@@ -31,7 +31,7 @@ let hbs = require('express-handlebars').create({
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use(session({
+/*app.use(session({
     secret: process.env.SESSION_PASSWORD,
     resave: false,
     saveUninitialized: false,
@@ -43,7 +43,7 @@ app.use(session({
 	maxAge: 600 * 100000
     }
     
-}));
+}));*/
 
 require('./routes/routes.js')(app);
 require('./routes/ajax_routes.js')(app,mysql);
@@ -69,7 +69,9 @@ app.get(`/img/${imgFile}`, function(req,res){
     res.end();
 });
 
-
+app.get(`/login`, function(req,res) {
+	res.render('login')
+});
 
 /* Error routes only used if none of the above routes return */
 app.use(function(req,res){
