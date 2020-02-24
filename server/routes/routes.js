@@ -8,4 +8,8 @@ module.exports = function(app){
     app.get(`/subscriptions`, function(req,res) {
 	res.render('profile')
     });
+	
+	app.get(`/create_account`, function (req, res) {
+	res.render('create')
+	});
 }
