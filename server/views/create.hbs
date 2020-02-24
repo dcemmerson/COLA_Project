@@ -1,0 +1,31 @@
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<html>
+   <head>
+      <title>Create Account</title>
+   </head>
+   <body>
+      <div class="container">
+      <form method="POST" action="/create_account">
+         <div class="form-group">
+            <label for="email">Email address:</label>
+            <input type="email" class="form-control" id="email" name="email">
+         </div>
+         <div class="form-group">
+            <label for="pwd">Password:</label>
+            <input type="password" class="form-control" id="pwd" name="pwd">
+         </div>
+         <div class="form-group">
+            <label for="pwdmatch">Re-Enter Password:</label>
+            <input type="password" class="form-control" id="pwdmatch" name="pwdmatch">
+         </div>
+         <div class="form-group">
+         <div class="form-group">
+            <label for="post">Post:</label>
+            <input type="text" class="form-control" id="post" name="post">
+         </div>
+         <div class="form-group">
+            <button type="submit" class="btn btn-default">Create Account</button>
+      </form>
+      </div>
+   </body>
+</html>
