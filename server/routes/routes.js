@@ -9,7 +9,7 @@ module.exports = function(app){
 	res.render('profile')
     });
 	
-	app.get(`/create_account`, function (req, res) {
+    app.get(`/create_account`, function (req, res) {
 	res.render('create')
-	});
+    });
 }
