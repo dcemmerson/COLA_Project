@@ -4,6 +4,7 @@ Description: Server config file for COLA rate change project. This file contains
 ************************************************************************************/
 
 require('dotenv').config();
+
 var express = require('express');
 var app = express();
 
@@ -13,11 +14,14 @@ const url = require('url');
 var session = require('express-session');
 var mysql = require('./dbcon.js');
 
+<<<<<<< HEAD
 const {
 	check,
 	validationResult
 } = require('express-validator');
 
+=======
+>>>>>>> 88f9ef2e1bd27498182c612132fafd25cae8a1c6
 
 /* i commented out next couple lines as i am uncertain what we need exactly if we
    take care of authentication using passportjs or auth0. Do we need to hash with
@@ -60,7 +64,11 @@ app.use(express.static('public'));
 
 app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
+<<<<<<< HEAD
 app.set('views', (__dirname) + '/views')
+=======
+app.set('views',  (__dirname) + '/views')
+>>>>>>> 88f9ef2e1bd27498182c612132fafd25cae8a1c6
 app.set('port', 10000);
 
 let cssFile;
@@ -79,12 +87,19 @@ app.get(`/img/${imgFile}`, function (req, res) {
 	res.end();
 });
 
+<<<<<<< HEAD
 app.get(`/login`, function (req, res) {
 	res.render('login')
 });
 
 app.get(`/create_account`, function (req, res) {
 	res.render('create')
+=======
+/* Error routes only used if none of the above routes return */
+app.use(function(req,res){
+  res.status(404);
+  res.render('404');
+>>>>>>> 88f9ef2e1bd27498182c612132fafd25cae8a1c6
 });
 
 
