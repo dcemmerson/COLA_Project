@@ -13,7 +13,6 @@ const url = require('url');
 var session = require('express-session');
 var mysql = require('./dbcon.js');
 
-console.log(__dirname)
 
 /* i commented out next couple lines as i am uncertain what we need exactly if we
    take care of authentication using passportjs or auth0. Do we need to hash with
@@ -70,14 +69,6 @@ let imgFile;
 app.get(`/img/${imgFile}`, function(req,res){
     res.send(`/img/${imgFile}`);
     res.end();
-});
-
-app.get(`/login`, function(req,res) {
-	res.render('login')
-});
-
-app.get(`/subscriptions`, function(req,res) {
-	res.render('profile')
 });
 
 /* Error routes only used if none of the above routes return */
