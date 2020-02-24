@@ -20,10 +20,10 @@ function queryDB(sql,values,mysql){
 
 module.exports = {
     /* place db functions here - see example below */
-    getHighScores: function(res,mysql,start,packetSize){
+    test_method: function(res, mysql){
 	return new Promise((resolve,reject) => {
-	    const sql = `SELECT username,score,level,rowsCleared FROM scores ORDER BY score DESC LIMIT ?,?`;
-	    const values = [start,packetSize];
+	    const sql = `INSERT INTO user (email, password, created) VALUES (?, ?, ?)`;
+	    const values = ["test@test.com", "password", "NOW()"];
 	    queryDB(sql,values,mysql)
 		.then((results) => {
 		    console.log(results);
