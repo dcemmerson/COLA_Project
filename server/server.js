@@ -13,10 +13,6 @@ const url = require('url');
 var session = require('express-session');
 var mysql = require('./dbcon.js');
 
-const {
-	check,
-	validationResult
-} = require('express-validator');
 
 
 /* i commented out next couple lines as i am uncertain what we need exactly if we
@@ -57,6 +53,9 @@ app.use(bodyParser.urlencoded({
 require('./routes/routes.js')(app);
 require('./routes/ajax_routes.js')(app, mysql);
 app.use(express.static('public'));
+const dbfunc=require('./routes/db_functions.js');
+console.log(dbfunc);
+
 
 app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
@@ -80,75 +79,7 @@ app.get(`/img/${imgFile}`, function (req, res) {
 });
 
 
-app.post(
-	"/create_account", [
-		// Check validity
-		check("email", "Email is invalid")
-		.isEmail()
-		.isLength({
-			min: 4
-		}),
-		check("pwd", "Password is invalid: must be at least 8 characters and must contain 1 lowercase, 1 uppercase, 1 number and 1 special character")
-		.isLength({
-			min: 8
-		})
-		.matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.* )(?=.*[^a-zA-Z0-9]).{8,}$/, 'i')
-		.custom((value, {
-			req,
-			loc,
-			path
-		}) => {
-			if (value !== req.body.pwdmatch) {
-				throw new Error("Passwords don't match");
-			} else {
-				return value;
-			}
-		})
-	],
-	(req, res, next) => {
-		// return validation results
-		const errorFormatter = ({
-			location,
-			msg,
-			param,
-			value,
-			nestedErrors
-		}) => {
-			// Build your resulting errors however you want! String, object, whatever - it works!
-			return `${msg}`;
-		};
-		const errors = validationResult(req).formatWith(errorFormatter);
 
-		if (!errors.isEmpty()) {
-			var errorResponse = errors.array({
-				onlyFirstError: true
-			});
-			var errorMssg = JSON.stringify(errorResponse[0]);
-			res.render('create', {
-				error: errorMssg
-			});
-
-			return;
-		}
-		
-		//var email =req.body.email;
-		//var pwd=req.body.pwd;
-		//var now=new Date().toISOString().replace(/\..+/, '');
-		try{
-		var sql = "INSERT INTO users (`email`, `password`, `created`, `modified`) VALUES (?, ?, ?, ?)"
-		const now = new Date().toISOString().replace(/\..+/, '');
-		var inserts = [req.body.email, req.body.pwd, now, now];
-		mysql.pool.query(sql, inserts, function (error, result) {
-			if (error) {
-				console.log("error");
-				throw error;
-				return;
-			}
-			res.redirect('subscriptions');
-			return;
-		}); } catch(err);
-		
-	})
 
 /* Error routes only used if none of the above routes return */
 app.use(function (req, res) {

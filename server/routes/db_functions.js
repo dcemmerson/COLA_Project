@@ -1,3 +1,4 @@
+var mysql = require('../dbcon.js');
 /* name: queryDB
    preconditions: sql contains string sql query
                   values is array of arguments for sql statement
@@ -20,17 +21,20 @@ function queryDB(sql,values,mysql){
 
 module.exports = {
     /* place db functions here - see example below */
-    test_method: function(res, mysql){
-	return new Promise((resolve,reject) => {
-	    const sql = `INSERT INTO user (email, password, created) VALUES (?, ?, ?)`;
-	    const values = ["test@test.com", "password", "NOW()"];
-	    queryDB(sql,values,mysql)
-		.then((results) => {
-		    console.log(results);
-		    if(results.length > 0) resolve(results);
-		    else reject()
-		})
-		.catch(err => reject(err))
-	})
-    },
+    add_user: function(email, pwd, now, res){
+		var sql = "INSERT INTO users (`email`, `password`, `created`, `modified`) VALUES (?, ?, ?, ?)"
+		//const now = new Date().toISOString().replace(/\..+/, '');
+		var inserts = [email, pwd, now, now];
+		mysql.pool.query(sql, inserts, function (error, result) {
+			if (error) {
+				console.log("error");
+				throw error;
+				return;
+			}
+			res.redirect('subscriptions');
+			return;
+		});
+	}
+	
+
 }
