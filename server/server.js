@@ -20,8 +20,6 @@ var mysql = require('./dbcon.js');
    bcrypt still if we use authenticator package?
 */
 //var auth = require('./auth/auth');
-//var bcrypt = require('bcrypt');
-//const saltRounds = 10;
 
 let hbs = require('express-handlebars').create({
 	defaultLayout: 'main',
@@ -34,7 +32,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
 	extended: false
 }));
-//app.use(expressValidator[]);
 
 /*app.use(session({
     secret: process.env.SESSION_PASSWORD,
@@ -53,8 +50,7 @@ app.use(bodyParser.urlencoded({
 require('./routes/routes.js')(app);
 require('./routes/ajax_routes.js')(app, mysql);
 app.use(express.static('public'));
-const dbfunc=require('./routes/db_functions.js');
-console.log(dbfunc);
+
 
 
 app.engine('hbs', hbs.engine);
@@ -77,8 +73,6 @@ app.get(`/img/${imgFile}`, function (req, res) {
 	res.send(`/img/${imgFile}`);
 	res.end();
 });
-
-
 
 
 /* Error routes only used if none of the above routes return */
