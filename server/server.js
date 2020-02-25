@@ -79,18 +79,6 @@ app.get(`/img/${imgFile}`, function (req, res) {
 	res.end();
 });
 
-app.get(`/login`, function (req, res) {
-	res.render('login')
-});
-
-app.get(`/create_account`, function (req, res) {
-	res.render('create')
-});
-
-
-app.get(`/subscriptions`, function (req, res) {
-	res.render('profile')
-});
 
 app.post(
 	"/create_account", [
@@ -119,18 +107,34 @@ app.post(
 	],
 	(req, res, next) => {
 		// return validation results
-		const errors = validationResult(req);
+		const errorFormatter = ({
+			location,
+			msg,
+			param,
+			value,
+			nestedErrors
+		}) => {
+			// Build your resulting errors however you want! String, object, whatever - it works!
+			return `${msg}`;
+		};
+		const errors = validationResult(req).formatWith(errorFormatter);
 
 		if (!errors.isEmpty()) {
 			var errorResponse = errors.array({
 				onlyFirstError: true
 			});
-			res.status(422).json({
-				message: errorResponse[0]
+			var errorMssg = JSON.stringify(errorResponse[0]);
+			res.render('create', {
+				error: errorMssg
 			});
+
 			return;
 		}
-
+		
+		//var email =req.body.email;
+		//var pwd=req.body.pwd;
+		//var now=new Date().toISOString().replace(/\..+/, '');
+		try{
 		var sql = "INSERT INTO users (`email`, `password`, `created`, `modified`) VALUES (?, ?, ?, ?)"
 		const now = new Date().toISOString().replace(/\..+/, '');
 		var inserts = [req.body.email, req.body.pwd, now, now];
@@ -142,7 +146,8 @@ app.post(
 			}
 			res.redirect('subscriptions');
 			return;
-		});
+		}); } catch(err);
+		
 	})
 
 /* Error routes only used if none of the above routes return */
