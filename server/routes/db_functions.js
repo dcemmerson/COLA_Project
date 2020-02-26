@@ -25,23 +25,17 @@ module.exports = {
 	
 	/* place db functions here - see example below */
 	/* addUser
-	* takes email password, date and res as parameters
+	* takes email password, date as parameters
 	*  and inserts a new user into the DB with hashed password
 	*/	
 	add_user: function (email, pwd, now, res) {
 		bcrypt.hash(pwd, saltRounds, function (err, hash) {
 			var sql = "INSERT INTO users (`email`, `password`, `created`, `modified`) VALUES (?, ?, ?, ?)"
-			var inserts = [email, hash, now, now];
-			mysql.pool.query(sql, inserts, function (error, result) {
-				if (error) {
-					console.log("error");
-					throw error;
-					return;
-				}
-				res.redirect('subscriptions');
-				return;
-			});
-		});
+			var values = [email, hash, now, now];
+			queryDB(sql, values, mysql)
+			
+		});	
 	}
+
 
 }

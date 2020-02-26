@@ -12,13 +12,9 @@ const url = require('url');
 
 var session = require('express-session');
 var mysql = require('./dbcon.js');
+var passport=require('passport')
 
 
-
-/* i commented out next couple lines as i am uncertain what we need exactly if we
-   take care of authentication using passportjs or auth0. Do we need to hash with
-   bcrypt still if we use authenticator package?
-*/
 //var auth = require('./auth/auth');
 
 let hbs = require('express-handlebars').create({
@@ -33,19 +29,12 @@ app.use(bodyParser.urlencoded({
 	extended: false
 }));
 
-/*app.use(session({
-    secret: process.env.SESSION_PASSWORD,
-    resave: false,
-    saveUninitialized: false,
-    rolling: true,
-    cookie: {
-	path: '/',
-	secure: false,
-	httpOnly: true,
-	maxAge: 600 * 100000
-    }
-    
-}));*/
+app.use(session({
+  secret: 'mOtyO2XoWSOutd7',
+  resave: false,
+  saveUninitialized: false,
+ // cookie: { secure: true }
+}));
 
 require('./routes/routes.js')(app);
 require('./routes/ajax_routes.js')(app, mysql);

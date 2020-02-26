@@ -70,7 +70,10 @@ module.exports = function (app) {
 				var email = req.body.email;
 				var pwd = req.body.pwd;
 				var now = new Date().toISOString().replace(/\..+/, '');
-				dbfunc.add_user(email, pwd, now, res);
+				dbfunc.add_user(email, pwd, now);
+				res.redirect('subscriptions');
+				return;
+				
 			}
 
 		})
