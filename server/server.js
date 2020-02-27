@@ -30,7 +30,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use(session({
-  secret: 'mOtyO2XoWSOutd7',
+  secret: process.env.SESSION_PASSWORD,
   resave: false,
   saveUninitialized: false,
  // cookie: { secure: true }

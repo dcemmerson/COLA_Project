@@ -22,20 +22,38 @@ function queryDB(sql, values, mysql) {
 }
 
 module.exports = {
-	
-	/* place db functions here - see example below */
-	/* addUser
-	* takes email password, date as parameters
-	*  and inserts a new user into the DB with hashed password
-	*/	
-	add_user: function (email, pwd, now, res) {
-		bcrypt.hash(pwd, saltRounds, function (err, hash) {
-			var sql = "INSERT INTO users (`email`, `password`, `created`, `modified`) VALUES (?, ?, ?, ?)"
-			var values = [email, hash, now, now];
-			queryDB(sql, values, mysql)
-			
-		});	
-	}
+    
+    /* place db functions here - see example below */
+    /* addUser
+     * takes email password, date as parameters
+     *  and inserts a new user into the DB with hashed password
+     */	
+    add_user: function (email, pwd, now, res) {
+	bcrypt.hash(pwd, saltRounds, function (err, hash) {
+	    var sql = "INSERT INTO users (`email`, `password`, `created`, `modified`) VALUES (?, ?, ?, ?)"
+	    var values = [email, hash, now, now];
+	    queryDB(sql, values, mysql)
+	    
+	});	
+    },
+    add_rates: function(scraped){
+	return new Promise((resolve, reject) => {
+	    let queries = [];
+	    const sql = `INSERT INTO COLARates (country, post, allowance, last_modified) VALUES (?, ?, ?, now())`
+	    scraped.forEach(entry => {
+		let values = [entry.country, entry.post, entry.allowance];
+		queries.push(queryDB(sql, values, mysql));
+	    })
+	    Promise.all(queries)
+		.then((res) => resolve(res))
+		.catch(err => {
+		    console.log(err);
+		    return;
+		})
+	})
+    }
+    
+    
 
 
 }

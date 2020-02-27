@@ -5,9 +5,13 @@ const {
 } = require('express-validator');
 
 module.exports = function (app) {
-	/* This query is for testing purposes */
-
-
+    app.get(`/cola_script_test`, function (req, res) {
+	var context = {};
+	context.script = ['cola_script_test.js'];
+	context.title = 'This is only a test';
+	res.render('cola_script_test', context);
+    });
+        
 	app.get(`/login`, function (req, res) {
 		res.render('login');
 	});
