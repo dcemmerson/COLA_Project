@@ -3,6 +3,7 @@ Description: Server config file for COLA rate change project. This file contains
              locations of routes, public content, and templating content.
 ************************************************************************************/
 
+
 require('dotenv').config();
 var express = require('express');
 var app = express();
@@ -28,13 +29,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
 	extended: false
 }));
-
+/*
 app.use(session({
   secret: process.env.SESSION_PASSWORD,
   resave: false,
   saveUninitialized: false,
  // cookie: { secure: true }
-}));
+}));*/
 
 require('./routes/routes.js')(app);
 require('./routes/ajax_routes.js')(app, mysql);
