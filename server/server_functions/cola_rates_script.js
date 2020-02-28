@@ -1,3 +1,5 @@
+const db = require('./db_functions.js');
+
 module.exports = {
     /* name: parse_cola_page
        preconditions: html is passed as string containing html page
@@ -37,5 +39,59 @@ module.exports = {
 		});
 	})
 	return context;
-    }
+    },
+    check_rate_changes: function(scraped_rates, changed_rates){
+	let queries = [];
+	
+	scraped_rates.forEach(element => {
+	    let query = db.get_cola_rate(element.country, element.post)
+		.then(res => {
+		    if(res[0].allowance != element.allowance){
+			changed_rates.push({
+			    id: res[0].id,
+			    country: res[0].country,
+			    post: res[0].post,
+			    allowance: element.allowance,
+			    previously_last_modified: res[0].last_modified
+			});
+		    }
+		})
+		.catch(err => {
+		    console.log(err);
+		    reject(err);
+		})
+	    queries.push(query);
+	});
+
+	return new Promise((resolve, reject) => {
+	    Promise.all(queries).then(() =>{
+		resolve();
+	    });
+	})
+    },
+    update_changed_rates: function(changed_rates){
+	let queries = [];
+	
+	changed_rates.forEach(changed => {
+	    let query = db.update_cola_rate(changed.id, changed.allowance)
+		.catch(err => {
+		    console.log(err);
+			reject(err);
+		})
+	    queries.push(query);
+	});
+	
+	return new Promise((resolve, reject) => {
+	    Promise.all(queries).then(() =>{
+		resolve();
+	    });
+	})
+    }	    
+    /*	Promise.all(queries)
+	.then((res) => resolve(res))
+	.catch(err => {
+		console.log(err);
+		return;
+		})
+    */
 }

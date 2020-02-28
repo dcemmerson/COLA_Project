@@ -61,7 +61,39 @@ module.exports = {
 		    return;
 		})
 	})
+    },
+    /* name: get_cola_rate
+       preconditions: country is string name of country which we need cola rate
+                      post is string name of post which we need cola rate
+       postconditions: returns promise, which when resolved returns object with 
+                       id, country, post, and allowance as data members
+       description:
+     */
+    get_cola_rate: function(country, post){
+	return new Promise((resolve, reject) => {
+	    const sql = `SELECT * FROM COLARates WHERE country=? AND post=?`
+	    const values = [country, post];
+	    queryDB(sql, values, mysql)
+		.then(res => resolve(res))
+		.catch(err => console.log(err))
+	})
+	
+    },
+    /* name: update_cola_rate
+       preconditions: COLARate_id is is of corresponding post/country needing update
+                      new_allowance is new allowance obtained by scraping webpage
+       postconditions: COLARate.id has been updated with new_allowance
+       description:
+    */
+    update_cola_rate: function(COLARate_id, new_allowance){
+	return new Promise((resolve, reject) => {
+	    const sql = `UPDATE COLARates SET allowance=? WHERE id=?`
+	    const values = [new_allowance, COLARate_id];
+	    queryDB(sql, values, mysql)
+		.then(res => resolve(res))
+		.catch(err => console.log(err))
+	})
+	
     }
     
-
 }

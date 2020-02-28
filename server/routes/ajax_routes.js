@@ -37,6 +37,25 @@ module.exports = function(app,  mysql){
 		})
 	});
     });
+    app.get(`/UPDATE_cola_rates`, (req, res) => {
+	let changed_rates = [];
+	after_load('https://aoprals.state.gov/Web920/cola.asp', html => {
+	    const scraped = crs.parse_cola_page(html);
+	    crs.check_rate_changes(scraped, changed_rates)
+		.then(() => {
+		    crs.update_changed_rates(changed_rates)
+			.then(() => {
+			    console.log(new Date() + 'cola rates updated');
+			    res.end();
+			})
+		})
+		.catch(err => {
+		    console.log(err)
+		    res.end()
+		})
+	});
+    });
+    
 }
 
 
