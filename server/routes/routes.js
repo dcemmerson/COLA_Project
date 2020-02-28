@@ -1,4 +1,4 @@
-const dbfunc = require('./db_functions.js');
+const dbfunc = require('../server_functions/db_functions.js');
 const {
 	check,
 	validationResult
