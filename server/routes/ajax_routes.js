@@ -1,6 +1,6 @@
 let db = require('./db_functions.js');
 let misc = require('./misc.js');
-//let fetch = require('node-fetch');
+let fetch = require('node-fetch');
 let after_load = require('after-load')
 
 module.exports = function(app,  mysql){

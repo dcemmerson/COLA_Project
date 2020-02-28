@@ -30,10 +30,19 @@ module.exports = {
      */	
     add_user: function (email, pwd, now, res) {
 	bcrypt.hash(pwd, saltRounds, function (err, hash) {
-	    var sql = "INSERT INTO users (`email`, `password`, `created`, `modified`) VALUES (?, ?, ?, ?)"
+	    var sql = "INSERT INTO user (`email`, `password`, `created`, `modified`) VALUES (?, ?, ?, ?)"
 	    var values = [email, hash, now, now];
-	    queryDB(sql, values, mysql)
-	    
+	    queryDB(sql, values, mysql).then((message)=>{
+			sql="SELECT id  from user WHERE id =LAST_INSERT_ID()"
+			values=0
+			queryDB(sql, values, mysql).then(message=>{
+			console.log(message[0].id);
+			
+			})
+			
+	
+			})
+	    return message[0].id;
 	});	
     },
     add_rates: function(scraped){
@@ -42,6 +51,7 @@ module.exports = {
 	    const sql = `INSERT INTO COLARates (country, post, allowance, last_modified) VALUES (?, ?, ?, now())`
 	    scraped.forEach(entry => {
 		let values = [entry.country, entry.post, entry.allowance];
+		console.log(values);
 		queries.push(queryDB(sql, values, mysql));
 	    })
 	    Promise.all(queries)

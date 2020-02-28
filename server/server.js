@@ -29,13 +29,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
 	extended: false
 }));
-/*
+
+
 app.use(session({
   secret: process.env.SESSION_PASSWORD,
   resave: false,
   saveUninitialized: false,
  // cookie: { secure: true }
-}));*/
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 require('./routes/routes.js')(app);
 require('./routes/ajax_routes.js')(app, mysql);
