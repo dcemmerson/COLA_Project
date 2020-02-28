@@ -37,6 +37,15 @@ module.exports = function(app,  mysql){
 		})
 	});
     });
+
+    /* name: UPDATE_cola_rates
+       preconditions: None
+       postconditions: parsed cola rates webpage, https://aoprals.state.gov/Web920/cola.asp,
+                       and db has been updated with new rates.
+       description: This routes was created simply to develop and test a script
+       to UPDATE cola rates webpage, followed by processing the data obtained. This
+       route will be removed in near future.
+    */
     app.get(`/UPDATE_cola_rates`, (req, res) => {
 	let changed_rates = [];
 	after_load('https://aoprals.state.gov/Web920/cola.asp', html => {
@@ -45,7 +54,7 @@ module.exports = function(app,  mysql){
 		.then(() => {
 		    crs.update_changed_rates(changed_rates)
 			.then(() => {
-			    console.log(new Date() + 'cola rates updated');
+			    console.log(new Date() + ': cola rates updated');
 			    res.end();
 			})
 		})

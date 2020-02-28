@@ -40,8 +40,21 @@ module.exports = {
 	})
 	return context;
     },
+    /* name: check_rate_changes
+       preconditions: scraped_rates contains array of objects obtained by scraping
+                      of the form {country:country, post: post, allowance: allowance}
+		      changed_rates is empty array
+       postconditions: If any rates have changed since last checked, changed_rates contains
+                       information about each post and new allowance. Returns a promise
+		       that does not resolve until all db queries have been completed.
+       description: Take each element in scraped_rates obtained from scraping
+                    from https://aoprals.state.gov/Web920/cola.asp webpage, select the 
+		    corresponding element/post in db and compare previous allowance to
+		    newly scraped allowance. If allowance is different, add to changed_rates
+		    array.
+     */
     check_rate_changes: function(scraped_rates, changed_rates){
-	let queries = [];
+	let queries = []; 
 	
 	scraped_rates.forEach(element => {
 	    let query = db.get_cola_rate(element.country, element.post)
@@ -69,6 +82,14 @@ module.exports = {
 	    });
 	})
     },
+    /* name: update_changed_rates
+       preconditions: changed_rates is array of objects for each post that has changed and
+                      needs to be UPDATed in db
+       postconditions: All posts described in changed_rates hae been changed.
+                       Returns a promise that doesnt resolve until all queries have
+		       been completed.
+       description: UPDATE each row allowance in db corresponding to changed_rates[].id
+    */
     update_changed_rates: function(changed_rates){
 	let queries = [];
 	
@@ -87,11 +108,4 @@ module.exports = {
 	    });
 	})
     }	    
-    /*	Promise.all(queries)
-	.then((res) => resolve(res))
-	.catch(err => {
-		console.log(err);
-		return;
-		})
-    */
 }
