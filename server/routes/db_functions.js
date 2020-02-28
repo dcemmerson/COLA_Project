@@ -36,6 +36,16 @@ module.exports = {
 	    
 	});	
     },
+
+    /* name: add_rates
+       preconditions: scraped contains array of objects of the form 
+       postconditions: returns Promise that doesnt resolve until all
+                       have been successfully added to db. 
+       description: This function should only need to be called to 
+                    initialize db. All cola rates contained in scraped
+		    are inserted into db. If any inserts fail, error 
+		    message printed and function returns immediately.
+     */
     add_rates: function(scraped){
 	return new Promise((resolve, reject) => {
 	    let queries = [];
@@ -53,7 +63,5 @@ module.exports = {
 	})
     }
     
-    
-
 
 }
