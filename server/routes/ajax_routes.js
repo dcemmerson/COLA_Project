@@ -1,6 +1,7 @@
-let db = require('./db_functions.js');
-let misc = require('./misc.js');
-let fetch = require('node-fetch');
+const db = require('../server_functions/db_functions.js');
+const misc = require('../server_functions/misc.js');
+const crs = require('../server_functions/cola_rates_script.js');
+
 let after_load = require('after-load')
 
 module.exports = function(app,  mysql){
@@ -27,7 +28,7 @@ module.exports = function(app,  mysql){
 	var context = {};
 	
 	after_load('https://aoprals.state.gov/Web920/cola.asp', html => {
-	    const scraped = misc.parse_cola_page(html);
+	    const scraped = crs.parse_cola_page(html);
 	    db.add_rates(scraped)
 		.then(() => res.end())
 		.catch(err => {
@@ -36,6 +37,25 @@ module.exports = function(app,  mysql){
 		})
 	});
     });
+    app.get(`/UPDATE_cola_rates`, (req, res) => {
+	let changed_rates = [];
+	after_load('https://aoprals.state.gov/Web920/cola.asp', html => {
+	    const scraped = crs.parse_cola_page(html);
+	    crs.check_rate_changes(scraped, changed_rates)
+		.then(() => {
+		    crs.update_changed_rates(changed_rates)
+			.then(() => {
+			    console.log(new Date() + 'cola rates updated');
+			    res.end();
+			})
+		})
+		.catch(err => {
+		    console.log(err)
+		    res.end()
+		})
+	});
+    });
+    
 }
 
 

@@ -37,12 +37,11 @@ module.exports = {
 			values=0
 			queryDB(sql, values, mysql).then(message=>{
 			console.log(message[0].id);
-			
 			})
 			
 	
 			})
-	    return message[0].id;
+	    
 	});	
     },
     add_rates: function(scraped){

@@ -2,7 +2,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('GET_cola_rates').addEventListener('click', event => {
 	event.preventDefault();
 	GET_cola_rates();
-	$('#display_cola_rates').innerText = 'fetching...';
+    });
+    document.getElementById('UPDATE_cola_rates').addEventListener('click', event => {
+	event.preventDefault();
+	UPDATE_cola_rates();
     });
 });
 
@@ -11,14 +14,12 @@ document.addEventListener('DOMContentLoaded', () => {
 */
 function GET_cola_rates(){
     fetch('./GET_cola_rates')
-	.then(res => {
-	    console.log(res)
-	    res.json();
-	})
-	.then(cola_rates =>{
-	    console.log(cola_rates);
-	    $('#display_cola_rates').innerText = cola_rates
-	})
+	.then()
 	.catch(err => console.log(err));
 }
 
+function UPDATE_cola_rates(){
+    fetch('/UPDATE_cola_rates')
+	.then()
+	.catch(err => console.log(err))
+}
