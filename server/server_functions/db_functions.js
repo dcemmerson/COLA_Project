@@ -37,7 +37,7 @@ module.exports = {
 	});	
     },
 
-    /* name: add_rates
+    /* name: add_cola_rates
        preconditions: scraped contains array of objects of the form 
        postconditions: returns Promise that doesnt resolve until all
                        have been successfully added to db. 
@@ -46,7 +46,7 @@ module.exports = {
 		    are inserted into db. If any inserts fail, error 
 		    message printed and function returns immediately.
      */
-    add_rates: function(scraped){
+    add_cola_rates: function(scraped){
 	return new Promise((resolve, reject) => {
 	    let queries = [];
 	    const sql = `INSERT INTO COLARates (country, post, allowance, last_modified) VALUES (?, ?, ?, now())`
@@ -62,6 +62,29 @@ module.exports = {
 		})
 	})
     },
+    /* name: add_cola_rate
+       preconditions: scraped contains array of objects of the form 
+       postconditions: returns Promise that doesnt resolve until all
+                       have been successfully added to db. 
+       description: This function should only need to be called to 
+                    initialize db. All cola rates contained in scraped
+		    are inserted into db. If any inserts fail, error 
+		    message printed and function returns immediately.
+     */
+    add_cola_rate: function(country, post, allowance){
+	return new Promise((resolve, reject) => {
+	    const sql = `INSERT INTO COLARates (country, post, allowance, last_modified) VALUES (?, ?, ?, now())`
+	    let values = [country, post, allowance];
+	    queryDB(sql, values, mysql)
+		.then(res => {
+		    resolve(res)
+		})
+		.catch(err => {
+		    console.log(err);
+		    reject(err)
+		})
+	})
+    },
     /* name: get_cola_rate
        preconditions: country is string name of country which we need cola rate
                       post is string name of post which we need cola rate
@@ -71,7 +94,7 @@ module.exports = {
      */
     get_cola_rate: function(country, post){
 	return new Promise((resolve, reject) => {
-	    const sql = `SELECT * FROM COLARates WHERE country=? AND post=?`
+	    const sql = `SELECT * FROM COLARates WHERE country=? AND post=?`;
 	    const values = [country, post];
 	    queryDB(sql, values, mysql)
 		.then(res => resolve(res))
