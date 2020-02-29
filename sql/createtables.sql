@@ -40,6 +40,7 @@ CREATE TABLE COLARates (
 	`country` varchar(255) NOT NULL,
     	`post` varchar(255) NOT NULL,
     	`allowance` int(11) NOT NULL,
+	`created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`last_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
