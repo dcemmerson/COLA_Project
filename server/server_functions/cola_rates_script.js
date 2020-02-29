@@ -1,5 +1,5 @@
 const db = require('./db_functions.js');
-
+const set_interval = require('set-interval');
 module.exports = {
     /* name: parse_cola_page
        preconditions: html is passed as string containing html page
@@ -107,5 +107,45 @@ module.exports = {
 		resolve();
 	    });
 	})
-    }	    
+    },
+    /* name: schedule_crs
+       preconditions: None
+       postconditions: cola rate change script has been scheduled to run
+                       at 11:59:59 GMT. start_cola_rate_change_script has
+		       been called and will continue to run script every
+		       24 hours.
+       description:
+    */
+    schedule_crcs: function(){
+	let schedule = require('node-schedule');
+	let today = new Date();
+	
+	let midnight = new Date(Date.UTC(today.getFullYear(),
+					 today.getMonth(),
+					 today.getDate() + 1,
+					 0,0,0,0));
+	//ensure we don't accidentally schedule the intervals to start
+	//at last night midnight GMT if it already passed
+	if(midnight < new Date())
+	    midnight = new Date(Date.UTC(today.getFullYear(),
+					 today.getMonth(),
+					 today.getDate() + 2,
+					 0,0,0,0));
+
+	console.log("Cola rate change script schdule to start at: " + midnight);
+	schedule.scheduleJob(midnight, () => {
+	    start_cola_rate_change_script()
+	})
+    }
+}
+    /* name: start_cola_rate_change_script
+       preconditions: None
+       postconditions: cola_rate_change script will continue to run at
+       set intervals every 24 hours at 11:59:59 GMT
+       description: This method must be run just once upon server startup.
+    */
+function start_cola_rate_change_script(){
+    console.log('interval script starting');
+    set_interval.start(() => console.log("running"),
+		       2000, 'test');
 }
