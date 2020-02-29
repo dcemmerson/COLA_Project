@@ -169,7 +169,7 @@ function start_cola_rate_change_script(){
 		})
 	});
     },
-		       6000, 'update_cola_rates');
+		       86400000, 'update_cola_rates');
 }
 /* name: update_changed_rates
    preconditions: changed_rates is array of objects for each post that has changed and
