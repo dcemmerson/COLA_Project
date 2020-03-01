@@ -25,7 +25,7 @@ CREATE TABLE template (
 	`name` varchar(255) NOT NULL,
 	`file` blob NOT NULL,
   	`comment` text,
-	`userId` int(11),
+	`userId` int(11) NOT NULL,
 	PRIMARY KEY (`id`),
 	FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -34,7 +34,7 @@ CREATE TABLE subscription (
 	`id` int(11) NOT NULL AUTO_INCREMENT,
 	`name` varchar(255) NOT NULL,
     	`comment` text,
-	`userId` int(11),
+	`userId` int(11) NOT NULL,
 	PRIMARY KEY (`id`),
 	FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
