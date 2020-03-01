@@ -25,14 +25,18 @@ CREATE TABLE template (
 	`name` varchar(255) NOT NULL,
 	`file` blob NOT NULL,
   	`comment` text,
-	PRIMARY KEY (`id`)
+	`userId` int(11),
+	PRIMARY KEY (`id`),
+	FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE subscription (
 	`id` int(11) NOT NULL AUTO_INCREMENT,
 	`name` varchar(255) NOT NULL,
     	`comment` text,
-	PRIMARY KEY (`id`)
+	`userId` int(11),
+	PRIMARY KEY (`id`),
+	FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE COLARates (
@@ -50,8 +54,8 @@ CREATE TABLE COLARates_subscription (
 	`COLARatesId` int(11) NOT NULL,
 	`subscriptionId` int(11) NOT NULL,
 	PRIMARY KEY (`id`),
-	FOREIGN KEY (`COLARatesId`) REFERENCES `COLARates` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-	FOREIGN KEY (`subscriptionId`) REFERENCES `subscription` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+	FOREIGN KEY (`COLARatesId`) REFERENCES `COLARates` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
+	FOREIGN KEY (`subscriptionId`) REFERENCES `subscription` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 SET FOREIGN_KEY_CHECKS = 1;
