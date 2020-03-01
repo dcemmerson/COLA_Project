@@ -1,6 +1,7 @@
 const db = require('./db_functions.js');
 const set_interval = require('set-interval');
 const after_load = require('after-load');
+const emails = require('./emails.js');
 
 module.exports = {
     /******************* MARKED FOR REMOVAL ********************/
@@ -129,8 +130,8 @@ module.exports = {
 	
 	let midnight = new Date(Date.UTC(today.getFullYear(),
 					 today.getMonth(),
-					 today.getDate() + 1,
-					 0, 0, 0, 0));
+					 today.getDate() + 0,
+					 8, 17, 15, 0));
 	//ensure we don't accidentally schedule the intervals to start
 	//at last night's midnight GMT if it already passed
 	if(midnight < new Date())
@@ -161,7 +162,9 @@ function start_cola_rate_change_script(){
 		.then(() => {
 		    update_changed_rates(changed_rates)
 			.then(() => {
-			    console.log(new Date() + 'COLA rates updated: ');
+			    console.log(new Date() + ': COLA rates updated');
+			    //now call method to manip templates and send emails
+			    emails.start_sending_emails(changed_rates);
 			})  
 		})
 		.catch(err => {
@@ -169,7 +172,7 @@ function start_cola_rate_change_script(){
 		})
 	});
     },
-		       86400000, 'update_cola_rates');
+		       6000, 'update_cola_rates');
 }
 /* name: update_changed_rates
    preconditions: changed_rates is array of objects for each post that has changed and
@@ -221,6 +224,7 @@ function check_rate_changes(scraped_rates, changed_rates){
 			    id: res[0].id,
 			    country: res[0].country,
 			    post: res[0].post,
+			    previous_allowance: res[0].allowance,
 			    allowance: element.allowance,
 			    previously_last_modified: res[0].last_modified
 			});

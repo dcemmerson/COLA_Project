@@ -37,6 +37,9 @@ module.exports = {
 	});	
     },
 
+    /************************************************************************/
+    /*********************** COLA RATE SCRIPT QUERIES ***********************/
+    /************************************************************************/
     /* name: add_cola_rates
        preconditions: scraped contains array of objects of the form 
        postconditions: returns Promise that doesnt resolve until all
@@ -115,8 +118,24 @@ module.exports = {
 	    queryDB(sql, values, mysql)
 		.then(res => resolve(res))
 		.catch(err => console.log(err))
-	})
-	
+	});	
+    },
+    /* name: get_users_subsribed_to_post
+       preconditions:
+       postconditions:
+       description
+    */
+    get_users_subscribed_to_post: function(post, country){
+	return new Promise((resolve, reject) => {
+	    const sql = `SELECT u.email as username, t.file, t.name AS filename FROM user u INNER JOIN subscription s ON  u.id=s.userId INNER JOIN COLARates_subscription cs ON s.id=cs.id INNER JOIN COLARates c ON cs.COLARatesId=c.id INNER JOIN template t ON s.userId=t.id WHERE c.post=? AND c.country=?`;
+	    const values = [post, country];
+	    queryDB(sql, values, mysql)
+		.then(res => resolve(res))
+		.catch(err => console.log(err))
+	});
     }
+    /************************************************************************/
+    /********************* END  COLA RATE SCRIPT QUERIES ********************/
+    /************************************************************************/
     
 }
