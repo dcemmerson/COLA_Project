@@ -25,7 +25,7 @@ CREATE TABLE template (
 	`name` varchar(255) NOT NULL,
 	`file` blob NOT NULL,
   	`comment` text,
-	`userId` int(11) NOT NULL,
+	`userId` int(11) NOT NULL DEFAULT 1,
 	PRIMARY KEY (`id`),
 	FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -35,8 +35,10 @@ CREATE TABLE subscription (
 	`name` varchar(255) NOT NULL,
     	`comment` text,
 	`userId` int(11) NOT NULL,
+	`templateId` int(11) NOT NULL,
 	PRIMARY KEY (`id`),
-	FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+	FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (`templateId`) REFERENCES `template` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE COLARates (
