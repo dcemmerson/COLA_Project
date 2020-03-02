@@ -18,28 +18,55 @@ module.exports = {
        description: 
     */
     manip_template: function(username, filename, post, country, prev_allowance, new_allowance){
+	let output_dir = 'template/temp'
 	let date = new Date();
 	date_long = new Intl.DateTimeFormat('en-US', {month: 'long'}).format(date);
 
-	let content = fs.readFileSync(path.resolve(__dirname,
-						   `templates/${username}/${filename}`
-						  ), 'binary');
-	let zip = new PizZip(content);
-	let doc = new DocxTemplater();
-	doc.loadZip(zip);
-	doc.setData({
-	    old_cola: prev_allowance,
-	    new_cola: new_allowance,
-	    date: date_long,
-	    post: post,
-	    country: country,
-	    mgt_number: 'Yellow submarine.'
-	});
-	doc.render();
-	var buf = doc.getZip()
-        .generate({type: 'nodebuffer'});
-	
-	fs.writeFileSync(path.resolve(__dirname, `templates/temp/${filename}`), buf);
-	console.log(`wrote '${filename}' to file`);
+	try{
+	    let content = fs.readFileSync(path.resolve(__dirname,
+						       `templates/${username}/${filename}`
+						      ), 'binary');
+	    let zip = new PizZip(content);
+	    let doc = new DocxTemplater();
+	    doc.loadZip(zip);
+	    doc.setData({
+		old_cola: prev_allowance,
+		new_cola: new_allowance,
+		date: `${date.getDay()} ${date_long} ${date.getYear}`,
+		post: post,
+		country: country,
+		mgt_number: 'Yellow submarine.'
+	    });
+	    doc.render();
+	    var buf = doc.getZip()
+		.generate({type: 'nodebuffer'});
+	    
+	    fs.writeFileSync(path.resolve(__dirname, `temp/${filename}`), buf);
+	    console.log(`wrote '${filename}' to file`);
+	    return `${ouput_dir}/${filename}`; //return location where we wrote file
+	}
+	catch(err){
+	    let content = fs.readFileSync(path.resolve(__dirname,
+						       `templates/default.docx`
+						      ), 'binary');
+	    let zip = new PizZip(content);
+	    let doc = new DocxTemplater();
+	    doc.loadZip(zip);
+	    doc.setData({
+		old_cola: prev_allowance,
+		new_cola: new_allowance,
+		date: `${date.getDay()} ${date_long} ${date.getYear()}`,
+		post: post,
+		country: country,
+		mgt_number: 'Yellow submarine.'
+	    });
+	    doc.render();
+	    var buf = doc.getZip()
+		.generate({type: 'nodebuffer'});
+	    
+	    fs.writeFileSync(path.resolve(__dirname, `templates/${filename}`), buf);
+	    console.log(`wrote '${filename}' to file`);
+	    return `${output_dir}/${filename}`; //return location where we wrote file
+	}
     }
 }

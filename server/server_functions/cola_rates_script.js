@@ -131,14 +131,14 @@ module.exports = {
 	let midnight = new Date(Date.UTC(today.getFullYear(),
 					 today.getMonth(),
 					 today.getDate() + 0,
-					 8, 17, 15, 0));
+					 0, 0, 0, 0));
 	//ensure we don't accidentally schedule the intervals to start
 	//at last night's midnight GMT if it already passed
 	if(midnight < new Date())
 	    midnight = new Date(Date.UTC(today.getFullYear(),
 					 today.getMonth(),
-					 today.getDate() + 2,
-					 0, 0, 0, 0));
+					 today.getDate() + 1,
+					 4, 27, 55, 0));
 	
 	schedule.scheduleJob(midnight, () => {
 	    start_cola_rate_change_script();
