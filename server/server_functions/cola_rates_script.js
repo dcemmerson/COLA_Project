@@ -3,6 +3,7 @@ const set_interval = require('set-interval');
 const after_load = require('after-load');
 const emails = require('./emails.js');
 
+
 module.exports = {
     /******************* MARKED FOR REMOVAL ********************/
     /* name: parse_cola_page
@@ -131,6 +132,8 @@ module.exports = {
 	let midnight = new Date(Date.UTC(today.getFullYear(),
 					 today.getMonth(),
 					 today.getDate() + 0,
+//					 today.getHours() + 8, today.getMinutes(),
+//					 today.getSeconds() + 1, 0));
 					 0, 0, 0, 0));
 	//ensure we don't accidentally schedule the intervals to start
 	//at last night's midnight GMT if it already passed
@@ -138,7 +141,9 @@ module.exports = {
 	    midnight = new Date(Date.UTC(today.getFullYear(),
 					 today.getMonth(),
 					 today.getDate() + 1,
-					 4, 27, 55, 0));
+//					 today.getHours() + 8, today.getMinutes(),
+//					 today.getSeconds() + 1, 0));
+						 4, 27, 55, 0));
 	
 	schedule.scheduleJob(midnight, () => {
 	    start_cola_rate_change_script();
@@ -154,7 +159,6 @@ module.exports = {
     */
 function start_cola_rate_change_script(){
     set_interval.start(() => {
-	console.log('interval');
 	let changed_rates = [];
 	after_load('https://aoprals.state.gov/Web920/cola.asp', html => {
 	    const scraped = parse_cola_page(html);

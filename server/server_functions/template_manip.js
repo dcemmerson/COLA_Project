@@ -18,7 +18,7 @@ module.exports = {
        description: 
     */
     manip_template: function(username, filename, post, country, prev_allowance, new_allowance){
-	let output_dir = 'template/temp'
+	let output_dir = 'templates/temp'
 	let date = new Date();
 	date_long = new Intl.DateTimeFormat('en-US', {month: 'long'}).format(date);
 
@@ -32,7 +32,7 @@ module.exports = {
 	    doc.setData({
 		old_cola: prev_allowance,
 		new_cola: new_allowance,
-		date: `${date.getDay()} ${date_long} ${date.getYear}`,
+		date: (date.getDay() + 1) + ` ${date_long} ` + date.getFullYear(),
 		post: post,
 		country: country,
 		mgt_number: 'Yellow submarine.'
@@ -41,11 +41,13 @@ module.exports = {
 	    var buf = doc.getZip()
 		.generate({type: 'nodebuffer'});
 	    
-	    fs.writeFileSync(path.resolve(__dirname, `temp/${filename}`), buf);
-	    console.log(`wrote '${filename}' to file`);
-	    return `${ouput_dir}/${filename}`; //return location where we wrote file
+	    fs.writeFileSync(path.resolve(__dirname, `${output_dir}/${filename}`), buf);
+	    console.log(`wrote '${filename}' to file - try`);
+	    return `${output_dir}/${filename}`; //return location where we wrote file
 	}
 	catch(err){
+	    console.log(err);
+	    console.log("Trying to send email using default template");
 	    let content = fs.readFileSync(path.resolve(__dirname,
 						       `templates/default.docx`
 						      ), 'binary');
@@ -55,7 +57,7 @@ module.exports = {
 	    doc.setData({
 		old_cola: prev_allowance,
 		new_cola: new_allowance,
-		date: `${date.getDay()} ${date_long} ${date.getYear()}`,
+		date: (date.getDay() + 1) + ` ${date_long} ` + date.getFullYear(),
 		post: post,
 		country: country,
 		mgt_number: 'Yellow submarine.'
@@ -64,8 +66,8 @@ module.exports = {
 	    var buf = doc.getZip()
 		.generate({type: 'nodebuffer'});
 	    
-	    fs.writeFileSync(path.resolve(__dirname, `templates/${filename}`), buf);
-	    console.log(`wrote '${filename}' to file`);
+	    fs.writeFileSync(path.resolve(__dirname, `${output_dir}/${filename}`), buf);
+	    console.log(`wrote '${filename}' to file - catch`);
 	    return `${output_dir}/${filename}`; //return location where we wrote file
 	}
     }
