@@ -23,17 +23,17 @@ module.exports = {
 	    try{
 		db.get_users_subscribed_to_post(changed.post, changed.country)
 		    .then(users => users.forEach(user => {
-			const filepath = tm.manip_template(user.username,
+			let file_info = tm.manip_template(user.username,
 					  user.filename,
 					  changed.post,
 					  changed.country,
 					  changed.previous_allowance,
-					  changed.allowance);
-			send_email(user.username, user.filename, filepath)
+							  changed.allowance);
+			send_email(user.username, file_info.filename, file_info.filepath)
 			    .then((res) => {
-				console.log(`Email sent to ${user.username} with ${user.filename}`
+				console.log(`Email sent to ${user.username} with '${file_info.filename}'`
 					    + ` attached. ${changed.post}, ${changed.country}: `
-					    + `prev_rate: ${changed.previous_allowance}, `
+				 	   + `prev_rate: ${changed.previous_allowance}, `
 					    + `new_rate: ${changed.allowance}`);
 			    })
 			    .catch(err => {
@@ -62,7 +62,7 @@ module.exports = {
 */
 function send_email(username, filename, filepath){
     return new Promise((resolve, reject) => {
-	console.log(`trying to send ${filename} from ${filepath}`);
+	console.log(`trying to send ${filename} from ${__dirname}/${filepath}`);
 	
 	const mail_options = {
 	    from: 'gunrock2018@gmail.com',
@@ -73,10 +73,12 @@ function send_email(username, filename, filepath){
 		{
 		    filename: filename,
 		    content: 'Buffer',
-		    path: `${__dirname}/${filepath}`
+		    path: `${__dirname}/${filepath}/${filename}`
 		}
-	    ]
+	    ]   
 	}
+	console.log('mail option path = ' + mail_options.attachments[0].path);
+	console.log('mail option filename = ' + mail_options.attachments[0].filename);
 	
 	transporter.sendMail(mail_options)
 	    .then(res => {

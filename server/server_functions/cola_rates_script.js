@@ -123,7 +123,9 @@ module.exports = {
                        at 00:00:00 GMT. start_cola_rate_change_script has
 		       been called and will continue to run script every
 		       24 hours.
-       description:
+       description: function needs to be called just once at node server startup. Function
+                    schedules for script to start at midnihgt, and then reoccur every 24
+		    hours.
     */
     schedule_crcs: function(){
 	let schedule = require('node-schedule');
@@ -140,10 +142,10 @@ module.exports = {
 	if(midnight < new Date())
 	    midnight = new Date(Date.UTC(today.getFullYear(),
 					 today.getMonth(),
-					 today.getDate() + 1,
-//					 today.getHours() + 8, today.getMinutes(),
-//					 today.getSeconds() + 1, 0));
-						 4, 27, 55, 0));
+					 today.getDate(),
+					 today.getHours() + 8, today.getMinutes(),
+					 today.getSeconds() + 1, 0));
+//						 0, 0, 0, 0));
 	
 	schedule.scheduleJob(midnight, () => {
 	    start_cola_rate_change_script();

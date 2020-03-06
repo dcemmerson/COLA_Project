@@ -18,9 +18,16 @@ module.exports = {
        description: 
     */
     manip_template: function(username, filename, post, country, prev_allowance, new_allowance){
-	let output_dir = 'templates/temp'
+	const output_dir = `templates/${username}`;
+	let output_filename;
 	let date = new Date();
 	date_long = new Intl.DateTimeFormat('en-US', {month: 'long'}).format(date);
+	
+	filename.lastIndexOf('.') != -1 ?
+	    output_filename = `${post}_${country}_${date.toISOString().substring(0, 10)}`
+	    + filename.substring(filename.lastIndexOf('.'), filename.length) :
+	    output_filename = `${post}_${country}_${date.toISOString().substring(0, 10)}`
+	    + `.doc`
 
 	try{
 	    let content = fs.readFileSync(path.resolve(__dirname,
@@ -41,13 +48,15 @@ module.exports = {
 	    var buf = doc.getZip()
 		.generate({type: 'nodebuffer'});
 	    
-	    fs.writeFileSync(path.resolve(__dirname, `${output_dir}/${filename}`), buf);
-	    console.log(`wrote '${filename}' to file - try`);
-	    return `${output_dir}/${filename}`; //return location where we wrote file
+	    fs.writeFileSync(path.resolve(__dirname, `${output_dir}/${output_filename}/`), buf);
+	    console.log(`wrote ${output_filename} to file`);
+	    return {filepath: `${output_dir}`, filename: `${output_filename}`};
 	}
+	
 	catch(err){
-	    console.log(err);
-	    console.log("Trying to send email using default template");
+	    //	    console.log(err);
+	    console.log(`User ${username} does not appear to have unique template`);
+	    console.log(`Trying to send email to ${username} using default template`);
 	    let content = fs.readFileSync(path.resolve(__dirname,
 						       `templates/default.docx`
 						      ), 'binary');
@@ -65,10 +74,9 @@ module.exports = {
 	    doc.render();
 	    var buf = doc.getZip()
 		.generate({type: 'nodebuffer'});
-	    
-	    fs.writeFileSync(path.resolve(__dirname, `${output_dir}/${filename}`), buf);
-	    console.log(`wrote '${filename}' to file - catch`);
-	    return `${output_dir}/${filename}`; //return location where we wrote file
+	    fs.writeFileSync(path.resolve(__dirname, `${output_dir}/${output_filename}`), buf);
+	    console.log(`wrote ${output_filename} to file - catch`);
+	    return {filepath: `${output_dir}`, filename: `${output_filename}`};
 	}
     }
 }
