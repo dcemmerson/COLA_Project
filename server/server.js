@@ -2,8 +2,6 @@
 Description: Server config file for COLA rate change project. This file contains the 
              locations of routes, public content, and templating content.
 ************************************************************************************/
-
-
 require('dotenv').config();
 var express = require('express');
 var app = express();
@@ -13,8 +11,11 @@ const url = require('url');
 
 var session = require('express-session');
 var mysql = require('./dbcon.js');
+
 var passport=require('passport')
 var MySQLStore = require('express-mysql-session')(session);
+
+
 
 
 //var auth = require('./auth/auth');
@@ -67,6 +68,9 @@ app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
 app.set('views', (__dirname) + '/views')
 app.set('port', 10000);
+
+const crcs = require('./server_functions/cola_rates_script.js')
+crcs.schedule_crcs();
 
 let cssFile;
 app.get(`/css/${cssFile}`, function (req, res) {
