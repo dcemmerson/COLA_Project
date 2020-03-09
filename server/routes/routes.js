@@ -16,11 +16,13 @@ module.exports = function (app) {
 	app.get(`/login`, function (req, res) {
 		res.render('login');
 	});
-	app.get(`/subscriptions`, dbfunc.authenticationMiddleware(), function (req, res) {
-		res.render('profile')
-		console.log(req.user);
-		console.log(req.isAuthenticated());
-	});
+    app.get(`/subscriptions`, /*dbfunc.authenticationMiddleware(),*/ function (req, res) {
+	let context = {};
+	context.subscriptions = true;
+	context.style = ['styles.css'];
+	context.title = 'My Subscriptions';
+	res.render('subscriptions', context);
+    });
 
 	app.get(`/create_account`, function (req, res) {
 		res.render('create')

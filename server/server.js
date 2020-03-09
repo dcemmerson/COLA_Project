@@ -74,8 +74,8 @@ crcs.schedule_crcs();
 
 let cssFile;
 app.get(`/css/${cssFile}`, function (req, res) {
-	res.send(`/css/${cssFile}`);
-	res.end;
+    res.send(`/css/${cssFile}`);
+    res.end();
 });
 let jsFile;
 app.get(`/js/${jsFile}`, function (req, res) {
