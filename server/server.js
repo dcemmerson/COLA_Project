@@ -14,6 +14,7 @@ const url = require('url');
 var session = require('express-session');
 var mysql = require('./dbcon.js');
 var passport=require('passport')
+var MySQLStore = require('express-mysql-session')(session);
 
 
 //var auth = require('./auth/auth');
@@ -31,10 +32,24 @@ app.use(bodyParser.urlencoded({
 }));
 
 
+var options = {
+  host            : process.env.DB_HOST,
+  user            : process.env.DB_USER,
+  password        : process.env.DB_PASSWORD,
+  database        : process.env.DB_NAME,
+};
+
+var sessionStore = new MySQLStore(options);
+var bcrypt = require('bcrypt');
+var passport=require('passport');
+const saltRounds = 10;
+
 app.use(session({
   secret: process.env.SESSION_PASSWORD,
+  store: sessionStore,
   resave: false,
   saveUninitialized: false,
+ 
  // cookie: { secure: true }
 }));
 

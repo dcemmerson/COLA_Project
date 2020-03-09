@@ -1,4 +1,7 @@
+var passport=require('passport');
 var bcrypt = require('bcrypt');
+
+require('../server.js');
 const saltRounds = 10;
 
 var mysql = require('../dbcon.js');
@@ -22,22 +25,32 @@ function queryDB(sql, values, mysql) {
 }
 
 module.exports = {
-    
-    /* place db functions here - see example below */
-    /* addUser
-     * takes email password, date as parameters
-     *  and inserts a new user into the DB with hashed password
-     */	
-    add_user: function (email, pwd, now, res) {
-	bcrypt.hash(pwd, saltRounds, function (err, hash) {
-	    var sql = "INSERT INTO users (`email`, `password`, `created`, `modified`) VALUES (?, ?, ?, ?)"
-	    var values = [email, hash, now, now];
-	    queryDB(sql, values, mysql)
-	    
-	});	
-    },
 
-    /* name: add_rates
+		/* place db functions here - see example below */
+		/* addUser
+		 * takes email password, date as parameters
+		 *  and inserts a new user into the DB with hashed password
+		 */
+		add_user: function (email, pwd, now, res, req) {
+			bcrypt.hash(pwd, saltRounds, function (err, hash) {
+						var sql = "INSERT INTO user (`email`, `password`, `created`, `modified`) VALUES (?, ?, ?, ?)"
+						var values = [email, hash, now, now];
+						queryDB(sql, values, mysql).then((message) => {
+							sql = "SELECT id  from user WHERE id =LAST_INSERT_ID()"
+							values = 0
+							queryDB(sql, values, mysql).then(message => {
+								const user_id =	parseInt(message[0].id);
+								req.login(user_id, function (err) {
+									res.redirect('subscriptions');
+								})
+
+							})
+
+						});
+					})
+				},
+
+				/* name: add_rates
        preconditions: scraped contains array of objects of the form 
        postconditions: returns Promise that doesnt resolve until all
                        have been successfully added to db. 
@@ -46,54 +59,75 @@ module.exports = {
 		    are inserted into db. If any inserts fail, error 
 		    message printed and function returns immediately.
      */
-    add_rates: function(scraped){
-	return new Promise((resolve, reject) => {
-	    let queries = [];
-	    const sql = `INSERT INTO COLARates (country, post, allowance, last_modified) VALUES (?, ?, ?, now())`
-	    scraped.forEach(entry => {
-		let values = [entry.country, entry.post, entry.allowance];
-		queries.push(queryDB(sql, values, mysql));
-	    })
-	    Promise.all(queries)
-		.then((res) => resolve(res))
-		.catch(err => {
-		    console.log(err);
-		    return;
-		})
-	})
-    },
-    /* name: get_cola_rate
-       preconditions: country is string name of country which we need cola rate
-                      post is string name of post which we need cola rate
-       postconditions: returns promise, which when resolved returns object with 
-                       id, country, post, and allowance as data members
-       description:
-     */
-    get_cola_rate: function(country, post){
-	return new Promise((resolve, reject) => {
-	    const sql = `SELECT * FROM COLARates WHERE country=? AND post=?`
-	    const values = [country, post];
-	    queryDB(sql, values, mysql)
-		.then(res => resolve(res))
-		.catch(err => console.log(err))
-	})
-	
-    },
-    /* name: update_cola_rate
-       preconditions: COLARate_id is is of corresponding post/country needing update
-                      new_allowance is new allowance obtained by scraping webpage
-       postconditions: COLARate.id has been updated with new_allowance
-       description:
-    */
-    update_cola_rate: function(COLARate_id, new_allowance){
-	return new Promise((resolve, reject) => {
-	    const sql = `UPDATE COLARates SET allowance=? WHERE id=?`
-	    const values = [new_allowance, COLARate_id];
-	    queryDB(sql, values, mysql)
-		.then(res => resolve(res))
-		.catch(err => console.log(err))
-	})
-	
-    }
-    
+				add_rates: function (scraped) {
+					return new Promise((resolve, reject) => {
+						let queries = [];
+						const sql = `INSERT INTO COLARates (country, post, allowance, last_modified) VALUES (?, ?, ?, now())`
+						scraped.forEach(entry => {
+							let values = [entry.country, entry.post, entry.allowance];
+							queries.push(queryDB(sql, values, mysql));
+						})
+						Promise.all(queries)
+							.then((res) => resolve(res))
+							.catch(err => {
+								console.log(err);
+								return;
+							})
+					})
+				},
+				/* name: get_cola_rate
+				   preconditions: country is string name of country which we need cola rate
+				                  post is string name of post which we need cola rate
+				   postconditions: returns promise, which when resolved returns object with 
+				                   id, country, post, and allowance as data members
+				   description:
+				 */
+				get_cola_rate: function (country, post) {
+					return new Promise((resolve, reject) => {
+						const sql = `SELECT * FROM COLARates WHERE country=? AND post=?`
+						const values = [country, post];
+						queryDB(sql, values, mysql)
+							.then(res => resolve(res))
+							.catch(err => console.log(err))
+					})
+
+				},
+				/* name: update_cola_rate
+				   preconditions: COLARate_id is is of corresponding post/country needing update
+				                  new_allowance is new allowance obtained by scraping webpage
+				   postconditions: COLARate.id has been updated with new_allowance
+				   description:
+				*/
+				update_cola_rate: function (COLARate_id, new_allowance) {
+					return new Promise((resolve, reject) => {
+						const sql = `UPDATE COLARates SET allowance=? WHERE id=?`
+						const values = [new_allowance, COLARate_id];
+						queryDB(sql, values, mysql)
+							.then(res => resolve(res))
+							.catch(err => console.log(err))
+					})
+
+				},
+				
+				authenticationMiddleware:	function () {
+  return (req, res, next) => {
+    console.log(`req.session.passport.user: ${JSON.stringify(req.session.passport)}`);
+    if (req.isAuthenticated()) return next();
+    res.redirect('/login');
+  }
 }
+
+
+			
+
+		}
+		passport.serializeUser(function (user_id, done) {
+				done(null, user_id);
+			});
+
+
+			passport.deserializeUser(function (user_id, done) {
+				done(null, user_id);
+			});
+			
+		

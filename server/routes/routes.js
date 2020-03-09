@@ -1,5 +1,5 @@
-var passport=require('passport')
 const dbfunc = require('../server_functions/db_functions.js');
+
 const {
 	check,
 	validationResult
@@ -16,8 +16,10 @@ module.exports = function (app) {
 	app.get(`/login`, function (req, res) {
 		res.render('login');
 	});
-	app.get(`/subscriptions`, function (req, res) {
+	app.get(`/subscriptions`, dbfunc.authenticationMiddleware(), function (req, res) {
 		res.render('profile')
+		console.log(req.user);
+		console.log(req.isAuthenticated());
 	});
 
 	app.get(`/create_account`, function (req, res) {
@@ -75,24 +77,17 @@ module.exports = function (app) {
 				var email = req.body.email;
 				var pwd = req.body.pwd;
 				var now = new Date().toISOString().replace(/\..+/, '');
-				dbfunc.add_user(email, pwd, now);
+				console.log("userid");
+				dbfunc.add_user(email, pwd, now, res, req);
+				
 				//console.log(user_id);
-				//req.login(user_id, function(err) {
-				res.redirect('subscriptions');// })
-				return;
+				
+				//return;
 				
 			}
 
 		})
 };
 
-/*
-passport.serializeUser(function(user_id, done) {
-  done(null, user_id);
-});
 
 
-passport.deserializeUser(function(user_id, done) {
-  done(err, user_id);
-});
-*/

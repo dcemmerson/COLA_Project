@@ -2,7 +2,8 @@ const db = require('../server_functions/db_functions.js');
 const misc = require('../server_functions/misc.js');
 const crs = require('../server_functions/cola_rates_script.js');
 
-let after_load = require('after-load')
+/********************* MARKED FOR REMOVAL *******************/
+let after_load = require('after-load');
 
 module.exports = function(app,  mysql){
     /* place ajax routes here */
@@ -16,7 +17,8 @@ module.exports = function(app,  mysql){
 		res.end();
 	    })
     });
-    
+
+    /********************* MARKED FOR REMOVAL *******************/
     /* name: GET_cola_rates
        preconditions: None
        postconditions: parsed cola rates webpage data sent to calling location
@@ -29,7 +31,7 @@ module.exports = function(app,  mysql){
 	
 	after_load('https://aoprals.state.gov/Web920/cola.asp', html => {
 	    const scraped = crs.parse_cola_page(html);
-	    db.add_rates(scraped)
+	    db.add_cola_rates(scraped)
 		.then(() => res.end())
 		.catch(err => {
 		    console.log(err);
@@ -37,6 +39,15 @@ module.exports = function(app,  mysql){
 		})
 	});
     });
+    /********************* MARKED FOR REMOVAL *******************/
+    /* name: UPDATE_cola_rates
+       preconditions: None
+       postconditions: parsed cola rates webpage, https://aoprals.state.gov/Web920/cola.asp,
+                       and db has been updated with new rates.
+       description: This routes was created simply to develop and test a script
+       to UPDATE cola rates webpage, followed by processing the data obtained. This
+       route will be removed in near future.
+    */
     app.get(`/UPDATE_cola_rates`, (req, res) => {
 	let changed_rates = [];
 	after_load('https://aoprals.state.gov/Web920/cola.asp', html => {
@@ -45,7 +56,7 @@ module.exports = function(app,  mysql){
 		.then(() => {
 		    crs.update_changed_rates(changed_rates)
 			.then(() => {
-			    console.log(new Date() + 'cola rates updated');
+			    console.log('COLA rates updated: ' + new Date());
 			    res.end();
 			})
 		})
