@@ -1,5 +1,5 @@
 const dbfunc = require('../server_functions/db_functions.js');
-
+var passport = require('passport');
 const {
 	check,
 	validationResult
@@ -25,6 +25,12 @@ module.exports = function (app) {
 	app.get(`/create_account`, function (req, res) {
 		res.render('create')
 	});
+	
+	app.post(['/login'], passport.authenticate(
+	'local', {
+	successRedirect: '/subscriptions',
+	failureRedirect: '/login'
+	}));
 
 	// upon submitting create account, validates the form information and adds user to DB
 	app.post(

@@ -1,5 +1,6 @@
 var passport = require('passport');
 var bcrypt = require('bcrypt');
+var LocalStrategy = require('passport-local').Strategy;
 
 require('../server.js');
 const saltRounds = 10;
@@ -75,7 +76,8 @@ module.exports = {
 			let queries = [];
 			const sql = `INSERT INTO COLARates (country, post, allowance, last_modified) VALUES (?, ?, ?, now())`
 			scraped.forEach(entry => {
-				let values = [entry.country, entry.post, entry.allowance];
+				let v
+				alues = [entry.country, entry.post, entry.allowance];
 				queries.push(queryDB(sql, values, mysql));
 			})
 			Promise.all(queries)
@@ -169,3 +171,23 @@ passport.serializeUser(function (user_id, done) {
 passport.deserializeUser(function (user_id, done) {
 	done(null, user_id);
 });
+
+passport.use(new LocalStrategy(
+    function(username, password, done) {
+		var sql="SELECT id, password FROM USER WHERE email= ?"
+		values=[username]
+	queryDB(sql, values, mysql).then((message) => {
+		console.log(message);
+		if (message.length==0){console.log("wrong keyword entry"); return done(null, false)};
+		const hash=message[0].password.toString();
+	   bcrypt.compare(password, hash, function(err, response)
+	   {
+		   if (response==true)
+			    return done(null, {user_id: message[0].id});
+			else
+				return done(null, false);	
+	   });
+	})
+	 
+	
+	}));
