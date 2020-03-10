@@ -21,7 +21,7 @@ module.exports = {
 	const output_dir = `templates/${username}`;
 	let output_filename;
 	let date = new Date();
-	date_long = new Intl.DateTimeFormat('en-US', {month: 'long'}).format(date);
+	date_long = new Intl.DateTimeFormat('en-US', {month: 'short'}).format(date);
 	
 	filename.lastIndexOf('.') != -1 ?
 	    output_filename = `${post}_${country}_${date.toISOString().substring(0, 10)}`

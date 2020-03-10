@@ -66,7 +66,22 @@ module.exports = function(app,  mysql){
 		})
 	});
     });
-    
+    app.get('/get_user_subscription_list', /*db.authenticationMiddleware(),*/
+	    function (req, res) {
+		const temp_user_id = 1;
+		let await_promises = [];
+		let context = {subscription_list: []};
+    		await_promises.push(
+		    db.get_user_subscription_list(temp_user_id)
+			.then(subs => subs.forEach(sub => {
+			    context.subscription_list.push(sub);
+			}))
+			.catch(err => console.log(err))
+		);
+		Promise.all(await_promises)
+		    .then(() => res.send(context))
+	    });
+
 }
 
 

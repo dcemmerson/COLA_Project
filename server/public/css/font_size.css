@@ -1,0 +1,156 @@
+/* mobile */
+@media screen and (max-width: 600px){
+    h1 {
+	font-size: 1.8em;
+    }
+    h3 {
+	font-size: 1.3em;
+    }
+    h5 {
+	font-size: 1.0em;
+    }
+    p {
+	font-size: 0.7em;
+    }
+    .p {
+	font-size: 0.7em;
+    }
+    .sm {
+	font-size: 0.7em;
+    }
+
+    td .button,
+    th,
+    td {
+	font-size: 0.75em;
+    }
+    i {
+	font-size: 0.9em;
+    }
+    div p {
+	font-size: 0.6em;
+    } 
+    .nav-item{
+	font-size: 0.8em;
+    }
+    .filterLink {
+	font-size: 0.65em;
+    }
+}
+/* tablet - ish */
+@media screen and (min-width: 600px){
+    h1 {
+	font-size: 2.2em;
+    }
+    h3 {
+	font-size: 1.6em;
+    }
+    h5 {
+	font-size: 1.1em;
+    }
+    p {
+	font-size: 0.9em;
+    }
+    .sm {
+	font-size: 0.8em;
+    }
+    .p {
+	font-size: 0.8em;
+    }
+    td .button,
+    th,
+    td {
+	font-size: 0.9em;
+    }
+    i {
+	font-size: 1.0em;
+    }
+    div p {
+	font-size: 0.6em;
+    }
+    .nav-item{
+	font-size: 0.9em;
+    } 
+    .filterLink {
+	font-size: 0.7em;
+    }
+}
+/* laptop - ish */
+@media screen and (min-width: 768px){
+    h1 {
+	font-size: 2.6em;
+    }
+    h3 {
+	font-size: 2.0em;
+    }
+    h5 {
+	font-size: 1.2em;
+    }
+    p {
+	font-size: 1.1em;
+    }
+    .sm {
+	font-size: 0.85em;
+    }
+    .p {
+	font-size: 0.9em;
+    }
+    td .button,
+    th,
+    td {
+	font-size: 0.95em;
+    }
+    i {
+	font-size: 1.0em;
+    }
+    div p {
+	font-size: 0.7em;
+    }
+    .nav-item{
+	font-size: 1.0em;
+    }
+    .filterLink {
+	font-size: 0.75em;
+    }
+}
+/* laptop - ish */
+@media screen and (min-width: 992px){
+    h1 {
+	font-size: 3.0em;
+    }
+    h3 {
+	font-size: 2.2em;
+    }
+    h5 {
+	font-size: 1.3em;
+    }
+    p {
+	font-size: 1.1em;
+    }
+    .sm {
+	font-size: 0.9em;
+    }
+    .p {
+	font-size: 1.0em;
+    }
+    td .button,
+    th,
+    td {
+	font-size: 1.0em;
+    }
+    i {
+	font-size: 1.0em;
+    }
+    div p {
+	font-size: 0.8em;
+    }
+    .nav-item{
+	font-size: 1.0em;
+    } 
+    .filterLink {
+	font-size: 0.8em;
+    }
+}
+.centerText {
+    text-align:center;
+}

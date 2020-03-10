@@ -39,6 +39,14 @@
 #custom-bootstrap-menu.navbar-default .navbar-toggle .icon-bar {
     background-color: #888;
 }
+#custom-bootstrap-menu.navbar-default .navbar-toggle:hover .icon-bar
 #custom-bootstrap-menu.navbar-default .navbar-toggle:focus .icon-bar {
     background-color: #f0f0f0;
+}
+
+.corner-border {
+    border: 1px solid;
+    border-color: #DDDDDD;
+    box-shadow: 3px 3px 5px #BBBBBB;
+    padding: 10px;
 }

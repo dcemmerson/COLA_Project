@@ -1,1 +1,89 @@
-<h1 class="text-center"> Manage My Subscriptions </h1>
+<h1 class="text-center mt-4"> Manage Subscriptions </h1>
+<div class="container-fluid">
+  <div class="row mt-4">
+    <!-- left col -->
+    <div class="col-0 col-md-1 col-lg-2">
+    </div>
+    <!-- main center screen -->
+    <div class="col-12 col-md-10 col-lg-8">
+      <div class="row justify-content-around">
+	<div class="col-12 col-md-4 col-lg-3">
+	  
+	  <h5 class="ml-4"><b>Email</b></h5>
+	  <span class="ml-4">
+	    {{#if email}}
+	    {{this.email}}
+	    {{else}}
+	    (Error retrieving)
+	    {{/if}}
+	  </span>
+	</div>
+	<div class="col-12 col-md-6 col-lg-5">
+	  <h5 class="ml-4"><b>Add Subscription</b></h5>
+	  <form>
+	    <div class="form-row">
+	      <label for="searchPosts" class="sr-only">Search for posts</label>
+	      <div class="input-group">
+		<select id="searchPosts" class="custom-select" placeholder="Search for post" style="max-width:400px">
+		  <option>Choose a post</option>
+		  {{#if post_info}}
+		  {{#each post_info}}
+		  <option data-COLARatesId="{{this.id}}">
+		    {{this.country}} ({{this.post}})</option>
+		  {{/each}}
+		  {{else}}
+		  <option data-COLARatesId="">Server error</option>
+		  {{/if}}
+		  </select>
+		<div class="input-group-append">
+		  <button class="btn btn-primary">Add</button>
+		</div>
+	      </div>
+	    </div>
+	  </form>
+	  
+	</div>
+	
+      </div>
+      
+      <!-- second row in main screen -->
+      <div class="row justify-content-around mt-4">
+	<div class="col-12 col-md-10 col-lg-8">
+	  <div class="mt-4 row corner-border">
+	    <h5><b>Current Subscriptions</b></h5>
+	    <table class="table">
+	      <thead>
+		<tr>
+		  <th scope="col">Post</th>
+		  <th scope="col">Country</th>
+		  <th scope="col">Allowance</th>
+		  <th scope="col">Last Adjusted</th>
+		  <th scope="col"></th>
+		</tr>
+	      </thead>
+	      <tbody class="subscriptions" id="subscriptionTbody">
+		{{#each subscription_list}}
+		<tr data-subscriptionId="{{this.subscriptionId}}">
+		  <td>{{this.post}}</td>
+		  <td>{{this.country}}</td>
+		  <td>{{this.allowance}}</td>
+		  <td>{{this.last_modified}}</td>
+		  <td>
+		    <button class="btn btn-sm btn-danger">
+		      <span class="button">Remove</span>
+		    </button>
+		  </td>
+		</tr>
+		{{/each}}
+	      </tbody>
+	    </table>
+	  </div>
+	</div>
+      </div>
+      
+    </div>
+    <!-- right col -->
+    <div class="col-0 col-md-1 col-lg-2">
+    </div>
+  </div>
+</div>

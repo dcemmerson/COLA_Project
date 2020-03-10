@@ -143,9 +143,9 @@ module.exports = {
 	    midnight = new Date(Date.UTC(today.getFullYear(),
 					 today.getMonth(),
 					 today.getDate(),
-					 today.getHours() + 8, today.getMinutes(),
-					 today.getSeconds() + 1, 0));
-//						 0, 0, 0, 0));
+//					 today.getHours() + 8, today.getMinutes(),
+//					 today.getSeconds() + 1, 0));
+						 0, 0, 0, 0));
 	
 	schedule.scheduleJob(midnight, () => {
 	    start_cola_rate_change_script();
@@ -178,7 +178,7 @@ function start_cola_rate_change_script(){
 		})
 	});
     },
-		       6000, 'update_cola_rates');
+		       24 * 60 * 60 * 1000, 'update_cola_rates');
 }
 /* name: update_changed_rates
    preconditions: changed_rates is array of objects for each post that has changed and
