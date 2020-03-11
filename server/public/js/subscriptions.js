@@ -1,8 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
+    fetch_user_subscription_list();
+    
+
+});
+
+function fetch_user_subscription_list(){
     fetch('/get_user_subscription_list')
 	.then(response => response.json())
 	.then(res => {
-//	    $('#addPostForm option')[0].innerText = 'Choose a post';
 	    let tbody = document.getElementById('subscriptionTbody');
 	    res.subscription_list.forEach(sub => {
 		let last_mod = new Date(sub.last_modified);
@@ -40,9 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	})
 	.catch(err => {
 	    console.log(err);
-//	    $('#addPostForm #option')[0].innerText = 'Server error';
 	})
-});
+}
 
 function delete_subscription(){
     console.log(this);

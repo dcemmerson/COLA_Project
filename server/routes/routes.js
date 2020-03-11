@@ -38,7 +38,7 @@ module.exports = function (app) {
 		context.style = ['styles.css', 'font_size.css'];
 		context.title = 'My Subscriptions';
 		context.subscriptions = true; //used for navivation.hbs
-		context.script = ['subscriptions.js'];
+		context.script = ['subscriptions.js', 'subscriptions_upload.js'];
 		
 		Promise.all(await_promises)
 		    .then(() => res.render('subscriptions', context))

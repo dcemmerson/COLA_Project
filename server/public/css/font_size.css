@@ -36,6 +36,9 @@
     .filterLink {
 	font-size: 0.65em;
     }
+    .spinner {
+	font-size: 1.6em;
+    }
 }
 /* tablet - ish */
 @media screen and (min-width: 600px){
@@ -73,6 +76,9 @@
     } 
     .filterLink {
 	font-size: 0.7em;
+    }
+    .spinner {
+	font-size: 1.8em;
     }
 }
 /* laptop - ish */
@@ -112,6 +118,9 @@
     .filterLink {
 	font-size: 0.75em;
     }
+    .spinner {
+	font-size: 2em;
+    }
 }
 /* laptop - ish */
 @media screen and (min-width: 992px){
@@ -150,7 +159,10 @@
     .filterLink {
 	font-size: 0.8em;
     }
+    .spinner {
+	font-size: 2em;
+    }
 }
-.centerText {
+.center-text {
     text-align:center;
 }
