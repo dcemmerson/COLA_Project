@@ -199,6 +199,24 @@ WHERE u.id=?`;
 		.catch(err => console.log(err))
 	});
     },
+    /* name: get_user_template_names
+       preconditions: user_id is current logged in user, which should be
+       obtained from open sesssion.
+       postconditions:  return Promise that returns names and ids of all user's
+                        uploaded templates, plus the default system template.
+    */
+    get_user_template_names: function (user_id) {
+	return new Promise((resolve, reject) => {
+	    const sql = `SELECT t.id, t.name, t.comment 
+FROM user u
+INNER JOIN template t ON u.id=t.userId 
+WHERE u.id=?`;
+	    const values = [user_id];
+	    queryDB(sql, values, mysql)
+		.then(res => resolve(res))
+		.catch(err => console.log(err))
+	});
+    },
     /* name: get_user_email
        preconditions: user_id is current logged in user, which should be
                       obtained from open sesssion.

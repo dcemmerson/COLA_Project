@@ -20,33 +20,46 @@
 	</div>
 	<div class="col-12 col-md-6 col-lg-5">
 	  <h5 class="ml-4"><b>Add Subscription</b></h5>
-	  <form>
-	    <div class="form-row">
-	      <label for="searchPosts" class="sr-only">Search for posts</label>
-	      <div class="input-group">
-		<select id="searchPosts" class="custom-select" placeholder="Search for post" style="max-width:400px">
-		  <option>Choose a post</option>
-		  {{#if post_info}}
+	  <form id="addPostForm">
+	    <!-- 1. choose a post -->
+	    <div class="">
+	      <div class="">
+		<label for="searchPosts" class="mt-2 mr-2">1. Choose a post</label>
+		<select id="searchPosts" class="custom-select ml-4 input-max-width" placeholder="Search for post" style="max-width:400px">
+		  <option>Posts</option>
 		  {{#each post_info}}
-		  <option data-COLARatesId="{{this.id}}">
-		    {{this.country}} ({{this.post}})</option>
+		  <option data-COLARatesId="{{this.id}}">{{this.country}} ({{this.post}})</option>
 		  {{/each}}
-		  {{else}}
-		  <option data-COLARatesId="">Server error</option>
-		  {{/if}}
-		  </select>
-		<div class="input-group-append">
-		  <button class="btn btn-primary">Add</button>
-		</div>
+		</select>
 	      </div>
-	    </div>
+	      <!-- 2 upload template -->
+	      <div class="mt-3">
+		<label for="uploadTemplate" class="">2. Choose a template</label>
+		<input type="file" id="uploadTemplate" class="btn btn-sm ml-4 input-max-width" placeholder="Upload a template">
+	      </div>
+	      <!-- Or use one of my other templates... -->
+	      <div class="mt-2">
+		<label for="uploadTemplate" class="ml-2">...or reuse one of my previous templates...</label>
+		<select id="choosePreviousTemplate" class="form-control ml-4 input-max-width">
+		  <option>Previous templates</option>
+		  {{#each templates}}
+		  <option data-templateId="{{this.id}}">{{this.name}}</option>
+		  {{/each}}
+		</select>
+	      </div>
+	      <!-- Preview or upload... -->
+	      <div class="mt-3">
+		<label for="uploadTemplate" class="">3. Show me!</label>
+		<button class="btn btn-sm btn-secondary ml-3">Preview</button>
+		<button class="btn btn-sm btn-primary">Submit</button>
+	      </div>
 	  </form>
+	  
+	  </div>
 	  
 	</div>
 	
-      </div>
-      
-      <!-- second row in main screen -->
+	<!-- second row in main screen -->
       <div class="row justify-content-around mt-4">
 	<div class="col-12 col-md-10 col-lg-8">
 	  <div class="mt-4 row corner-border">

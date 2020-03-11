@@ -16,7 +16,7 @@ module.exports = function (app) {
 	    function (req, res) {
 		const temp_user_id = 1;
 		let await_promises = [];
-		let context = {post_info: []};
+		let context = {post_info: [], templates: []};
 		
 		await_promises.push(
 		    db.get_list_of_posts()
@@ -24,6 +24,12 @@ module.exports = function (app) {
 			    context.post_info.push(post);
 			}))
 			.catch(err => console.log(err))
+		    ,
+		    db.get_user_template_names(temp_user_id)
+			.then(templates => templates.forEach(template => {
+			    context.templates.push(template);
+			}))
+		    	.catch(err => console.log(err))
 		    ,
 		    db.get_user_email(temp_user_id)
 			.then(res => context.email = res[0].email)
