@@ -14,3 +14,7 @@
 {{#each style}}
   <link rel="stylesheet" type="text/css" href="/css/{{this}}"></link>
 {{/each}}
+
+{{#each nonlocal_script}}
+  <script src="{{this}}" type="text/javascript"></script>
+{{/each}}

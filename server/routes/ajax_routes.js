@@ -1,6 +1,8 @@
 const db = require('../server_functions/db_functions.js');
 const misc = require('../server_functions/misc.js');
 const crs = require('../server_functions/cola_rates_script.js');
+const multer = require('multer');
+const upload = multer();
 
 /********************* MARKED FOR REMOVAL *******************/
 let after_load = require('after-load');
@@ -66,6 +68,8 @@ module.exports = function(app,  mysql){
 		})
 	});
     });
+
+    /******************* Subscription page ajax routes *********************/
     app.get('/get_user_subscription_list', /*db.authenticationMiddleware(),*/
 	    function (req, res) {
 		const temp_user_id = 1;
@@ -81,7 +85,14 @@ module.exports = function(app,  mysql){
 		Promise.all(await_promises)
 		    .then(() => res.send(context))
 	    });
-
+    
+    app.post('/add_new_subscription_with_file', /*db.authenticationMiddleware(),*/ upload.any(),
+	     function (req, res) {
+		 console.log(req.body.test);
+		 console.log(req.body.data);
+		 console.log(req.files);
+	     });
+    /****************** End subscription page ajax routes *******************/
 }
 
 
