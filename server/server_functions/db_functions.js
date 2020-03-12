@@ -37,18 +37,11 @@ module.exports = {
 	    var sql = "INSERT INTO user (`email`, `password`, `created`, `modified`) VALUES (?, ?, ?, ?)"
 	    var values = [email, hash, now, now];
 	    queryDB(sql, values, mysql).then((message) => {
-		console.log(message);
-		sql = "SELECT id from user WHERE id= LAST_INSERT_ID()"
-		values = 'LAST_INSERT_ID()'
-		queryDB(sql, values, mysql).then(message => {
-			console.log(message);
-		    const user_id = parseInt(message[0].id);
-			console.log(user_id);
-		    req.login(user_id, function (err) {
+		console.log(message.insertId);
+		const user_id=message.insertId;
+		req.login(user_id, function (err) {
 			res.redirect('subscriptions');
 		    })
-
-		})
 
 	    });
 	})
