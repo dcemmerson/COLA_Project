@@ -37,7 +37,7 @@ module.exports = {
 	    var sql = "INSERT INTO user (`email`, `password`, `created`, `modified`) VALUES (?, ?, ?, ?)"
 	    var values = [email, hash, now, now];
 	    queryDB(sql, values, mysql).then((message) => {
-		sql = "SELECT id  from user WHERE id =LAST_INSERT_ID()"
+		sql = "SELECT id  from user WHERE id=LAST_INSERT_ID()"
 		values = 0
 		queryDB(sql, values, mysql).then(message => {
 		    const user_id = parseInt(message[0].id);
