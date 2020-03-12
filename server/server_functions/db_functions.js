@@ -37,10 +37,9 @@ module.exports = {
 	    var sql = "INSERT INTO user (`email`, `password`, `created`, `modified`) VALUES (?, ?, ?, ?)"
 	    var values = [email, hash, now, now];
 	    queryDB(sql, values, mysql).then((message) => {
-
+		console.log(message);
 		sql = "SELECT id from user WHERE id= LAST_INSERT_ID()"
-
-		values = 0
+		values = 'LAST_INSERT_ID()'
 		queryDB(sql, values, mysql).then(message => {
 			console.log(message);
 		    const user_id = parseInt(message[0].id);
@@ -236,6 +235,8 @@ WHERE u.id=?`;
 		.catch(err => console.log(err))
 	});
     }
+	
+	
 
     /*******************************************************************/
     /****************** END SUBSCRIPTION PAGE QUERIES ******************/
