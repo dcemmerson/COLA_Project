@@ -112,8 +112,9 @@ module.exports = function(app,  mysql){
 		 });
 */
 		 		 
-		 db.insert_template_uploaded(temp_user_id, req.file.originalname,
-					     req.file.buffer)
+		 db.insert_new_subscription_with_template_file(temp_user_id, req.body.post_id,
+							       req.file.originalname,
+							       req.file.buffer)
 		     .then(() => {
 			 res.send("Success");
 		     })

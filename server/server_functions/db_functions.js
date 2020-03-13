@@ -228,7 +228,7 @@ WHERE u.id=?`;
 		.catch(err => console.log(err))
 	});
     },
-    /* name: insert_template_uploaded
+    /* name: insert_new_subscription_with_template_file
        preconditions: userId should be id of logged in user.
                       name will be stored in name field - should match name of file
                       file is validated docx file template uploaded by user
@@ -236,12 +236,23 @@ WHERE u.id=?`;
        postconditions:  return Promise that returns email that corresponds
        to user_id in user table.
     */
-    insert_template_uploaded: function (user_id, name, file, comment="") {
+    insert_new_subscription_with_template_file: function (user_id, post_id, filename, file, comment="") {
 	return new Promise((resolve, reject) => {
-	    const sql = `INSERT INTO template (name, file, comment, userId) VALUES (?, ?, ?, ?)`;
-	    const values = [name, file, comment, user_id];
+	    let sql = `INSERT INTO template (name, file, comment, userId) VALUES (?, ?, ?, ?);`
+	    
+	    let values = [filename, file, comment, user_id]
+	    
 	    queryDB(sql, values, mysql)
-		.then(res => resolve(res))
+		.then(res => {
+		    sql = `INSERT INTO subscription (name, comment, userId, templateId) VALUES (?, ?, ?, ?);`
+		    values = ["", "", user_id, post_id, res.insertId];
+		    return queryDB(sql,values, mysql);
+		})
+	    	.then(res => {
+		    sql = ` INSERT INTO COLARates_subscription (subscriptionId, COLARatesId) VALUES (?, ?);`
+		    values = [res.insertId, post_id];
+		    return queryDB(sql,values, mysql);
+		})
 		.catch(err => console.log(err))
 	});
     },

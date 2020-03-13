@@ -25,6 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
 async function submit_new_subscription(){
     let uploadTemp = $('#uploadTemplate');
     let prevTemp = $('#choosePreviousTemplate');
+    let post = $('#searchPosts')[0];
+    let post_id = post[post.selectedIndex].getAttribute('data-COLARatesId');
     
     if(uploadTemp[0].value){
 	if(!window.File || !window.FileReader || !window.FileList || !window.Blob){
@@ -36,6 +38,8 @@ async function submit_new_subscription(){
 //	console.log(file);
 	let fd = new FormData();
 	fd.append('upload', uploadTemp[0].files[0]);
+	fd.append('post_id', post_id);
+	
 	fetch('/add_new_subscription_with_file', {
 	    method: 'POST',
 	    body: fd
