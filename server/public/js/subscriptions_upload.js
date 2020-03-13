@@ -22,37 +22,64 @@ document.addEventListener('DOMContentLoaded', () => {
     
 });
 
-async function submit_new_subscription(){
-    let uploadTemp = $('#uploadTemplate');
-    let prevTemp = $('#choosePreviousTemplate');
+function submit_new_subscription(){
+    let upload_temp = $('#uploadTemplate');
+    let prev_temp = $('#choosePreviousTemplate');
     let post = $('#searchPosts')[0];
     let post_id = post[post.selectedIndex].getAttribute('data-COLARatesId');
     
-    if(uploadTemp[0].value){
-	if(!window.File || !window.FileReader || !window.FileList || !window.Blob){
-	    console.log("File API not supported by broser");
-	    return;
-	}
-//	try{
-//	let file = await read_file(uploadTemp[0].files[0]);
-//	console.log(file);
+    if(upload_temp[0].value){
+	add_new_subscription_with_template_file(post_id, upload_temp);
+    }
+    else if(prev_temp.selectedIndex != 0){
+	add_new_subscription_prev_template(post_id, prev_temp[0]);
+    }
+}
+
+async function add_new_subscription_prev_template(post_id, prev_temp){     
+    try {
+	let context ={};
+	context.post_id = post_id;
+	context.template_id = prev_temp[prev_temp.selectedIndex].getAttribute('data-templateId');
+	
+	let response = await fetch('/add_new_subscription_with_prev_template', {
+	    method: 'POST',
+	    headers: {
+		'Content-Type': 'application/JSON'
+	    },
+	    body: JSON.stringify(context)
+	})
+	
+    }
+    catch(err) {
+	document.getElementById('addSubscriptionMessageDiv').innerText = "Error uploading template";
+	console.log(err);
+    }
+
+}
+
+async function add_new_subscription_with_template_filefile(post_id, upload_temp){
+    if(!window.File || !window.FileReader || !window.FileList || !window.Blob){
+	console.log("File API not supported by broser");
+	$('addSubscriptionMessageDiv').innerText = "Incompatible browser"
+	return;
+    }
+    
+    try {
 	let fd = new FormData();
-	fd.append('upload', uploadTemp[0].files[0]);
+	fd.append('upload', upload_temp[0].files[0]);
 	fd.append('post_id', post_id);
 	
-	fetch('/add_new_subscription_with_file', {
+	let response = await fetch('/add_new_subscription_with_template_file', {
 	    method: 'POST',
 	    body: fd
 	})
-	    .then(response => {
-		console.log("success");
-	    })
-/*	}
-	catch(err){
-	    console.log(err);
-	}
-*/
     }
+    catch(err) {
+	document.getElementById('addSubscriptionMessageDiv').innerText = "Error uploading template";
+	console.log(err);
+    }
+
 }
 
 function preview_new_subscription(){

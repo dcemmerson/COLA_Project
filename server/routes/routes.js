@@ -35,7 +35,7 @@ module.exports = function (app) {
 			.then(res => context.email = res[0].email)
 			.catch(err => console.log(err))
 		)
-		context.style = ['styles.css', 'font_size.css'];
+		context.style = ['styles.css', 'font_size.css', 'subscriptions.css'];
 		context.title = 'My Subscriptions';
 		context.subscriptions = true; //used for navivation.hbs
 		context.script = ['subscriptions.js', 'subscriptions_upload.js'];

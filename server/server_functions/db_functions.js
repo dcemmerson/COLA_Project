@@ -233,8 +233,7 @@ WHERE u.id=?`;
                       name will be stored in name field - should match name of file
                       file is validated docx file template uploaded by user
 		      comment is any comment the user added when uploading file.
-       postconditions:  return Promise that returns email that corresponds
-       to user_id in user table.
+       postconditions:  return Promise that fulfills after new subscription added
     */
     insert_new_subscription_with_template_file: function (user_id, post_id, filename, file, comment="") {
 	return new Promise((resolve, reject) => {
@@ -256,8 +255,27 @@ WHERE u.id=?`;
 		.catch(err => console.log(err))
 	});
     },
+        /* name: insert_new_subscription_with_prev_template
+       preconditions: user_id should be id of logged in user.
+		      comment is any comment the user added when uploading file.
+		      template_id is id corresponding to primary key in template table
+       postconditions:  return Promise that fulfills after new subscription added
+    */
+    insert_new_subscription_with_prev_template: function (user_id, post_id, template_id, comment="") {
+	return new Promise((resolve, reject) => {
+	    let sql = `INSERT INTO subscription (name, comment, userId, templateId) VALUES (?, ?, ?, ?);`
+	    let values = ["", "", user_id, post_id, template_id];	    
+	    queryDB(sql, values, mysql)
+	    	.then(res => {
+		    sql = ` INSERT INTO COLARates_subscription (subscriptionId, COLARatesId) VALUES (?, ?);`
+		    values = [res.insertId, post_id];
+		    return queryDB(sql,values, mysql);
+		})
+		.catch(err => console.log(err))
+	});
+    },
 
-    /*temp for testing file upload - take out after 3/12*/
+    /*temp for testing file upload - take out after 3/13*/
     get_template: function(user_id){
 	return new Promise((resolve, reject) => {
 	    const sql = `SELECT * FROM template WHERE userId=?`;

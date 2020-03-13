@@ -3,21 +3,7 @@ const misc = require('../server_functions/misc.js');
 const crs = require('../server_functions/cola_rates_script.js');
 const multer = require('multer');
 const randomAccessFile = require('random-access-file');
-
-/*
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-	cb(null, '.');
-    },
-    filename: function (req, file, cb) {
-	cb(null, req.file.orignalname);
-    }
-});
-function test(){
-    console.log('test got called');
-}*/
 const upload = multer();
-const fs = require('fs');
 
 /********************* MARKED FOR REMOVAL *******************/
 let after_load = require('after-load');
@@ -101,17 +87,9 @@ module.exports = function(app,  mysql){
 		    .then(() => res.send(context))
 	    });
     
-    app.post('/add_new_subscription_with_file', /*db.authenticationMiddleware(),*/ upload.single('upload'),
+    app.post('/add_new_subscription_with_template_file', /*db.authenticationMiddleware(),*/ upload.single('upload'),
 	     function (req, res) {
 		 const temp_user_id = 1;
-		 
-/*		 let file = randomAccessFile(req.file.originalname);
-		 file.write(0, req.file.buffer, (err) => {
-		     if(err) console.log(err);
-		     else console.log("success??");
-		 });
-*/
-		 console.log('insert new sub');x
 		 db.insert_new_subscription_with_template_file(temp_user_id, req.body.post_id,
 							       req.file.originalname,
 							       req.file.buffer)
@@ -123,7 +101,29 @@ module.exports = function(app,  mysql){
 			 res.send("Error uploading file");
 		     })
 	     });
+        app.post('/add_new_subscription_with_prev_template', /*db.authenticationMiddleware(),*/
+	     function (req, res) {
+		 const temp_user_id = 1;
+		 console.log("post_id = " + req.body.post_id);
+		 console.log("tempalte id = " + req.body.template_id);
+		 db.insert_new_subscription_with_prev_template(temp_user_id,
+							       req.body.post_id,
+							       req.body.template_id)
+		     .then(() => {
+			 console.log("success add new sub");
+			 res.send("Success");
+		     })
+		     .catch(err => {
+			 console.log(err);
+			 res.send("Error uploading file");
+		     })
+	     });
     /****************** End subscription page ajax routes *******************/
 }
 
-
+/*		 let file = randomAccessFile(req.file.originalname);
+		 file.write(0, req.file.buffer, (err) => {
+		     if(err) console.log(err);
+		     else console.log("success??");
+		 });
+*/
