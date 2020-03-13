@@ -111,7 +111,7 @@ module.exports = function(app,  mysql){
 		     else console.log("success??");
 		 });
 */
-		 		 
+		 console.log('insert new sub');x
 		 db.insert_new_subscription_with_template_file(temp_user_id, req.body.post_id,
 							       req.file.originalname,
 							       req.file.buffer)
