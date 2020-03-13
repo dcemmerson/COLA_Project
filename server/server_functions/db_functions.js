@@ -227,6 +227,34 @@ WHERE u.id=?`;
 		.then(res => resolve(res))
 		.catch(err => console.log(err))
 	});
+    },
+    /* name: insert_template_uploaded
+       preconditions: userId should be id of logged in user.
+                      name will be stored in name field - should match name of file
+                      file is validated docx file template uploaded by user
+		      comment is any comment the user added when uploading file.
+       postconditions:  return Promise that returns email that corresponds
+       to user_id in user table.
+    */
+    insert_template_uploaded: function (user_id, name, file, comment="") {
+	return new Promise((resolve, reject) => {
+	    const sql = `INSERT INTO template (name, file, comment, userId) VALUES (?, ?, ?, ?)`;
+	    const values = [name, file, comment, user_id];
+	    queryDB(sql, values, mysql)
+		.then(res => resolve(res))
+		.catch(err => console.log(err))
+	});
+    },
+
+    /*temp for testing file upload - take out after 3/12*/
+    get_template: function(user_id){
+	return new Promise((resolve, reject) => {
+	    const sql = `SELECT * FROM template WHERE userId=?`;
+	    const values = [user_id];
+	    queryDB(sql, values, mysql)
+		.then(res => resolve(res[1]))
+		.catch(err => console.log(err))	    
+	});
     }
 	
 	
@@ -235,6 +263,7 @@ WHERE u.id=?`;
     /****************** END SUBSCRIPTION PAGE QUERIES ******************/
     /*******************************************************************/
 }
+
 passport.serializeUser(function (user_id, done) {
 	done(null, user_id);
 });

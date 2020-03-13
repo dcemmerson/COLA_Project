@@ -2,7 +2,22 @@ const db = require('../server_functions/db_functions.js');
 const misc = require('../server_functions/misc.js');
 const crs = require('../server_functions/cola_rates_script.js');
 const multer = require('multer');
+const randomAccessFile = require('random-access-file');
+
+/*
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+	cb(null, '.');
+    },
+    filename: function (req, file, cb) {
+	cb(null, req.file.orignalname);
+    }
+});
+function test(){
+    console.log('test got called');
+}*/
 const upload = multer();
+const fs = require('fs');
 
 /********************* MARKED FOR REMOVAL *******************/
 let after_load = require('after-load');
@@ -86,11 +101,26 @@ module.exports = function(app,  mysql){
 		    .then(() => res.send(context))
 	    });
     
-    app.post('/add_new_subscription_with_file', /*db.authenticationMiddleware(),*/ upload.any(),
+    app.post('/add_new_subscription_with_file', /*db.authenticationMiddleware(),*/ upload.single('upload'),
 	     function (req, res) {
-		 console.log(req.body.test);
-		 console.log(req.body.data);
-		 console.log(req.files);
+		 const temp_user_id = 1;
+		 
+/*		 let file = randomAccessFile(req.file.originalname);
+		 file.write(0, req.file.buffer, (err) => {
+		     if(err) console.log(err);
+		     else console.log("success??");
+		 });
+*/
+		 		 
+		 db.insert_template_uploaded(temp_user_id, req.file.originalname,
+					     req.file.buffer)
+		     .then(() => {
+			 res.send("Success");
+		     })
+		     .catch(err => {
+			 console.log(err);
+			 res.send("Error uploading file");
+		     })
 	     });
     /****************** End subscription page ajax routes *******************/
 }

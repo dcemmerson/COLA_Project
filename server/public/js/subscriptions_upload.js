@@ -32,17 +32,12 @@ async function submit_new_subscription(){
 	    return;
 	}
 //	try{
-	let file = await read_file(uploadTemp[0].files[0]);
-	console.log(file);
+//	let file = await read_file(uploadTemp[0].files[0]);
+//	console.log(file);
 	let fd = new FormData();
-	fd.append('data', file);
-	fd.append('test', "abcd");
+	fd.append('upload', uploadTemp[0].files[0]);
 	fetch('/add_new_subscription_with_file', {
 	    method: 'POST',
-/*	    headers: {
-		'Content-Type': 'multipart/form-data'
-	    },
-*/
 	    body: fd
 	})
 	    .then(response => {
@@ -62,7 +57,7 @@ function preview_new_subscription(){
     //figure out if user is uploading new template or using previous template
     if(uploadTemp[0].value){
 	if(!window.File || !window.FileReader || !window.FileList || !window.Blob){
-	    console.log("File API not supported by broser");
+	    console.log("File API not supoprted by broser");
 	    return;
 	}
 	

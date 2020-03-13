@@ -26,7 +26,7 @@
 	      <div class="">
 		<label for="searchPosts" class="mt-2 mr-2">1. Choose a post</label>
 		<select id="searchPosts" class="custom-select ml-4 input-max-width" placeholder="Search for post" style="max-width:400px">
-		  <option>Posts</option>
+		  <option></option>
 		  {{#each post_info}}
 		  <option data-COLARatesId="{{this.id}}">{{this.country}} ({{this.post}})</option>
 		  {{/each}}
@@ -41,7 +41,7 @@
 	      <div class="mt-2">
 		<label for="uploadTemplate" class="ml-2">...or reuse one of my previous templates...</label>
 		<select id="choosePreviousTemplate" class="form-control ml-4 input-max-width">
-		  <option>Previous templates</option>
+		  <option></option>
 		  {{#each templates}}
 		  <option data-templateId="{{this.id}}">{{this.name}}</option>
 		  {{/each}}
