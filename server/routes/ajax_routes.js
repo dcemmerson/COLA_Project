@@ -94,6 +94,7 @@ module.exports = function(app,  mysql){
 							       req.file.originalname,
 							       req.file.buffer)
 		     .then(() => {
+			 console.log("sending success");
 			 res.send("Success");
 		     })
 		     .catch(err => {

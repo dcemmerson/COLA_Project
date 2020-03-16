@@ -66,7 +66,7 @@ CREATE TABLE `COLARates_subscription` (
   KEY `COLARatesId` (`COLARatesId`),
   KEY `subscriptionId` (`subscriptionId`),
   CONSTRAINT `COLARates_subscription_ibfk_1` FOREIGN KEY (`COLARatesId`) REFERENCES `COLARates` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `COLARates_subscription_ibfk_2` FOREIGN KEY (`subscriptionId`) REFERENCES `subscription` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
+  CONSTRAINT `COLARates_subscription_ibfk_2` FOREIGN KEY (`subscriptionId`) REFERENCES `subscription` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

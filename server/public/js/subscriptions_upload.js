@@ -15,9 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
 	e.preventDefault();
 	preview_new_subscription();
     });
-    $('#submitNewSubscription').on('click', e => {
+    $('#submitNewSubscription').on('click', async e => {
 	e.preventDefault();
-	submit_new_subscription();
+	show_spinner($('#addNewSubscriptionButtons')[0]);
+	await submit_new_subscription();
+	remove_spinner($('#addNewSubscriptionButtons')[0]);
     });
     
 });
@@ -58,7 +60,7 @@ async function add_new_subscription_prev_template(post_id, prev_temp){
 
 }
 
-async function add_new_subscription_with_template_filefile(post_id, upload_temp){
+async function add_new_subscription_with_template_file(post_id, upload_temp){
     if(!window.File || !window.FileReader || !window.FileList || !window.Blob){
 	console.log("File API not supported by broser");
 	$('addSubscriptionMessageDiv').innerText = "Incompatible browser"
@@ -76,10 +78,33 @@ async function add_new_subscription_with_template_filefile(post_id, upload_temp)
 	})
     }
     catch(err) {
-	document.getElementById('addSubscriptionMessageDiv').innerText = "Error uploading template";
+	let error_div = document.getElementById('addSubscriptionMessageDiv');
+	error_div.hidden = false;
+	error_div.innerText = "Error uploading template";
+	error_div.setAttribute('class', 'errorMessage');
+	hidden_timer(error_div)
 	console.log(err);
+	return;
     }
+    new_subscription_success(post_id);
+    clear_user_subscriptions();
+    fetch_user_subscription_list();
+}
 
+
+function new_subscription_success(post_id){
+    let msg_div = document.getElementById('addSubscriptionMessageDiv');
+
+    for (let [num, option] of Object.entries($('#searchPosts option'))) {
+	if(option.getAttribute('data-COLARatesId') == post_id){
+	    msg_div.innerText = 'New subscription created: '
+		+ option.innerText;
+	    msg_div.setAttribute('class', 'successMessage');
+	    msg_div.hidden = false;
+	    hidden_timer(msg_div)
+	    return;
+	}
+    }
 }
 
 function preview_new_subscription(){
@@ -108,55 +133,3 @@ function preview_new_subscription(){
     //	$('#previewModal').modal('toggle');
 
 }
-
-/* https://docs.microsoft.com/en-us/office/dev/add-ins/word/get-the-whole-document-from-an-add-in-for-word */
-function read_file(file){
-    return new Promise((resolve, reject) => {
-
-	let fileReader = new FileReader();
-	//	fileReader.onerror = reject;
-	fileReader.onload = function (e) {
-	    resolve(fileReader.result)
-	}
-	fileReader.readAsText(file);
-    });
-    
-}
-
-function getSliceAsync(file, nextSlice, sliceCount, gotAllSlices, docdataSlices, slicesReceived) {
-    file.getSliceAsync(nextSlice, function (sliceResult) {
-        if (sliceResult.status == "succeeded") {
-            if (!gotAllSlices) { // Failed to get all slices, no need to continue.
-                return;
-            }
-	    //store slice in temp array that we will string back together after read whole file
-            docdataSlices[sliceResult.value.index] = sliceResult.value.data;
-            if (++slicesReceived == sliceCount) {
-		// All slices have been received.
-		file.closeAsync();
-		onGotAllSlices(docdataSlices);
-            }
-            else {
-                getSliceAsync(file, ++nextSlice, sliceCount, gotAllSlices, docdataSlices, slicesReceived);
-            }
-        }
-        else {
-            gotAllSlices = false;
-            file.closeAsync();
-            app.showNotification("getSliceAsync Error:", sliceResult.error.message);
-        }
-    });
-}
-
-function onGotAllSlices(docdataSlices) {
-    var docdata = [];
-    for (var i = 0; i < docdataSlices.length; i++) {
-        docdata = docdata.concat(docdataSlices[i]);
-    }
-
-    var fileContent = new String();
-    for (var j = 0; j < docdata.length; j++) {
-        fileContent += String.fromCharCode(docdata[j]);
-    }
-}
-

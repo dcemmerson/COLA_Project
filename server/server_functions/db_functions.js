@@ -244,7 +244,7 @@ WHERE u.id=?`;
 	    queryDB(sql, values, mysql)
 		.then(res => {
 		    sql = `INSERT INTO subscription (name, comment, userId, templateId) VALUES (?, ?, ?, ?);`
-		    values = ["", "", user_id, post_id, res.insertId];
+		    values = ["", "", user_id, res.insertId];
 		    return queryDB(sql,values, mysql);
 		})
 	    	.then(res => {
@@ -252,6 +252,7 @@ WHERE u.id=?`;
 		    values = [res.insertId, post_id];
 		    return queryDB(sql,values, mysql);
 		})
+		.then(() => resolve())
 		.catch(err => console.log(err))
 	});
     },
