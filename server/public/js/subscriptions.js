@@ -1,3 +1,4 @@
+const LINESPACING = 10;
 document.addEventListener('DOMContentLoaded', async () => {
     let subscription_list = fetch_user_subscription_list();
 
@@ -44,11 +45,13 @@ function resize_item_inner_out(element){
     
     let maxHeight = 0;
     for(let i = 0; i < element.childNodes.length; i++)
-	if(element.childNodes[i].nodeType === 1)
+	if(element.childNodes[i].nodeType === 1){
 	    maxHeight += element.childNodes[i].clientHeight;
+	    maxHeight += LINESPACING;
+	}
     
     element.setAttribute('style',
-			 `max-height: ${maxHeight}px`);
+			 `max-height: ${maxHeight + LINESPACING}px`);
 //    return maxHeight;
 }
 
