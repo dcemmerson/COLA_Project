@@ -102,7 +102,7 @@ module.exports = function(app,  mysql){
 			 res.send("Error uploading file");
 		     })
 	     });
-        app.post('/add_new_subscription_with_prev_template', /*db.authenticationMiddleware(),*/
+    app.post('/add_new_subscription_with_prev_template', /*db.authenticationMiddleware(),*/
 	     function (req, res) {
 		 const temp_user_id = 1;
 		 console.log("post_id = " + req.body.post_id);
@@ -119,12 +119,30 @@ module.exports = function(app,  mysql){
 			 res.send("Error uploading file");
 		     })
 	     });
+    app.post('/delete_subscription', /*db.authenticationMiddleware(),*/
+	     function (req, res) {
+		 const temp_user_id = 1;
+		 var context = {};
+		 console.log(`subs id = ${req.body.subscriptionId}`);
+		 
+		 db.delete_user_subscription(req.body.subscriptionId, temp_user_id)
+		     .then(() => {
+			 console.log("deleted new sub");
+			 res.deleted = true;
+			 res.send(context);
+		     })
+		     .catch(err => {
+			 console.log(err);
+			 context.deleted = false;
+			 res.send(context);
+		     })
+	     });
     /****************** End subscription page ajax routes *******************/
 }
 
 /*		 let file = randomAccessFile(req.file.originalname);
 		 file.write(0, req.file.buffer, (err) => {
-		     if(err) console.log(err);
-		     else console.log("success??");
+		 if(err) console.log(err);
+		 else console.log("success??");
 		 });
 */

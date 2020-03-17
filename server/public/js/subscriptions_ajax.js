@@ -24,18 +24,23 @@ document.addEventListener('DOMContentLoaded', () => {
     
 });
 
-function submit_new_subscription(){
+async function submit_new_subscription(){
     let upload_temp = $('#uploadTemplate');
     let prev_temp = $('#choosePreviousTemplate');
     let post = $('#searchPosts')[0];
     let post_id = post[post.selectedIndex].getAttribute('data-COLARatesId');
     
     if(upload_temp[0].value){
-	add_new_subscription_with_template_file(post_id, upload_temp);
+	await add_new_subscription_with_template_file(post_id, upload_temp);
     }
     else if(prev_temp.selectedIndex != 0){
-	add_new_subscription_prev_template(post_id, prev_temp[0]);
+	await add_new_subscription_prev_template(post_id, prev_temp[0]);
     }
+    
+    show_spinner($('#subscriptionsContainer')[0]);
+    clear_user_subscriptions();
+    await fetch_user_subscription_list();
+    remove_spinner($('#subscriptionsContainer')[0]);
 }
 
 async function add_new_subscription_prev_template(post_id, prev_temp){     
@@ -54,10 +59,15 @@ async function add_new_subscription_prev_template(post_id, prev_temp){
 	
     }
     catch(err) {
-	document.getElementById('addSubscriptionMessageDiv').innerText = "Error uploading template";
+	let error_div = document.getElementById('addSubscriptionMessageDiv');
+	error_div.hidden = false;
+	error_div.innerText = "Error creating new subscription";
+	error_div.setAttribute('class', 'errorMessage');
+	hidden_timer(error_div)
 	console.log(err);
+	return;
     }
-
+    new_subscription_success(post_id);
 }
 
 async function add_new_subscription_with_template_file(post_id, upload_temp){
@@ -87,25 +97,10 @@ async function add_new_subscription_with_template_file(post_id, upload_temp){
 	return;
     }
     new_subscription_success(post_id);
-    clear_user_subscriptions();
-    fetch_user_subscription_list();
 }
 
 
-function new_subscription_success(post_id){
-    let msg_div = document.getElementById('addSubscriptionMessageDiv');
 
-    for (let [num, option] of Object.entries($('#searchPosts option'))) {
-	if(option.getAttribute('data-COLARatesId') == post_id){
-	    msg_div.innerText = 'New subscription created: '
-		+ option.innerText;
-	    msg_div.setAttribute('class', 'successMessage');
-	    msg_div.hidden = false;
-	    hidden_timer(msg_div)
-	    return;
-	}
-    }
-}
 
 function preview_new_subscription(){
     let uploadTemp = $('#uploadTemplate');
@@ -132,4 +127,68 @@ function preview_new_subscription(){
     console.log(template);
     //	$('#previewModal').modal('toggle');
 
+}
+
+async function fetch_user_subscription_list(){
+    try{
+	clear_user_subscriptions();
+	let response = await fetch('/get_user_subscription_list')
+	let res = await response.json();
+	
+	let tbody = document.getElementById('subscriptionTbody');
+	res.subscription_list.forEach(sub => {
+	    let last_mod = new Date(sub.last_modified);
+	    let last_mod_month = new Intl.DateTimeFormat('en-US', {month: 'short'}).format(last_mod);
+	    let tr = document.createElement('tr');
+	    tr.setAttribute('data-subscriptionId', sub.subscriptionId);
+	    let td1 = document.createElement('td');
+	    td1.innerText = sub.post;
+	    tr.appendChild(td1);
+	    let td2 = document.createElement('td');
+	    td2.innerText = sub.country;
+	    tr.appendChild(td2);
+	    let td3 = document.createElement('td');
+	    td3.innerText = sub.allowance;
+	    tr.appendChild(td3);
+	    let td4 = document.createElement('td');
+	    td4.innerText = last_mod.getDate() + ' '
+		+ last_mod_month + ' '
+		+ last_mod.getFullYear();
+	    tr.appendChild(td4);
+	    let td5 = document.createElement('td');
+	    let del_btn = document.createElement('button');
+	    del_btn.setAttribute('class', 'btn btn-sm btn-danger');
+	    del_btn.setAttribute('data-subscriptionId', sub.subscriptionId); 
+	    del_btn.addEventListener('click', delete_subscription);
+	    let del_btn_text = document.createElement('span');
+	    del_btn_text.innerText = 'Remove';
+
+	    del_btn.appendChild(del_btn_text);
+	    td5.appendChild(del_btn);
+	    tr.appendChild(td5);
+	    
+	    tbody.appendChild(tr);
+	})
+	remove_spinner($('#subscriptionsContainer')[0]);
+    }
+    catch(err) {
+	console.log(err);
+    }
+}
+
+async function delete_subscription(){
+    var context = {};
+    context.subscriptionId = this.getAttribute('data-subscriptionId');
+    clear_user_subscriptions();
+    size_table();
+
+    let response = await fetch('/delete_subscription', {
+	method: 'POST',
+	headers: {
+	    'Content-Type': 'application/JSON'
+	},
+	body: JSON.stringify(context)
+    })
+    fetch_user_subscription_list();
+    size_table();
 }

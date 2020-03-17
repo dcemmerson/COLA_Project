@@ -6,3 +6,9 @@
 .successMessage {
     color: green;
 }
+#subscriptionsContainer {
+    overflow: auto;
+    min-height: 200px;
+}
+#subscriptionsOuterContainer {
+ }

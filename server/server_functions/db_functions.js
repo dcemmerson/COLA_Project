@@ -168,7 +168,7 @@ module.exports = {
     */
     get_list_of_posts: function () {
 	return new Promise((resolve, reject) => {
-	    const sql = `SELECT * FROM COLARates`;
+	    const sql = `SELECT * FROM COLARates ORDER BY country ASC, post ASC`;
 	    const values = [];
 	    queryDB(sql, values, mysql)
 		.then(res => resolve(res))
@@ -188,7 +188,8 @@ FROM user u
 INNER JOIN subscription s ON u.id=s.userId
 INNER JOIN COLARates_subscription crs ON s.id=crs.subscriptionId
 INNER JOIN COLARates cr ON crs.COLARatesId=cr.id
-WHERE u.id=?`;
+WHERE u.id=?
+ORDER BY cr.country ASC, cr.post ASC`;
 	    const values = [user_id];
 	    queryDB(sql, values, mysql)
 		.then(res => resolve(res))
@@ -206,7 +207,8 @@ WHERE u.id=?`;
 	    const sql = `SELECT t.id, t.name, t.comment 
 FROM user u
 INNER JOIN template t ON u.id=t.userId 
-WHERE u.id=?`;
+WHERE u.id=?
+ORDER BY t.name ASC`;
 	    const values = [user_id];
 	    queryDB(sql, values, mysql)
 		.then(res => resolve(res))
@@ -265,12 +267,31 @@ WHERE u.id=?`;
     insert_new_subscription_with_prev_template: function (user_id, post_id, template_id, comment="") {
 	return new Promise((resolve, reject) => {
 	    let sql = `INSERT INTO subscription (name, comment, userId, templateId) VALUES (?, ?, ?, ?);`
-	    let values = ["", "", user_id, post_id, template_id];	    
+	    let values = ["", "", user_id, template_id];	    
 	    queryDB(sql, values, mysql)
 	    	.then(res => {
 		    sql = ` INSERT INTO COLARates_subscription (subscriptionId, COLARatesId) VALUES (?, ?);`
 		    values = [res.insertId, post_id];
 		    return queryDB(sql,values, mysql);
+		})
+	    	.then(() => resolve())
+		.catch(err => console.log(err))
+	});
+    },
+    /* name: delete_user_subscription
+       preconditions: user_id should be id of logged in user.
+       subscription_id is id corresponding to primary key in subscription table
+                      that user wishes to delete
+       postconditions:  return Promise that fulfills after subscription is deleted
+    */
+    delete_user_subscription: function (subscriptionId, userId) {
+	return new Promise((resolve, reject) => {
+	    let sql = `DELETE FROM subscription WHERE id=? AND userId=?;`
+	    let values = [subscriptionId, userId];	    
+	    queryDB(sql, values, mysql)
+	    	.then(res => {
+		    console.log('subscriptions deleted: ' + res.affectedRows);
+		    resolve();
 		})
 		.catch(err => console.log(err))
 	});

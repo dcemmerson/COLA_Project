@@ -1,63 +1,61 @@
-document.addEventListener('DOMContentLoaded', () => {
-    fetch_user_subscription_list();
-    
+document.addEventListener('DOMContentLoaded', async () => {
+    let subscription_list = fetch_user_subscription_list();
 
+    await subscription_list;
+    set_window_prefs();
 });
 
-async function fetch_user_subscription_list(){
-    try{
-	let response = await fetch('/get_user_subscription_list')
-	let res = await response.json();
-	
-	let tbody = document.getElementById('subscriptionTbody');
-	res.subscription_list.forEach(sub => {
-	    let last_mod = new Date(sub.last_modified);
-	    let last_mod_month = new Intl.DateTimeFormat('en-US', {month: 'short'}).format(last_mod);
-	    let tr = document.createElement('tr');
-	    tr.setAttribute('data-subscriptionId', sub.subscriptionId);
-	    let td1 = document.createElement('td');
-	    td1.innerText = sub.post;
-	    tr.appendChild(td1);
-	    let td2 = document.createElement('td');
-	    td2.innerText = sub.country;
-	    tr.appendChild(td2);
-	    let td3 = document.createElement('td');
-	    td3.innerText = sub.allowance;
-	    tr.appendChild(td3);
-	    let td4 = document.createElement('td');
-	    td4.innerText = last_mod.getDate() + ' '
-		+ last_mod_month + ' '
-		+ last_mod.getFullYear();
-	    tr.appendChild(td4);
-	    let td5 = document.createElement('td');
-	    let del_btn = document.createElement('button');
-	    del_btn.setAttribute('class', 'btn btn-sm btn-danger');
-	    del_btn.setAttribute('data-subscriptionId', sub.subscriptionId); 
-	    del_btn.addEventListener('click', delete_subscription);
-	    let del_btn_text = document.createElement('span');
-	    del_btn_text.innerText = 'Remove';
+function set_window_prefs(){
+    size_table();
+    let in_progress = false;
+    window.addEventListener('resize', () => {
+	if(!in_progress){
+	    in_progress = true;
+	    setTimeout(() => {
+		size_table();
+		in_progress = false;
+	    }, 100);	    
+	}	
+    })
+}
 
-	    del_btn.appendChild(del_btn_text);
-	    td5.appendChild(del_btn);
-	    tr.appendChild(td5);
-	    
-	    tbody.appendChild(tr);
-	})
-    }
-    catch(err) {
-	console.log(err);
-    }
+function size_table(){
+    let size = $('#subscriptionsTable')[0].clientHeight;
+
+    if(size > (0.6 * window.innerHeight)) size = 0.6 * window.innerHeight;
+    if(size < 200) size = 200;
+    
+    document.getElementById('subscriptionsContainer')
+	.setAttribute('style', `max-height:${size}px`);
+    console.log('resize');
+
+    //now size the container around the table accordingly
+    resize_item_inner_out($('#subscriptionsOuterContainer')[0]);
+}
+
+//name: resize_item_inner_out()
+//description: be careful with this function!
+// It will resize all elements within
+// "element" to take minimum amount of required space by elements inside element
+function resize_item_inner_out(element){
+/*    if(element.childNodes.length == 0)
+	return element.clientHeight;
+*/
+    
+    let maxHeight = 0;
+    for(let i = 0; i < element.childNodes.length; i++)
+	if(element.childNodes[i].nodeType === 1)
+	    maxHeight += element.childNodes[i].clientHeight;
+    
+    element.setAttribute('style',
+			 `max-height: ${maxHeight}px`);
+//    return maxHeight;
 }
 
 function clear_user_subscriptions(){
     let tbody = document.getElementById('subscriptionTbody');
     while(tbody.firstChild)
 	tbody.removeChild(tbody.firstChild);
-}
-function delete_subscription(){
-    console.log(this);
-    //   fetch('/get_user_subscription_list')
-    
 }
 
 function hidden_timer(element){
@@ -71,5 +69,32 @@ function show_spinner(element){
     element.appendChild(i);
 }
 function remove_spinner(element){
-    element.removeChild($('i.fa.fa-spinner.fa-spin.spinner')[0]);
+    try{
+//	element.removeChild(element.getElementsByClassName('i fa fa spinner fa-spin spinner')[0]);
+	let spinners = element.getElementsByClassName('fa fa-spinner fa-spin spinner');
+//	spinners.forEach(el => element.removeChild(el));
+	
+	for(let i = 0; i < spinners.length; i++){
+	    element.removeChild(spinners[i]);	
+	}
+    }
+    catch(err){
+	console.log("No spinner to remove");
+	console.log(err);
+    }
+}
+
+function new_subscription_success(post_id){
+    let msg_div = document.getElementById('addSubscriptionMessageDiv');
+
+    for (let [num, option] of Object.entries($('#searchPosts option'))) {
+	if(option.getAttribute('data-COLARatesId') == post_id){
+	    msg_div.innerText = 'New subscription created: '
+		+ option.innerText;
+	    msg_div.setAttribute('class', 'successMessage');
+	    msg_div.hidden = false;
+	    hidden_timer(msg_div)
+	    return;
+	}
+    }
 }

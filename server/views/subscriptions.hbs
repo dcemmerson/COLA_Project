@@ -63,34 +63,43 @@
       <!-- second row in main screen -->
       <div class="row justify-content-around mt-4">
 	<div class="col-12 col-md-10 col-lg-8">
-	  <div class="mt-4 row corner-border">
-	    <h5><b>Current Subscriptions</b></h5>
-	    <table class="table">
-	      <thead>
-		<tr>
-		  <th scope="col">Post</th>
-		  <th scope="col">Country</th>
-		  <th scope="col">Allowance</th>
-		  <th scope="col">Last Adjusted</th>
-		  <th scope="col"></th>
-		</tr>
-	      </thead>
-	      <tbody class="subscriptions" id="subscriptionTbody">
-		{{#each subscription_list}}
-		<tr data-subscriptionId="{{this.subscriptionId}}">
-		  <td>{{this.post}}</td>
-		  <td>{{this.country}}</td>
-		  <td>{{this.allowance}}</td>
-		  <td>{{this.last_modified}}</td>
-		  <td>
-		    <button class="btn btn-sm btn-danger">
-		      <span class="button">Remove</span>
-		    </button>
-		  </td>
-		</tr>
-		{{/each}}
-	      </tbody>
-	    </table>
+	  <div class="mt-4 row corner-border" id="subscriptionsOuterContainer">
+	    <h5 id=""><b>Current Subscriptions</b></h5>
+	    <div id="subscriptionsContainer">
+	      <table class="table" id="subscriptionsTable">
+		<thead>
+		  <tr>
+		    <th scope="col">Post</th>
+		    <th scope="col">Country</th>
+		    <th scope="col">Allowance</th>
+		    <th scope="col">Last Adjusted</th>
+		    <th scope="col"></th>
+		  </tr>
+		</thead>
+		
+		<tbody class="subscriptions" id="subscriptionTbody">
+		  {{#if subscription_list}}
+		  {{#each subscription_list}}
+		  <tr data-subscriptionId="{{this.subscriptionId}}">
+		    <td>{{this.post}}</td>
+		    <td>{{this.country}}</td>
+		    <td>{{this.allowance}}</td>
+		    <td>{{this.last_modified}}</td>
+		    <td>
+		      <button class="btn btn-sm btn-danger" onClick="delete_subscription()">
+			<span class="button">Remove</span>
+		      </button>
+		    </td>
+		  </tr>
+		  {{/each}}
+		</tbody>
+	      </table>
+	      {{else}}
+</tbody>
+</table>
+	      <i class="fa fa-spinner fa-spin spinner"></i>
+	      {{/if}}
+	    </div>
 	  </div>
 	</div>
       </div>
@@ -114,8 +123,7 @@
       </div>
       <div class="modal-body">
         <p class="center-text">
-	  <!--<i class="fa fa-spinner fa-spin spinner"></i>
-	    -->
+	  <i class="fa fa-spinner fa-spin spinner"></i>
 	</p>
       </div>
       <div class="modal-footer">

@@ -38,7 +38,7 @@ module.exports = function (app) {
 		context.style = ['styles.css', 'font_size.css', 'subscriptions.css'];
 		context.title = 'My Subscriptions';
 		context.subscriptions = true; //used for navivation.hbs
-		context.script = ['subscriptions.js', 'subscriptions_upload.js'];
+		context.script = ['subscriptions.js', 'subscriptions_ajax.js'];
 //		context.nonlocal_script = ['https://appsforoffice.microsoft.com/lib/1/hosted/office.js']
 		
 		Promise.all(await_promises)
