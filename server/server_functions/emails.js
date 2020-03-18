@@ -63,15 +63,21 @@ module.exports = {
   preconditions: username is valid user email
                  filename is name of file that we will be sending to user. filename 
 		 has already been creaed in server/templates/temp/${filename}
+		 file contains buffer of file that needs to be sent, already with rates
+		 changed inside document
   postconditions: email has been sent to user with attachment
-  description:
+  description: Returns a promise that fulfills after all actions completed. 
+               1. make a directory with user's email as name of directory
+	       2. writes file into that directory
+	       3. send user email
+	       4. remove newly created directory and file
 */
 function send_email(username, filename, file){
 //function send_email(username, filename, filepath){
     return new Promise((resolve, reject) => {
-	const path = `${__dirname}/${username}`
-	mkdir(path)
-	    .then(() => write_file(path, filename, file))
+	const path = `${__dirname}`
+//	mkdir(path)
+	write_file(path, filename, file)
 	    .then(() => {
 		console.log(`trying to send ${filename} from ${path}`);
 		
@@ -100,7 +106,8 @@ function send_email(username, filename, file){
 		});
 	    })
 //	    .then(() => transporter.sendMail(mail_options))
-	    .then(() => rmdir(path))
+	//	    .then(() => rmdir(path))
+	    .then(() => delete_file(path, filename))
 	    .then(() => resolve())
 	    .catch(err => reject(err));
 	
@@ -132,4 +139,15 @@ function write_file(path, filename, buffer){
 	    resolve();
 	});
     });
+}
+function delete_file(path, filename){
+    return new Promise((resolve, reject) => {
+	fs.unlink(`${path}/${filename}`, err => {
+	    if(err){
+		console.log(err);
+		reject(err);
+	    }
+	    resolve();
+	})
+    })
 }
