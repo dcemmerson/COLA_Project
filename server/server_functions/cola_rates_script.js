@@ -170,7 +170,6 @@ function start_cola_rate_change_script(){
 		    update_changed_rates(changed_rates)
 			.then(() => {
 			    console.log(new Date() + ': COLA rates updated');
-			    //now call method to manip templates and send emails
 			    emails.start_sending_emails(changed_rates);
 			})  
 		})

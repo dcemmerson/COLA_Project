@@ -34,8 +34,7 @@ module.exports = {
 			    changed.country,
 			    changed.previous_allowance,
 			    changed.allowance);
-			send_email(user.username, user.filename, file)
-//			send_email(user.username, file_info.filename, file_info.filepath)
+			let email_promise = send_email(user.username, user.filename, file, changed)
 			    .then((res) => {
 				console.log(`Email sent to ${user.username} with '${user.filename}'`
 					    + ` attached. ${changed.post}, ${changed.country}: `
@@ -44,6 +43,7 @@ module.exports = {
 			    })
 		    }))
 		    .catch(err => {
+			console.log(err);
 			throw 'Error sending email';
 		    })
 		
@@ -72,82 +72,25 @@ module.exports = {
 	       3. send user email
 	       4. remove newly created directory and file
 */
-function send_email(username, filename, file){
+function send_email(username, filename, file, changed){
 //function send_email(username, filename, filepath){
-    return new Promise((resolve, reject) => {
-	const path = `${__dirname}`
-//	mkdir(path)
-	write_file(path, filename, file)
-	    .then(() => {
-		console.log(`trying to send ${filename} from ${path}`);
-		
-		const mail_options = {
-		    from: 'gunrock2018@gmail.com',
-		    to: username,
-		    subject: 'Hello there',
-		    html: '<p>hello, see attachment</p>',
-		    attachments: [
-			{
-			    filename: filename,
-			    content: 'Buffer',
-			    path: `/${path}/${filename}`
-			}
-		    ]   
+    return new Promise((resolve, reject) => {	
+	const mail_options = {
+	    from: 'gunrock2018@gmail.com',
+	    to: username,
+	    subject: `COLA Rate Change: ${changed.post}, ${changed.country}.`,
+	    html: '<p>hello, see attachment</p>',
+	    attachments: [
+		{
+		    filename: filename,
+		    content: file
 		}
-		console.log('mail option path = ' + mail_options.attachments[0].path);
-		console.log('mail option filename = ' + mail_options.attachments[0].filename);
-		return new Promise((resolve, reject) => {
-		    transporter.sendMail(mail_options, (err, info) =>{
-			if(err) reject(err);
-			console.log(info);
-			resolve(info);
-		    })
-		    
-		});
-	    })
-//	    .then(() => transporter.sendMail(mail_options))
-	//	    .then(() => rmdir(path))
-	    .then(() => delete_file(path, filename))
-	    .then(() => resolve())
-	    .catch(err => reject(err));
-	
-    });
-}
-
-function mkdir(path){
-    return new Promise((resolve, reject) => {
-	fs.mkdir(`${path}`, err => reject(err));
-	resolve();
-    })
-}
-function rmdir(path){
-    return new Promise((resolve, reject) => {
-	rimraf(`${path}`, err => {
+	    ]   
+	}
+	transporter.sendMail(mail_options, (err, info) =>{
 	    if(err) reject(err);
-	    resolve();
-	})
-    })
-}
-function write_file(path, filename, buffer){
-    return new Promise((resolve, reject) => {
-	let file = randomAccessFile(`${path}/${filename}`);
-	file.write(0, buffer, err => {
-	    if(err) {
-		console.log(err);
-		reject(err);
-	    }
-	    resolve();
-	});
-    });
-}
-function delete_file(path, filename){
-    return new Promise((resolve, reject) => {
-	fs.unlink(`${path}/${filename}`, err => {
-	    if(err){
-		console.log(err);
-		reject(err);
-	    }
-	    resolve();
+	    console.log(info);
+	    resolve(info);
 	})
     })
 }

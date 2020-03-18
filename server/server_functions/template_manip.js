@@ -1,6 +1,5 @@
 const DocxTemplater = require('docxtemplater');
 const PizZip = require('pizzip');
-const path = require('path');
 
 module.exports = {
     /* name: manip_template
