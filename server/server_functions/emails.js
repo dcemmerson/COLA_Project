@@ -33,7 +33,9 @@ module.exports = {
 			    changed.post,
 			    changed.country,
 			    changed.previous_allowance,
-			    changed.allowance);
+			    changed.allowance,
+			    changed.last_modified
+			);
 			let email_promise = send_email(user.username, user.filename, file, changed)
 			    .then((res) => {
 				console.log(`Email sent to ${user.username} with '${user.filename}'`
@@ -74,12 +76,17 @@ module.exports = {
 */
 function send_email(username, filename, file, changed){
 //function send_email(username, filename, filepath){
-    return new Promise((resolve, reject) => {	
+    return new Promise((resolve, reject) => {
+	const date_long = new Intl.DateTimeFormat('en-US', {month: 'long'})
+	      .format(changed.last_modified);
 	const mail_options = {
 	    from: 'gunrock2018@gmail.com',
 	    to: username,
-	    subject: `COLA Rate Change: ${changed.post}, ${changed.country}.`,
-	    html: '<p>hello, see attachment</p>',
+	    subject: `MGMT Notice: COLA Rate Change ${changed.post}, ${changed.country}`,
+	    html: `<p>Effective ${changed.last_modified.getUTCDate()} ${date_long},`
+		+ ` ${changed.last_modified.getUTCFullYear()}, the COLA rate for ${changed.post}, `
+		+ `${changed.country} has changed from `
+		+ `<b>${changed.previous_allowance}%</b> to <b>${changed.allowance}%</b>.</p>`,
 	    attachments: [
 		{
 		    filename: filename,

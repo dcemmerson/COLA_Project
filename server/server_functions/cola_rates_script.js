@@ -233,6 +233,7 @@ function check_rate_changes(scraped_rates, changed_rates){
 			    post: res[0].post,
 			    previous_allowance: res[0].allowance,
 			    allowance: element.allowance,
+			    last_modified: new Date(),
 			    previously_last_modified: res[0].last_modified
 			});
 		    }

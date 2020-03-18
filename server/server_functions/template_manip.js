@@ -8,25 +8,19 @@ module.exports = {
 		      same name.
                       filename is name of file that user gave their template
                       post is name of post whose rate has changed
-		      coutnry is name of country that post belogns to
+		      country is name of country that post belogns to
 		      prev_allowance is old allowance before change script ran
 		      new_allowance is allowance after change script ranx
-       postconditions: username's filename has been opened and values have been manipulated.
-                       A new docx has been created in templates/${username}/
+       postconditions: username's file has been manipulated.
+                       A new docx has been created, which is returned from manip_template
        description: 
     */
-    manip_template: function(username, filename, file, post, country, prev_allowance, new_allowance){
-	const output_dir = `templates/${username}`;
-	let output_filename;
-	let date = new Date();
-	date_long = new Intl.DateTimeFormat('en-US', {month: 'short'}).format(date);
+    manip_template: function(username, filename, file, post, country, prev_allowance,
+			     new_allowance, last_modified){
+	const date_long = new Intl.DateTimeFormat('en-US', {month: 'short'}).format(last_modified);
+	console.log(`date: ${(last_modified.getDate() )} ${date_long} ${last_modified.getFullYear()}`)
+	console.log(`utcdate: ${(last_modified.getUTCDate() )} ${date_long} ${last_modified.getUTCFullYear()}`)
 	
-	filename.lastIndexOf('.') != -1 ?
-	    output_filename = `${post}_${country}_${date.toISOString().substring(0, 10)}`
-	    + filename.substring(filename.lastIndexOf('.'), filename.length) :
-	    output_filename = `${post}_${country}_${date.toISOString().substring(0, 10)}`
-	    + `.doc`
-
 	let content = file;
 	let zip = new PizZip(content);
 	let doc = new DocxTemplater();
@@ -34,10 +28,10 @@ module.exports = {
 	doc.setData({
 	    old_cola: prev_allowance,
 	    new_cola: new_allowance,
-	    date: (date.getDay() + 1) + ` ${date_long} ` + date.getFullYear(),
+	    date: last_modified.getUTCDate() + ` ${date_long} ` + last_modified.getUTCFullYear(),
 	    post: post,
 	    country: country,
-	    mgt_number: 'Yellow submarine.'
+	    mgt_number: 'idk...'
 	});
 	doc.render();
 	return doc.getZip().generate({type: 'nodebuffer'});;
