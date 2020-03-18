@@ -146,7 +146,13 @@ module.exports = {
     */
     get_users_subscribed_to_post: function (post, country) {
 	return new Promise((resolve, reject) => {
-	    const sql = `SELECT u.email as username, t.file, t.name AS filename FROM user u INNER JOIN subscription s ON  u.id=s.userId INNER JOIN COLARates_subscription cs ON s.id=cs.subscriptionId INNER JOIN COLARates c ON cs.COLARatesId=c.id INNER JOIN template t ON s.templateId=t.id WHERE c.post=? AND c.country=?`;
+	    const sql = `SELECT u.email as username, t.file, t.name AS filename 
+FROM user u 
+INNER JOIN subscription s ON  u.id=s.userId 
+INNER JOIN COLARates_subscription cs ON s.id=cs.subscriptionId 
+INNER JOIN COLARates c ON cs.COLARatesId=c.id 
+INNER JOIN template t ON s.templateId=t.id 
+WHERE c.post=? AND c.country=?`;
 	    const values = [post, country];
 	    queryDB(sql, values, mysql)
 		.then(res => resolve(res))

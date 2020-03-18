@@ -2,7 +2,7 @@ const db = require('../server_functions/db_functions.js');
 const misc = require('../server_functions/misc.js');
 const crs = require('../server_functions/cola_rates_script.js');
 const multer = require('multer');
-const randomAccessFile = require('random-access-file');
+
 const upload = multer();
 
 /********************* MARKED FOR REMOVAL *******************/
@@ -140,9 +140,3 @@ module.exports = function(app,  mysql){
     /****************** End subscription page ajax routes *******************/
 }
 
-/*		 let file = randomAccessFile(req.file.originalname);
-		 file.write(0, req.file.buffer, (err) => {
-		 if(err) console.log(err);
-		 else console.log("success??");
-		 });
-*/

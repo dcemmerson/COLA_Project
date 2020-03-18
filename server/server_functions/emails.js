@@ -1,5 +1,8 @@
 const db = require('./db_functions.js');
 const tm = require('./template_manip.js');
+const fs = require('fs');
+const rimraf = require('rimraf');
+const randomAccessFile = require('random-access-file');
 const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -23,24 +26,27 @@ module.exports = {
 	    try{
 		db.get_users_subscribed_to_post(changed.post, changed.country)
 		    .then(users => users.forEach(user => {
-			let file_info = tm.manip_template(user.username,
-					  user.filename,
-					  changed.post,
-					  changed.country,
-					  changed.previous_allowance,
-							  changed.allowance);
-			send_email(user.username, file_info.filename, file_info.filepath)
+			const file = tm.manip_template(
+			    user.username,
+			    user.filename,
+			    user.file,
+			    changed.post,
+			    changed.country,
+			    changed.previous_allowance,
+			    changed.allowance);
+			send_email(user.username, user.filename, file)
+//			send_email(user.username, file_info.filename, file_info.filepath)
 			    .then((res) => {
-				console.log(`Email sent to ${user.username} with '${file_info.filename}'`
+				console.log(`Email sent to ${user.username} with '${user.filename}'`
 					    + ` attached. ${changed.post}, ${changed.country}: `
-				 	   + `prev_rate: ${changed.previous_allowance}, `
+				 	    + `prev_rate: ${changed.previous_allowance}, `
 					    + `new_rate: ${changed.allowance}`);
 			    })
-			    .catch(err => {
-				throw 'Error sending email';
-			    })
-			
 		    }))
+		    .catch(err => {
+			throw 'Error sending email';
+		    })
+		
 	    }
 	    catch(err){
 		console.log(err);
@@ -60,36 +66,70 @@ module.exports = {
   postconditions: email has been sent to user with attachment
   description:
 */
-function send_email(username, filename, filepath){
+function send_email(username, filename, file){
+//function send_email(username, filename, filepath){
     return new Promise((resolve, reject) => {
-	console.log(`trying to send ${filename} from ${__dirname}/${filepath}`);
-	
-	const mail_options = {
-	    from: 'gunrock2018@gmail.com',
-	    to: username,
-	    subject: 'Hello there',
-	    html: '<p>hello, see attachment</p>',
-	    attachments: [
-		{
-		    filename: filename,
-		    content: 'Buffer',
-		    path: `${__dirname}/${filepath}/${filename}`
+	const path = `${__dirname}/${username}`
+	mkdir(path)
+	    .then(() => write_file(path, filename, file))
+	    .then(() => {
+		console.log(`trying to send ${filename} from ${path}`);
+		
+		const mail_options = {
+		    from: 'gunrock2018@gmail.com',
+		    to: username,
+		    subject: 'Hello there',
+		    html: '<p>hello, see attachment</p>',
+		    attachments: [
+			{
+			    filename: filename,
+			    content: 'Buffer',
+			    path: `/${path}/${filename}`
+			}
+		    ]   
 		}
-	    ]   
-	}
-	console.log('mail option path = ' + mail_options.attachments[0].path);
-	console.log('mail option filename = ' + mail_options.attachments[0].filename);
+		console.log('mail option path = ' + mail_options.attachments[0].path);
+		console.log('mail option filename = ' + mail_options.attachments[0].filename);
+		return new Promise((resolve, reject) => {
+		    transporter.sendMail(mail_options, (err, info) =>{
+			if(err) reject(err);
+			console.log(info);
+			resolve(info);
+		    })
+		    
+		});
+	    })
+//	    .then(() => transporter.sendMail(mail_options))
+	    .then(() => rmdir(path))
+	    .then(() => resolve())
+	    .catch(err => reject(err));
 	
-	transporter.sendMail(mail_options)
-	    .then(res => {
-		console.log(res)
-		resolve(res);
-	    })
-	    .catch(err => {
-		console.log(err)
-		reject(err);
-	    })
     });
 }
 
-
+function mkdir(path){
+    return new Promise((resolve, reject) => {
+	fs.mkdir(`${path}`, err => reject(err));
+	resolve();
+    })
+}
+function rmdir(path){
+    return new Promise((resolve, reject) => {
+	rimraf(`${path}`, err => {
+	    if(err) reject(err);
+	    resolve();
+	})
+    })
+}
+function write_file(path, filename, buffer){
+    return new Promise((resolve, reject) => {
+	let file = randomAccessFile(`${path}/${filename}`);
+	file.write(0, buffer, err => {
+	    if(err) {
+		console.log(err);
+		reject(err);
+	    }
+	    resolve();
+	});
+    });
+}
