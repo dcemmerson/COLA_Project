@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     await subscription_list;
     set_window_prefs();
 });
-
 function set_window_prefs(){
     size_table();
     let in_progress = false;
@@ -19,7 +18,6 @@ function set_window_prefs(){
 	}	
     })
 }
-
 function size_table(){
     let size = $('#subscriptionsTable')[0].clientHeight;
 
@@ -28,31 +26,6 @@ function size_table(){
     
     document.getElementById('subscriptionsContainer')
 	.setAttribute('style', `max-height:${size}px`);
-    console.log('resize');
-
-    //now size the container around the table accordingly
-    resize_item_inner_out($('#subscriptionsOuterContainer')[0]);
-}
-
-//name: resize_item_inner_out()
-//description: be careful with this function!
-// It will resize all elements within
-// "element" to take minimum amount of required space by elements inside element
-function resize_item_inner_out(element){
-/*    if(element.childNodes.length == 0)
-	return element.clientHeight;
-*/
-    
-    let maxHeight = 0;
-    for(let i = 0; i < element.childNodes.length; i++)
-	if(element.childNodes[i].nodeType === 1){
-	    maxHeight += element.childNodes[i].clientHeight;
-	    maxHeight += LINESPACING;
-	}
-    
-    element.setAttribute('style',
-			 `max-height: ${maxHeight + LINESPACING}px`);
-//    return maxHeight;
 }
 
 function clear_user_subscriptions(){

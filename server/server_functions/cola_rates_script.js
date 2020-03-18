@@ -135,18 +135,18 @@ module.exports = {
 	let midnight = new Date(Date.UTC(today.getFullYear(),
 					 today.getMonth(),
 					 today.getDate() + 0,
-					 today.getHours() + 7, today.getMinutes(),
-					 today.getSeconds() + 1, 0));
-//					 0, 0, 0, 0));
+//					 today.getHours() + 7, today.getMinutes(),
+//					 today.getSeconds() + 1, 0));
+					 0, 0, 0, 0));
 	//ensure we don't accidentally schedule the intervals to start
 	//at last night's midnight GMT if it already passed
 	if(midnight < new Date())
 	    midnight = new Date(Date.UTC(today.getFullYear(),
 					 today.getMonth(),
 					 today.getDate(),
-					 today.getHours() + 7, today.getMinutes(),
-					 today.getSeconds() + 1, 0));
-//						 0, 0, 0, 0));
+//					 today.getHours() + 7, today.getMinutes(),
+//					 today.getSeconds() + 1, 0));
+						 0, 0, 0, 0));
 	
 	schedule.scheduleJob(midnight, () => {
 	    start_cola_rate_change_script();
@@ -178,8 +178,8 @@ function start_cola_rate_change_script(){
 		})
 	});
     },
-		       6000, 'update_cola_rates');
-//		       24 * 60 * 60 * 1000, 'update_cola_rates');
+//		       6000, 'update_cola_rates');
+		       24 * 60 * 60 * 1000, 'update_cola_rates');
 }
 /* name: update_changed_rates
    preconditions: changed_rates is array of objects for each post that has changed and
