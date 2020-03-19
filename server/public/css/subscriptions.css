@@ -11,4 +11,5 @@
     min-height: 200px;
 }
 #subscriptionsOuterContainer {
- }
+    max-width: 1000px;
+}

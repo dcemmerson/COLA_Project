@@ -60,7 +60,7 @@ module.exports = {
 		    newly scraped allowance. If allowance is different, add to changed_rates
 		    array.
      */
-    check_rate_changes: function(scraped_rates, changed_rates){
+/*    check_rate_changes: function(scraped_rates, changed_rates){
 	let queries = []; 
 	
 	scraped_rates.forEach(element => {
@@ -89,7 +89,7 @@ module.exports = {
 	    });
 	})
     },
-    
+  */  
     /****************** MARKED FOR REMOVAL ******************/
     /* name: update_changed_rates
        preconditions: changed_rates is array of objects for each post that has changed and
@@ -99,7 +99,7 @@ module.exports = {
 		       been completed.
        description: UPDATE each row allowance in db corresponding to changed_rates[].id
     */
-    update_changed_rates: function(changed_rates){
+/*    update_changed_rates: function(changed_rates){
 	let queries = [];
 	
 	changed_rates.forEach(changed => {
@@ -117,6 +117,7 @@ module.exports = {
 	    });
 	})
     },
+*/
     /* name: schedule_crcs
        preconditions: None
        postconditions: cola rate change script has been scheduled to run
@@ -134,16 +135,16 @@ module.exports = {
 	let midnight = new Date(Date.UTC(today.getFullYear(),
 					 today.getMonth(),
 					 today.getDate() + 0,
-//					 today.getHours() + 8, today.getMinutes(),
-//					 today.getSeconds() + 1, 0));
-					 0, 0, 0, 0));
+					 today.getHours() + 7, today.getMinutes(),
+					 today.getSeconds() + 1, 0));
+//					 0, 0, 0, 0));
 	//ensure we don't accidentally schedule the intervals to start
 	//at last night's midnight GMT if it already passed
 	if(midnight < new Date())
 	    midnight = new Date(Date.UTC(today.getFullYear(),
 					 today.getMonth(),
 					 today.getDate(),
-//					 today.getHours() + 8, today.getMinutes(),
+//					 today.getHours() + 7, today.getMinutes(),
 //					 today.getSeconds() + 1, 0));
 						 0, 0, 0, 0));
 	
@@ -169,7 +170,6 @@ function start_cola_rate_change_script(){
 		    update_changed_rates(changed_rates)
 			.then(() => {
 			    console.log(new Date() + ': COLA rates updated');
-			    //now call method to manip templates and send emails
 			    emails.start_sending_emails(changed_rates);
 			})  
 		})
@@ -178,7 +178,8 @@ function start_cola_rate_change_script(){
 		})
 	});
     },
-		       24 * 60 * 60 * 1000, 'update_cola_rates');
+		       6000, 'update_cola_rates');
+//		       24 * 60 * 60 * 1000, 'update_cola_rates');
 }
 /* name: update_changed_rates
    preconditions: changed_rates is array of objects for each post that has changed and
@@ -232,6 +233,7 @@ function check_rate_changes(scraped_rates, changed_rates){
 			    post: res[0].post,
 			    previous_allowance: res[0].allowance,
 			    allowance: element.allowance,
+			    last_modified: new Date(),
 			    previously_last_modified: res[0].last_modified
 			});
 		    }
