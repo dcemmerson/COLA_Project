@@ -1,16 +1,22 @@
 const db = require('./db_functions.js');
 const tm = require('./template_manip.js');
 const fs = require('fs');
+const path = require('path');
 const rimraf = require('rimraf');
 const randomAccessFile = require('random-access-file');
 const nodemailer = require('nodemailer');
+var Email = require('email-templates');
+var transporter = nodemailer.createTransport('smtps://gunrock2018%40gmail.com:iamaweimaraner@smtp.gmail.com')
+/*
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
 	user: 'gunrock2018@gmail.com',
 	pass: 'iamaweimaraner'
-    }
+    },
+//    jsonTransport: true
 });
+*/
 
 module.exports = {
     /* name: send_emails
@@ -74,6 +80,7 @@ module.exports = {
 	       3. send user email
 	       4. remove newly created directory and file
 */
+/*
 function send_email(username, filename, file, changed){
 //function send_email(username, filename, filepath){
     return new Promise((resolve, reject) => {
@@ -99,5 +106,71 @@ function send_email(username, filename, file, changed){
 	    console.log(info);
 	    resolve(info);
 	})
+    })
+    }
+*/
+
+function send_email(username, filename, file, changed, jwt='not_implemented'){
+    return new Promise((resolve, reject) => {
+	const month_long = new Intl.DateTimeFormat('en-US', {month: 'long'})
+	      .format(changed.last_modified);
+	
+	const email = new Email({
+	    message: {
+		from: 'gunrock2018@gmail.com',
+		attachments: [
+		    {
+			filename: filename,
+			content: file
+		    },
+		    {
+			filename: 'badge.png',
+			path: path.join(__dirname, '..', '/emails/build/img/badge.png'),
+			cid: 'badge@nodemailer.com'
+		    }
+		]
+	    },
+	    send: true,
+	    transport: transporter,
+//	    transport: {
+//		jsonTransport: true
+//	    },
+
+	    views: {
+		options: {
+		    extension: 'handlebars'
+		}
+	    },
+	    juice: true,
+	    juiceResources: {
+		preserveImportant: true,
+		webResources: {
+		    relativeTo: path.join(__dirname, '..', '/emails/build'),
+		    images: true
+		}
+	    }
+	});
+	
+	email.send({
+	    template: `rate_change`,
+	    message: {
+		to: username
+	    },
+	    locals: {
+		locale: 'en',
+		username: username,
+		changed: changed,
+		date: changed.last_modified.getUTCDate(),
+		month: month_long,
+		year: changed.last_modified.getUTCFullYear(),
+		jwt: jwt,
+		style: ['rate_change_email.css']
+	    }
+	})
+	    .then(resolve)
+	    .catch(err => {
+		console.error(err);
+		reject();
+	    })
     })
 }

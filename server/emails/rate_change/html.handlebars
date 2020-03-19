@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{title}}</title>
+    <link rel="canonical" href="https://..."/>
+    <meta charset="utf-8"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+    {{#each style}}
+    <link rel="stylesheet" type="text/css" href="/css/{{this}}"></link>
+    {{/each}}
+  </head>
+  <body>
+    <img src="cid:badge@nodemailer.com"></img>
+    <div class="">
+      <p>
+	Effective {{date}} {{month}} {{year}}, the COLA rate for {{changed.country}}
+	({{changed.post}}) has changed from
+	<strong>{{changed.previous_allowance}}% </strong>
+	to <strong>{{changed.allowance}}%</strong>.
+	Change to post allowances are based on currency exchange rate information
+	reported to the Office of Allowances as of the first Thursday of the
+	Pay Period.
+	<br><br>
+	  Current and historice COLA rates can be found on the Office of Allowance's
+	  publicly available website:
+	  <a href="https://aoprals.state.gov/Web920/cola.asp">
+	    https://aoprals.state.gov/Web920/cola.asp
+	  </a>
+	</p>
+	</div>
+	<br><br><br><br>
+    <footer>
+      <p>
+	{{username}} is subscribed to receive COLA rate changes related
+	to {{changed.country}} ({{changed.post}}).
+      </p>
+      <div>
+	<a href="/subscriptions">Manage Subscription</a>
+	<a href="/unsubscribe/{{jwt}}">Unsubscribe</a>
+      </div>
+    </footer>
+  </body>
+</html>
+
