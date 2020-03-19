@@ -124,6 +124,66 @@ module.exports = function (app) {
 		req.session.destroy();
 		res.redirect('/login');
     });
+	
+	app.get(`/reset`, function (req, res) {
+	res.render('reset');
+    });
+	
+	app.post(`/forgot`, function (req, res) {
+		res.redirect('/reset');
+    });
+	
+	
+	// upon submitting create account, validates the form information and adds user to DB
+	app.post(
+		`/resetpwd`, [
+			// Check validity
+			check("email", "Email is invalid")
+			.isEmail()
+			.isLength({
+				min: 4
+			})
+		],
+		(req, res, next) => {
+			// return formatted validation results
+			const errorFormatter = ({
+				msg,
+			}) => {
+				return `${msg}`;
+			};
+			const errors = validationResult(req).formatWith(errorFormatter);
+
+			if (!errors.isEmpty()) {
+				var errorResponse = errors.array({
+					onlyFirstError: true
+				});
+				res.render('reset', {
+					error: errorResponse
+				});
+
+				return;
+			}
+
+			//if no errors, add user to DB
+			else {
+				var email = req.body.email;
+				console.log(email);
+				var message=db.check_email(email,res, req);
+				if (message.length==0) 
+		{
+			res.render('reset', {
+					error: "Email does not exist"
+				});
+		}
+		else res.redirect('/login');
+				
+	
+				
+			}
+
+		});
+	
+	
 		
 		
 };

@@ -46,6 +46,25 @@ module.exports = {
 	    });
 	})
     },
+	
+	check_email: function (email, res, req) {
+	    var sql = "SELECT email FROM USER WHERE email= ?"
+	    var values = [email];
+	    queryDB(sql, values, mysql).then((message) => {
+		console.log(message);
+		return message;
+		if (message.length==0) 
+		{
+			res.render('reset', {
+					error: "Email does not exist"
+				});
+		}
+		else res.redirect('/login');
+		
+
+	    });
+    },
+	
 
 
     authenticationMiddleware: function () {
@@ -323,6 +342,7 @@ passport.serializeUser(function (user_id, done) {
 passport.deserializeUser(function (user_id, done) {
 	done(null, user_id);
 });
+
 
 passport.use(new LocalStrategy(
     function(username, password, done) {
