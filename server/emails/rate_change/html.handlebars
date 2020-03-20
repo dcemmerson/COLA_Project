@@ -14,7 +14,7 @@
     <div class="">
       <p>
 	Effective {{date}} {{month}} {{year}}, the COLA rate for {{changed.country}}
-	({{changed.post}}) has changed from
+	({{changed.post}}) has changed from 
 	<strong>{{changed.previous_allowance}}% </strong>
 	to <strong>{{changed.allowance}}%</strong>.
 	Change to post allowances are based on currency exchange rate information
@@ -35,8 +35,8 @@
 	to {{changed.country}} ({{changed.post}}).
       </p>
       <div>
-	<a href="/subscriptions">Manage Subscription</a>
-	<a href="/unsubscribe/{{jwt}}">Unsubscribe</a>
+	<a href="{{host}}/subscriptions">Manage Subscription</a>
+	<a href="{{host}}/unsubscribetok?tok={{jwt}}">Unsubscribe</a>
       </div>
     </footer>
   </body>

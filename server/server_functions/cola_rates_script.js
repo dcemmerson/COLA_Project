@@ -193,7 +193,7 @@ function update_changed_rates(changed_rates){
     let queries = [];
     
     changed_rates.forEach(changed => {
-	let query = db.update_cola_rate(changed.id, changed.allowance)
+	let query = db.update_cola_rate(changed.postId, changed.allowance)
 	    .catch(err => {
 		console.log(err);
 		reject(err);
@@ -228,7 +228,8 @@ function check_rate_changes(scraped_rates, changed_rates){
 		try{
 		    if(res[0] && res[0].allowance != element.allowance){
 			changed_rates.push({
-			    id: res[0].id,
+//			    id: res[0].id,
+			    postId: res[0].id,
 			    country: res[0].country,
 			    post: res[0].post,
 			    previous_allowance: res[0].allowance,

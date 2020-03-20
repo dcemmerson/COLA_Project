@@ -2,10 +2,8 @@ const db = require('../server_functions/db_functions.js');
 const misc = require('../server_functions/misc.js');
 const crs = require('../server_functions/cola_rates_script.js');
 const multer = require('multer');
-
 const upload = multer();
 
-/********************* MARKED FOR REMOVAL *******************/
 let after_load = require('after-load');
 
 module.exports = function(app,  mysql){
@@ -138,5 +136,60 @@ module.exports = function(app,  mysql){
 		     })
 	     });
     /****************** End subscription page ajax routes *******************/
+
+    /****************** AJAX routes coming from email links *****************/
+    app.get('/unsubscribetok', function (req, res) {
+	const temp_user_id = 1;
+	var context = {
+	    layout: 'login_layout.hbs',
+	    style: ['unsubscribetok.css', 'font_size.css', 'style.css']
+	}
+	var decrypted;
+	
+	if(!req.query.tok){
+	    console.log(`Invalid token: ${req.query.tok}`);
+	    context.error = true;
+	    context.deleted = false;
+	    res.render('unsubscribetok', context);
+	    return;
+	}
+	
+	misc.jwt_verify(req.query.tok)
+	    .then(dec => {
+		console.log(dec);
+		decrypted = dec;
+		
+		context.country = dec.country;
+		context.post = dec.post;
+		context.username = dec.username;
+
+		return db.delete_user_subscription(dec.subscriptionId, dec.userId);
+	    })
+	    .then(dbres => {
+		context.unsubscribed = true;
+		
+		if(dbres.affectedRows > 0)
+		    context.deleted = true;
+		else if(dbres.affectedRows == 0)
+		    context.alreadyUnsubscribed = true;
+
+		return db.get_number_user_redundant_subscriptions(decrypted.userId,
+								  decrypted.postId);
+	    })
+	    .then(dbres => {
+		if(dbres.numberSubscriptions > 0){
+		    context.additionalSubs = true;
+		    context.numberAdditionalSubs = dbres.numberSubscriptions;
+		}		
+		res.render('unsubscribetok',context);
+	    })
+	    .catch(err => {
+		console.log(err);
+		context.error = true;
+		res.render('unsubscribetok', context);
+	    })
+    });
+    /**************** End AJAX routes coming from email links ****************/
 }
+
 

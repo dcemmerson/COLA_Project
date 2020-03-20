@@ -163,16 +163,17 @@ module.exports = {
        postconditions: return list of users subscribed to post, along with
                        the template file for each user.
     */
-    get_users_subscribed_to_post: function (post, country) {
+    get_users_subscribed_to_post: function (postId) {
 	return new Promise((resolve, reject) => {
-	    const sql = `SELECT u.email as username, t.file, t.name AS filename`
+	    const sql = `SELECT s.id AS subscriptionId, u.email AS username,`
+		  + ` u.id AS userId, t.file, t.name AS filename`
 		  + ` FROM user u`
 		  + ` INNER JOIN subscription s ON  u.id=s.userId`
 		  + ` INNER JOIN COLARates_subscription cs ON s.id=cs.subscriptionId`
-		  + ` INNER JOIN COLARates c ON cs.COLARatesId=c.id`
+		  + ` INNER JOIN COLARates cr ON cs.COLARatesId=cr.id`
 		  + ` INNER JOIN template t ON s.templateId=t.id` 
-		  + ` WHERE c.post=? AND c.country=?`;
-	    const values = [post, country];
+		  + ` WHERE cr.id=?`;
+	    const values = [postId];
 	    queryDB(sql, values, mysql)
 		.then(res => resolve(res))
 		.catch(err => console.log(err))
@@ -208,13 +209,14 @@ module.exports = {
     */
     get_user_subscription_list: function (user_id) {
 	return new Promise((resolve, reject) => {
-	    const sql = `SELECT cr.post, cr.country, cr.allowance, cr.last_modified, s.id AS subscriptionId, s.name, s.comment
-FROM user u
-INNER JOIN subscription s ON u.id=s.userId
-INNER JOIN COLARates_subscription crs ON s.id=crs.subscriptionId
-INNER JOIN COLARates cr ON crs.COLARatesId=cr.id
-WHERE u.id=?
-ORDER BY cr.country ASC, cr.post ASC`;
+	    const sql = `SELECT cr.post, cr.country, cr.allowance, cr.last_modified,`
+		  + ` s.id AS subscriptionId, s.name, s.comment`
+		  + ` FROM user u`
+		  + ` INNER JOIN subscription s ON u.id=s.userId`
+		  + ` INNER JOIN COLARates_subscription crs ON s.id=crs.subscriptionId`
+		  + ` INNER JOIN COLARates cr ON crs.COLARatesId=cr.id`
+		  + ` WHERE u.id=?`
+		  + ` ORDER BY cr.country ASC, cr.post ASC`;
 	    const values = [user_id];
 	    queryDB(sql, values, mysql)
 		.then(res => resolve(res))
@@ -229,11 +231,11 @@ ORDER BY cr.country ASC, cr.post ASC`;
     */
     get_user_template_names: function (user_id) {
 	return new Promise((resolve, reject) => {
-	    const sql = `SELECT t.id, t.name, t.comment 
-FROM user u
-INNER JOIN template t ON u.id=t.userId 
-WHERE u.id=?
-ORDER BY t.name ASC`;
+	    const sql = `SELECT t.id, t.name, t.comment`
+		  + ` FROM user u`
+		  + ` INNER JOIN template t ON u.id=t.userId` 
+		  + ` WHERE u.id=?`
+		  + ` ORDER BY t.name ASC`;
 	    const values = [user_id];
 	    queryDB(sql, values, mysql)
 		.then(res => resolve(res))
@@ -316,14 +318,14 @@ ORDER BY t.name ASC`;
 	    queryDB(sql, values, mysql)
 	    	.then(res => {
 		    console.log('subscriptions deleted: ' + res.affectedRows);
-		    resolve();
+		    resolve(res);
 		})
 		.catch(err => console.log(err))
 	});
     },
 
     /*temp for testing file upload - take out after 3/13*/
-    get_template: function(user_id){
+/*    get_template: function(user_id){
 	return new Promise((resolve, reject) => {
 	    const sql = `SELECT * FROM template WHERE userId=?`;
 	    const values = [user_id];
@@ -331,13 +333,34 @@ ORDER BY t.name ASC`;
 		.then(res => resolve(res[1]))
 		.catch(err => console.log(err))	    
 	});
-    }
-	
-	
-
+    },*/
     /*******************************************************************/
     /****************** END SUBSCRIPTION PAGE QUERIES ******************/
     /*******************************************************************/
+
+    /*******************************************************************/
+    /******************** UNSUBSCRIBETOK PAGE QUERIES ******************/
+    /*******************************************************************/
+    /*temp for testing file upload - take out after 3/13*/
+    get_number_user_redundant_subscriptions: function(userId, postId){
+	return new Promise((resolve, reject) => {
+	    const sql = `SELECT COUNT(u.id) AS numberSubscriptions`
+		  + ` FROM user u`
+		  + ` INNER JOIN subscription s ON u.id=s.userId`
+		  + ` INNER JOIN COLARates_subscription crs ON s.id=crs.subscriptionId`
+		  + ` INNER JOIN COLARates cr ON crs.COLARatesId=cr.id`
+		  + ` WHERE u.id=? AND cr.id=?`;
+	    const values = [userId, postId];
+	    queryDB(sql, values, mysql)
+		.then(res => resolve(res[0]))
+		.catch(err => console.log(err))	    
+	});
+    }
+    /*******************************************************************/
+    /****************** END UNSUBSCRIBETOK PAGE QUERIES ****************/
+    /*******************************************************************/
+
+
 }
 
 passport.serializeUser(function (user_id, done) {

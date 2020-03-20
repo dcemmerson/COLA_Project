@@ -15,22 +15,21 @@ module.exports = {
                        A new docx has been created, which is returned from manip_template
        description: 
     */
-    manip_template: function(username, filename, file, post, country, prev_allowance,
-			     new_allowance, last_modified){
-	const date_long = new Intl.DateTimeFormat('en-US', {month: 'short'}).format(last_modified);
-	console.log(`date: ${(last_modified.getDate() )} ${date_long} ${last_modified.getFullYear()}`)
-	console.log(`utcdate: ${(last_modified.getUTCDate() )} ${date_long} ${last_modified.getUTCFullYear()}`)
-	
-	let content = file;
+    manip_template: function(user, changed){
+	const date_long = new Intl.DateTimeFormat('en-US', {month: 'short'})
+	      .format(changed.last_modified);
+	let content = user.file;
 	let zip = new PizZip(content);
 	let doc = new DocxTemplater();
 	doc.loadZip(zip);
 	doc.setData({
-	    old_cola: prev_allowance,
-	    new_cola: new_allowance,
-	    date: last_modified.getUTCDate() + ` ${date_long} ` + last_modified.getUTCFullYear(),
-	    post: post,
-	    country: country,
+	    old_cola: changed.prev_allowance,
+	    new_cola: changed.new_allowance,
+	    date: changed.last_modified.getUTCDate()
+		+ ` ${date_long} `
+		+ changed.last_modified.getUTCFullYear(),
+	    post: changed.post,
+	    country: changed.country,
 	    mgt_number: 'idk...'
 	});
 	doc.render();
