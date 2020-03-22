@@ -29,17 +29,30 @@ async function submit_new_subscription(){
     let prev_temp = $('#choosePreviousTemplate');
     let post = $('#searchPosts')[0];
     let post_id = post[post.selectedIndex].getAttribute('data-COLARatesId');
-    
-    if(upload_temp[0].value){
-	await add_new_subscription_with_template_file(post_id, upload_temp);
+
+    try{
+	if(upload_temp[0].value){
+	    await add_new_subscription_with_template_file(post_id, upload_temp);
+	}
+	else if(prev_temp.selectedIndex != 0){
+	    await add_new_subscription_prev_template(post_id, prev_temp[0]);
+	}
+	post.selectedIndex = 0;
+	prev_temp[0].selectedIndex = 0;
+	upload_temp[0].value = "";
     }
-    else if(prev_temp.selectedIndex != 0){
-	await add_new_subscription_prev_template(post_id, prev_temp[0]);
+    catch(err){
+	console.log(err);
     }
     
-    show_spinner($('#subscriptionsContainer')[0]);
-    clear_user_subscriptions();
-    await fetch_user_subscription_list();
+    try{
+	show_spinner($('#subscriptionsContainer')[0]);
+	clear_user_subscriptions();
+	await fetch_user_subscription_list();
+    }
+    catch(err){
+	console.log(err);
+    }
     remove_spinner($('#subscriptionsContainer')[0]);
 }
 

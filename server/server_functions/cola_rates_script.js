@@ -166,12 +166,10 @@ function start_cola_rate_change_script(){
 	after_load('https://aoprals.state.gov/Web920/cola.asp', html => {
 	    const scraped = parse_cola_page(html);
 	    check_rate_changes(scraped, changed_rates)
-		.then(() => {
-		    update_changed_rates(changed_rates)
-			.then(() => {
-			    console.log(new Date() + ': COLA rates updated');
-			    emails.start_sending_emails(changed_rates);
-			})  
+		.then(() => update_changed_rates(changed_rates))
+	    	.then(() => {
+		    console.log(new Date() + ': COLA rates updated');
+		    emails.start_sending_emails(changed_rates);
 		})
 		.catch(err => {
 		    console.log(err)
@@ -307,4 +305,7 @@ function parse_cola_page(html){
 	    });
     })
     return context;
+}
+function format_string(str){
+    
 }

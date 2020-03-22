@@ -21,6 +21,7 @@ module.exports = {
 	let content = user.file;
 	let zip = new PizZip(content);
 	let doc = new DocxTemplater();
+
 	doc.loadZip(zip);
 	doc.setData({
 	    old_cola: changed.prev_allowance,
