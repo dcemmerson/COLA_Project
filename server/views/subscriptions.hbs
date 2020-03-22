@@ -1,4 +1,6 @@
-<h1 class="text-center mt-4"> Manage Subscriptions </h1>
+<div class="container d-flex justify-content-center">
+  <h1 class="h2 inlineBlock border-bottom px-2 pt-4 pb-2"> Manage Subscriptions </h1>
+</div>
 <div class="container-fluid">
   <div class="row mt-4">
     <!-- left col -->
@@ -8,7 +10,7 @@
     <div class="col-12 col-md-10 col-lg-8">
       <div class="row justify-content-around">
 	<div class="col-12 col-md-4 col-lg-3 mb-3">
-	  <h5 class="ml-4"><b>Email</b></h5>
+	  <h2 class="h5 ml-4"><b>Email</b></h2>
 	  <span class="ml-4">
 	    {{#if email}}
 	    {{this.email}}
@@ -18,7 +20,7 @@
 	  </span>
 	</div>
 	<div class="col-12 col-md-6 col-lg-5">
-	  <h5 class="ml-4"><b>Add Subscription</b></h5>
+	  <h2 class="h5 ml-4"><b>Add Subscription</b></h2>
 	  <form id="addPostForm">
 	    <div><p id="addSubscriptionMessageDiv"></p></div>
 	    <!-- 1. choose a post -->
@@ -65,7 +67,7 @@
 	<div class="col-12">
 	  <div class="mt-4 corner-border px-4" id="subscriptionsOuterContainer">
 	    <div class="row">
-	      <h5 id=""><b>Current Subscriptions</b></h5>
+	      <h2 class="h5" id=""><b>Current Subscriptions</b></h2>
 	    </div>
 	    <div id="subscriptionsContainer" class="row ml-1 mt-1">
 	      <table class="table" id="subscriptionsTable">
@@ -118,7 +120,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Preview</h5>
+        <h2 class="h5 modal-title">Preview</h2>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
