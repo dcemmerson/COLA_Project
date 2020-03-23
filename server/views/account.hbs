@@ -1,0 +1,72 @@
+<div class="container d-flex justify-content-center">
+  <h1 class="h2 inlineBlock border-bottom px-2 pt-4 pb-2"> My Account </h1>
+</div>
+<div class="container-fluid">
+  <div class="row mt-4">
+    <!-- left col -->
+    <div class="col-0 col-md-1 col-lg-2">
+    </div>
+    <!-- main center screen -->
+    <div class="col-12 col-md-10 col-lg-8">
+      <div class="row justify-content-around">
+	<div class="col-12 col-md-6 col-lg-4 mb-3">
+	  <div class="row">
+	    <div class="col">
+	      <h2 class="h5 ml-4"><b>Email</b></h2>
+	      <span class="ml-4">
+		{{#if email}}
+		{{this.email}}
+		{{else}}
+		(Error retrieving)
+		{{/if}}
+	      </span>
+	    </div>
+	  </div>
+	</div>
+	<div class="col-12 col-md-6 col-lg-5">
+	  <h2 class="h5 ml-4"><b>Change Password</b></h2>
+	  <form id="changePasswordForm" class="">
+	    <div class="row" id="message">
+	      <div class="col">
+		<h3 class="h6"><b>Password must contain the following:</b></h3>
+		<p id="letter" class="invalid">A <b>lowercase</b> letter</p>
+		<p id="capital" class="invalid">A <b>capital (uppercase)</b> letter</p>
+		<p id="number" class="invalid">A <b>number</b></p>
+		<p id="length" class="invalid">Minimum <b>8 characters</b></p>
+	      </div>
+	    </div>
+	    <div><p id="changePasswordMessageDiv"></p></div>
+	    <div class="">
+	      <!-- 1. old password -->
+	      <div class="form-group">
+		<label for="oldPassword" class="mt-2 mr-2">Old Password</label>
+		<input id="oldPassword" type="password" class="form-control" required>
+	      </div>
+	      <!-- 2. new password -->
+	      <div class="form-group">
+		<label for="newPassword" class="mt-2 mr-2">New Password</label>
+		<input id="newPassword" type="password" class="form-control"
+		       pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+		       data-toggle="popover" data-content="" required>
+	      </div>
+	      <!-- 3. new password re-enter -->
+	      <div class="form-group">
+		<label for="newPasswordRe" class="mt-2 mr-2">Re-enter New Password</label>
+		<input id="newPasswordRe" type="password" class="form-control"
+		       data-toggle="popover" data-content="" required>
+	      </div>
+	      <!-- 4. submit... -->
+	      <div class="" id="">
+		<button type="submit" id="submitNewPassword" class="btn btn-sm btn-primary">Submit</button>
+	      </div>
+	  </form>
+	  </div>	  
+	</div>
+      </div>
+      
+    </div>
+    <!-- right col -->
+    <div class="col-0 col-md-1 col-lg-2">
+    </div>
+  </div>
+</div>
