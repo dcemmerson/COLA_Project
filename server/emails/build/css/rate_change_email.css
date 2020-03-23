@@ -11,3 +11,8 @@ footer {
 .p {
     color: black;
 }
+
+.fileError {
+    color: red;
+    font-size: 10px;
+}

@@ -37,16 +37,19 @@ module.exports = {
 		mgt_number: 'idk...'
 	    });
 	    doc.render();
+	    user.fileError = false;
 	    return doc.getZip().generate({type: 'nodebuffer'});
 	}
 	catch(err){
-	    const badFilename = user.filename;
+	    user.fileError = true;
+	    
+	    user.errorFilename = user.filename;
 	    user.filename = 'error.txt';
 	    
-	    console.log(`Error: cannot manipulate template ${badFilename} owned by`
+	    console.log(`Error: cannot manipulate template ${user.errorFilename} owned by`
 			+ ` ${user.username} for ${changed.country} (${changed.post}).`);
-	    return new Buffer(
-		`The template file ${badFilename} uploaded by ${user.username},`
+	    return Buffer.from(
+		`The template file ${user.errorFilename} uploaded by ${user.username},`
 		    + ` for ${changed.country} (${changed.post}),`
 		    + ` is either of an unsupported format (not .doc or .docx),`
 		    + ` or is corrupted. Please login to ${HOST} to remedy problem.`

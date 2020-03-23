@@ -21,14 +21,27 @@
 	reported to the Office of Allowances as of the first Thursday of the
 	Pay Period.
 	<br><br>
-	  Current and historice COLA rates can be found on the Office of Allowance's
-	  publicly available website:
-	  <a href="https://aoprals.state.gov/Web920/cola.asp">
-	    https://aoprals.state.gov/Web920/cola.asp
-	  </a>
-	</p>
-	</div>
-	<br><br><br><br>
+	Current and historic COLA rates can be found on the Office of Allowance's
+	publicly available website:
+	<a href="https://aoprals.state.gov/Web920/cola.asp">
+	  https://aoprals.state.gov/Web920/cola.asp
+	</a>
+      </p>
+    </div>
+    <br><br><br><br>
+    {{#if fileError}}
+    <br><br>
+    <div>
+      <p class="fileError">
+	The template file {{errorFilename}} uploaded by {{username}},
+	for {{changed.country}} ({{changed.post}}),
+	is either of an unsupported format (not .doc or .docx),
+	or is corrupted. Please login to <a href="{{host}}/login">{{host}}/login</a> to remedy problem.
+	It is recommended that you unsubscribe from this post
+	and create a new subscription to this post with a new template file.
+      </p>
+    </div>
+    {{/if}}
     <footer>
       <p>
 	{{username}} is subscribed to receive COLA rate changes related

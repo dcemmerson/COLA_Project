@@ -122,6 +122,8 @@ function send_email(user, changed, file){
 			year: changed.last_modified.getUTCFullYear(),
 			host: HOST,
 			jwt: token,
+			errorFilename: user.errorFilename,
+			fileError: user.fileError,
 			style: ['rate_change_email.css']
 		    }
 		})
