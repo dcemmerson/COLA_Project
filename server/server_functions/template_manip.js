@@ -1,5 +1,7 @@
+require('dotenv').config();
 const DocxTemplater = require('docxtemplater');
 const PizZip = require('pizzip');
+const HOST = process.env.HOST || 'http://localhost:10000';
 
 module.exports = {
     /* name: manip_template
@@ -16,24 +18,40 @@ module.exports = {
        description: 
     */
     manip_template: function(user, changed){
-	const date_long = new Intl.DateTimeFormat('en-US', {month: 'short'})
-	      .format(changed.last_modified);
-	let content = user.file;
-	let zip = new PizZip(content);
-	let doc = new DocxTemplater();
+	try{
+	    const date_long = new Intl.DateTimeFormat('en-US', {month: 'short'})
+		  .format(changed.last_modified);
+	    let content = user.file;
+	    let zip = new PizZip(content);
+	    let doc = new DocxTemplater();
 
-	doc.loadZip(zip);
-	doc.setData({
-	    old_cola: changed.prev_allowance,
-	    new_cola: changed.new_allowance,
-	    date: changed.last_modified.getUTCDate()
-		+ ` ${date_long} `
-		+ changed.last_modified.getUTCFullYear(),
-	    post: changed.post,
-	    country: changed.country,
-	    mgt_number: 'idk...'
-	});
-	doc.render();
-	return doc.getZip().generate({type: 'nodebuffer'});;
+	    doc.loadZip(zip);
+	    doc.setData({
+		old_cola: changed.prev_allowance,
+		new_cola: changed.new_allowance,
+		date: changed.last_modified.getUTCDate()
+		    + ` ${date_long} `
+		    + changed.last_modified.getUTCFullYear(),
+		post: changed.post,
+		country: changed.country,
+		mgt_number: 'idk...'
+	    });
+	    doc.render();
+	    return doc.getZip().generate({type: 'nodebuffer'});
+	}
+	catch(err){
+	    const badFilename = user.filename;
+	    user.filename = 'error.txt';
+	    
+	    console.log(`Error: cannot manipulate template ${badFilename} owned by`
+			+ ` ${user.username} for ${changed.country} (${changed.post}).`);
+	    return new Buffer(
+		`The template file ${badFilename} uploaded by ${user.username},`
+		    + ` for ${changed.country} (${changed.post}),`
+		    + ` is either of an unsupported format (not .doc or .docx),`
+		    + ` or is corrupted. Please login to ${HOST} to remedy problem.`
+		    + `\n\nIt is recommended that you unsubscribe from this post`
+		    + ` and create a new subscription to this post with a new template file.`);
+	}
     }
 }
