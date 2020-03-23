@@ -13,21 +13,10 @@ function update_password(){
 }
 
 function password_validation(){
+    var popoverField = $('#newPassword');
     var newPassword = $('#newPassword')[0];
-/*    var letter = document.getElementById('letter');
-    var capital = document.getElementById('capital');
-    var number = document.getElementById('number');
-    var length = document.getElementById('length');
-    var message = document.getElementById('message');
-*/
-/*    newPassword.addEventListener('focus', () => {
-//	message.style.display = 'block';
-    })
-    newPassword.addEventListener('blur', () => {
-//	message.style.display = 'none';
-    })
-*/
-    //    newPassword.addEventListener('keyup', () => {
+    var newPasswordRe = $('#newPasswordRe')[0];
+    
     let lowerCase = /[a-z]/g;
     let upperCase = /[A-Z]/g;
     let numbers = /[0-9]/g;
@@ -53,15 +42,20 @@ function password_validation(){
 	newPassword.setAttribute('data-content',
 				 'Must contain at least 8 characters');
     }
+    else if(newPassword.value !== newPasswordRe.value){
+	popoverField = $('#newPasswordRe');
+	newPasswordRe.setAttribute('data-content',
+				   'Password mismatch');
+    }
     else{
 	validPassword = true;
     }
 
     if(!validPassword){
-	$('#newPassword').popover('show');
-	setTimeout(() => {
-	    $('#newPassword').popover('hide');
-	}, 3000);
+	popoverField.popover('show');
+	setTimeout((popfie) => {
+	    popfie.popover('dispose');
+	}, 3000, popoverField);
     }
 	
     return validPassword;
