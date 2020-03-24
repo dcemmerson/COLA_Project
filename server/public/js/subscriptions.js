@@ -115,8 +115,7 @@ function validate_subscription(){
 	    buPop.popover('dispose');
 	}, 3500, pop)
     }
-//    return valid;
-    return true;
+    return valid;
 }
 
 function set_error_border(el){
