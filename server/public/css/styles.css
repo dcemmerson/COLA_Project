@@ -54,3 +54,9 @@
 .inlineBlock {
     display: inline-block;
 }
+.normalBSBorder {
+    border: 1px solid #ced4da;
+}
+.errorBorder {
+    border: 1px solid red;
+}

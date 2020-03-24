@@ -46,9 +46,7 @@ function show_spinner(element){
 }
 function remove_spinner(element){
     try{
-//	element.removeChild(element.getElementsByClassName('i fa fa spinner fa-spin spinner')[0]);
 	let spinners = element.getElementsByClassName('fa fa-spinner fa-spin spinner');
-//	spinners.forEach(el => element.removeChild(el));
 	
 	for(let i = 0; i < spinners.length; i++){
 	    element.removeChild(spinners[i]);	
@@ -63,14 +61,66 @@ function remove_spinner(element){
 function new_subscription_success(post_id){
     let msg_div = document.getElementById('addSubscriptionMessageDiv');
 
+    let pop = $('#newSubscriptionPopover');
+    
     for (let [num, option] of Object.entries($('#searchPosts option'))) {
 	if(option.getAttribute('data-COLARatesId') == post_id){
-	    msg_div.innerText = 'New subscription created: '
-		+ option.innerText;
-	    msg_div.setAttribute('class', 'successMessage');
-	    msg_div.hidden = false;
-	    hidden_timer(msg_div)
+	    pop[0].setAttribute('data-content', `New subscription added: ${option.innerText}`);
+	    pop.popover('show');
+	    $('.popover').css('border-color', 'green');
+	    
+	    setTimeout(buPop => {
+		buPop.popover('dispose');
+	    }, 3500, pop)
 	    return;
 	}
     }
+}
+
+function validate_subscription(){
+    let valid = false;
+    const posts = document.getElementById('searchPosts');
+    const upTemp = document.getElementById('uploadTemplate');
+    const prevTemp = document.getElementById('choosePreviousTemplate');
+    let buttonPop = document.getElementById('newSubscriptionPopover');
+    
+    let reg = /(\.doc|\.docx)$/i;
+    
+    if(posts.selectedIndex === 0){
+	buttonPop.setAttribute('data-content', '1. Must select a post.');
+	set_error_border(posts);
+    }
+    else if(!upTemp.value && prevTemp.selectedIndex === 0){
+	buttonPop.setAttribute('data-content', '2. Must choose a template.');
+	set_error_border(upTemp);
+	set_error_border(prevTemp);
+    }
+    else if(!reg.exec(upTemp.value)
+	    && !reg.exec(prevTemp[prevTemp.selectedIndex].value)){
+		//check if ending of file is not .doc or .doc
+	buttonPop.setAttribute('data-content', 'Unsupported file type');
+	if(upTemp.value) set_error_border(upTemp);
+	else if(prevTemp.value) set_error_border(prevTemp);
+    }
+    else{ //otherwise the post/file combo looks fine to upload
+	valid = true;
+    }
+
+    if(!valid){
+	let pop = $('#newSubscriptionPopover');
+	pop.popover('show');
+	$('.popover').css('border-color', 'red');
+	
+	setTimeout(buPop => {
+	    buPop.popover('dispose');
+	}, 3500, pop)
+    }
+    return valid;
+}
+
+function set_error_border(el){
+    el.classList.add('errorBorder');
+    setTimeout(el => {
+	el.classList.remove('errorBorder');
+    }, 3500, el)
 }

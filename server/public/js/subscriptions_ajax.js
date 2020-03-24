@@ -18,7 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#submitNewSubscription').on('click', async e => {
 	e.preventDefault();
 	show_spinner($('#addNewSubscriptionButtons')[0]);
-	await submit_new_subscription();
+	if(validate_subscription())
+	    await submit_new_subscription();
 	remove_spinner($('#addNewSubscriptionButtons')[0]);
     });
     
@@ -44,16 +45,20 @@ async function submit_new_subscription(){
     catch(err){
 	console.log(err);
     }
-    
+
+    //keep this in a separate try/catch statement. Will ensure if there is
+    //an error at some point in the above try catch, the subscription list
+    //will remain accurate, even if we deleted the subscription on server
+    //and at some later point something unexpectedly threw an error.
     try{
-	show_spinner($('#subscriptionsContainer')[0]);
+	show_spinner($('#subscriptionsContainerSpinner')[0]);
 	clear_user_subscriptions();
 	await fetch_user_subscription_list();
     }
     catch(err){
 	console.log(err);
     }
-    remove_spinner($('#subscriptionsContainer')[0]);
+    remove_spinner($('#subscriptionsContainerSpinner')[0]);
 }
 
 async function add_new_subscription_prev_template(post_id, prev_temp){     
@@ -72,12 +77,23 @@ async function add_new_subscription_prev_template(post_id, prev_temp){
 	
     }
     catch(err) {
-	let error_div = document.getElementById('addSubscriptionMessageDiv');
+	let pop = $('#newSubscriptionPopover');
+	pop[0].setAttribute('data-content', 'Error creating new subscription');
+	pop.popover('show');
+	$('.popover').css('border-color', 'red');
+	
+	setTimeout(buPop => {
+	    buPop.popover('dispose');
+	}, 3500, pop)
+
+/*	let error_div = document.getElementById('addSubscriptionMessageDiv');
 	error_div.hidden = false;
 	error_div.innerText = "Error creating new subscription";
 	error_div.setAttribute('class', 'errorMessage');
 	hidden_timer(error_div)
+*/
 	console.log(err);
+
 	return;
     }
     new_subscription_success(post_id);
@@ -101,11 +117,21 @@ async function add_new_subscription_with_template_file(post_id, upload_temp){
 	})
     }
     catch(err) {
-	let error_div = document.getElementById('addSubscriptionMessageDiv');
+	let pop = $('#newSubscriptionPopover');
+	pop[0].setAttribute('data-content', 'Error creating new subscription');
+	pop.popover('show');
+	$('.popover').css('border-color', 'red');
+	
+	setTimeout(buPop => {
+	    buPop.popover('dispose');
+	}, 3500, pop)
+
+/*	let error_div = document.getElementById('addSubscriptionMessageDiv');
 	error_div.hidden = false;
 	error_div.innerText = "Error uploading template";
 	error_div.setAttribute('class', 'errorMessage');
-	hidden_timer(error_div)
+	hidden_timer(error_div);
+*/
 	console.log(err);
 	return;
     }

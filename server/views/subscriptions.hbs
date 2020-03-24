@@ -36,12 +36,12 @@
 	      </div>
 	      <!-- 2 upload template -->
 	      <div class="mt-3">
-		<label for="uploadTemplate" class="">2. Choose a template (.docx)</label>
+		<label for="uploadTemplate" class="">2. Choose a template (doc/docx)</label>
 		<input type="file" accept=".doc, .docx" id="uploadTemplate" class="btn btn-sm ml-4 input-max-width" placeholder="Upload a template">
 	      </div>
 	      <!-- Or use one of my other templates... -->
 	      <div class="mt-2">
-		<label for="uploadTemplate" class="ml-2">...or reuse one of my previous templates...</label>
+		<label for="uploadTemplate" class="ml-2">...or reuse a previous templates...</label>
 		<select id="choosePreviousTemplate" class="form-control ml-4 input-max-width">
 		  <option></option>
 		  {{#each templates}}
@@ -54,7 +54,10 @@
 		<label for="uploadTemplate" class="">3. Subscribe </label>
 		<!--		<button id="previewNewSubscription" class="btn btn-sm btn-secondary ml-3">Preview</button>
 		  -->
-		<button id="submitNewSubscription" class="ml-4 btn btn-sm btn-primary">Submit</button>
+		<span id="newSubscriptionPopover" data-container="body" data-toggle="popover"
+		     data-placement="right" data-selector="test">
+		  <button id="submitNewSubscription" class="ml-4 btn btn-sm btn-primary">Submit</button>
+		</span>
 	      </div>
 	  </form>
 	  
@@ -82,27 +85,11 @@
 		</thead>
 		
 		<tbody class="subscriptions" id="subscriptionTbody">
-		  {{#if subscription_list}}
-		  {{#each subscription_list}}
-		  <tr data-subscriptionId="{{this.subscriptionId}}">
-		    <td>{{this.post}}</td>
-		    <td>{{this.country}}</td>
-		    <td>{{this.allowance}}</td>
-		    <td>{{this.last_modified}}</td>
-		    <td>
-		      <button class="btn btn-sm btn-danger" onClick="delete_subscription()">
-			<span class="button">Remove</span>
-		      </button>
-		    </td>
-		  </tr>
-		  {{/each}}
+
 		</tbody>
 	      </table>
-	      {{else}}
-</tbody>
-</table>
+	      <div id="subscriptionsContainerSpinner"></div>
 	      <i class="fa fa-spinner fa-spin spinner"></i>
-	      {{/if}}
 	    </div>
 	  </div>
 	</div>
