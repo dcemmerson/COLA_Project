@@ -27,6 +27,7 @@ module.exports = function(app,  mysql){
        to GET cola rates webpage, followed by processing the data obtained. This
        route will be removed in near future.
     */
+    /*
     app.get(`/GET_cola_rates`, (req, res) => {
 	var context = {};
 	
@@ -40,6 +41,7 @@ module.exports = function(app,  mysql){
 		})
 	});
     });
+*/
     /********************* MARKED FOR REMOVAL *******************/
     /* name: UPDATE_cola_rates
        preconditions: None
@@ -49,7 +51,7 @@ module.exports = function(app,  mysql){
        to UPDATE cola rates webpage, followed by processing the data obtained. This
        route will be removed in near future.
     */
-    app.get(`/UPDATE_cola_rates`, (req, res) => {
+/*    app.get(`/UPDATE_cola_rates`, (req, res) => {
 	let changed_rates = [];
 	after_load('https://aoprals.state.gov/Web920/cola.asp', html => {
 	    const scraped = crs.parse_cola_page(html);
@@ -67,7 +69,7 @@ module.exports = function(app,  mysql){
 		})
 	});
     });
-
+*/
     /******************* Subscription page ajax routes *********************/
     app.get('/get_user_subscription_list', /*db.authenticationMiddleware(),*/
 	    function (req, res) {
@@ -88,40 +90,47 @@ module.exports = function(app,  mysql){
     app.post('/add_new_subscription_with_template_file', /*db.authenticationMiddleware(),*/ upload.single('upload'),
 	     function (req, res) {
 		 const temp_user_id = 1;
-		 db.insert_new_subscription_with_template_file(temp_user_id, req.body.post_id,
-							       req.file.originalname,
-							       req.file.buffer)
+		 var context = {};
+		 
+		 misc.validate_file(req.file, context)
+		     .then(() => db.insert_new_subscription_with_template_file(temp_user_id,
+									       req.body.post_id,
+									       req.file.originalname,
+									       req.file.buffer))
 		     .then(() => {
-			 console.log("sending success");
-			 res.send("Success");
+			 context.success = true;
+			 res.send(context);
 		     })
 		     .catch(err => {
-			 console.log(err);
-			 res.send("Error uploading file");
+			 if(err) console.log(err);
+			 context.success = false;
+			 context.error = err;
+			 res.send(context);
 		     })
 	     });
     app.post('/add_new_subscription_with_prev_template', /*db.authenticationMiddleware(),*/
 	     function (req, res) {
+		 var context = {};
 		 const temp_user_id = 1;
-		 console.log("post_id = " + req.body.post_id);
-		 console.log("tempalte id = " + req.body.template_id);
+
 		 db.insert_new_subscription_with_prev_template(temp_user_id,
 							       req.body.post_id,
 							       req.body.template_id)
 		     .then(() => {
-			 console.log("success add new sub");
-			 res.send("Success");
+			 context.success = true;
+			 res.send(context);
 		     })
 		     .catch(err => {
+			 context.success = false;
+			 context.error = err;
 			 console.log(err);
-			 res.send("Error uploading file");
+			 res.send(context);
 		     })
 	     });
     app.post('/delete_subscription', /*db.authenticationMiddleware(),*/
 	     function (req, res) {
 		 const temp_user_id = 1;
 		 var context = {};
-		 console.log(`subs id = ${req.body.subscriptionId}`);
 		 
 		 db.delete_user_subscription(req.body.subscriptionId, temp_user_id)
 		     .then(() => {

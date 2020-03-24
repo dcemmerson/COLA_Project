@@ -33,17 +33,37 @@ async function submit_new_subscription(){
 
     try{
 	if(upload_temp[0].value){
-	    await add_new_subscription_with_template_file(post_id, upload_temp);
+	    var result = await add_new_subscription_with_template_file(post_id, upload_temp);
 	}
 	else if(prev_temp.selectedIndex != 0){
-	    await add_new_subscription_prev_template(post_id, prev_temp[0]);
+	    var result = await add_new_subscription_prev_template(post_id, prev_temp[0]);
 	}
-	post.selectedIndex = 0;
-	prev_temp[0].selectedIndex = 0;
-	upload_temp[0].value = "";
+
+	if(result.success){
+	    post.selectedIndex = 0;
+	    prev_temp[0].selectedIndex = 0;
+	    upload_temp[0].value = "";
+	    new_subscription_success(post_id);
+	}
+	else if(result.error)
+	    throw new Error(result.error); //custom error originating from server
+	else
+	    throw result; //something else went wrong
     }
     catch(err){
-	console.log(err);
+	let pop = $('#newSubscriptionPopover');
+	if(!result.success){
+	    console.log(err);
+	    pop[0].setAttribute('data-content', result.errorMessage);
+	}
+	else
+	    pop[0].setAttribute('data-content', 'Unknown error creating new subscription.');
+	pop.popover('show');
+	$('.popover').css('border-color', 'red');
+	
+	setTimeout(buPop => {
+	    buPop.popover('dispose');
+	}, 3500, pop)
     }
 
     //keep this in a separate try/catch statement. Will ensure if there is
@@ -67,7 +87,7 @@ async function add_new_subscription_prev_template(post_id, prev_temp){
 	context.post_id = post_id;
 	context.template_id = prev_temp[prev_temp.selectedIndex].getAttribute('data-templateId');
 	
-	let response = await fetch('/add_new_subscription_with_prev_template', {
+	var response = await fetch('/add_new_subscription_with_prev_template', {
 	    method: 'POST',
 	    headers: {
 		'Content-Type': 'application/JSON'
@@ -75,28 +95,12 @@ async function add_new_subscription_prev_template(post_id, prev_temp){
 	    body: JSON.stringify(context)
 	})
 	
+	return await response.json();
     }
     catch(err) {
-	let pop = $('#newSubscriptionPopover');
-	pop[0].setAttribute('data-content', 'Error creating new subscription');
-	pop.popover('show');
-	$('.popover').css('border-color', 'red');
-	
-	setTimeout(buPop => {
-	    buPop.popover('dispose');
-	}, 3500, pop)
-
-/*	let error_div = document.getElementById('addSubscriptionMessageDiv');
-	error_div.hidden = false;
-	error_div.innerText = "Error creating new subscription";
-	error_div.setAttribute('class', 'errorMessage');
-	hidden_timer(error_div)
-*/
 	console.log(err);
-
-	return;
+	return err;
     }
-    new_subscription_success(post_id);
 }
 
 async function add_new_subscription_with_template_file(post_id, upload_temp){
@@ -111,31 +115,17 @@ async function add_new_subscription_with_template_file(post_id, upload_temp){
 	fd.append('upload', upload_temp[0].files[0]);
 	fd.append('post_id', post_id);
 	
-	let response = await fetch('/add_new_subscription_with_template_file', {
+	var response = await fetch('/add_new_subscription_with_template_file', {
 	    method: 'POST',
 	    body: fd
 	})
-    }
-    catch(err) {
-	let pop = $('#newSubscriptionPopover');
-	pop[0].setAttribute('data-content', 'Error creating new subscription');
-	pop.popover('show');
-	$('.popover').css('border-color', 'red');
 	
-	setTimeout(buPop => {
-	    buPop.popover('dispose');
-	}, 3500, pop)
-
-/*	let error_div = document.getElementById('addSubscriptionMessageDiv');
-	error_div.hidden = false;
-	error_div.innerText = "Error uploading template";
-	error_div.setAttribute('class', 'errorMessage');
-	hidden_timer(error_div);
-*/
-	console.log(err);
-	return;
+	return await response.json();
     }
-    new_subscription_success(post_id);
+    catch(err) {	
+	console.log(err);
+	return err;
+    }
 }
 
 
@@ -165,7 +155,6 @@ function preview_new_subscription(){
     }
     console.log(template);
     //	$('#previewModal').modal('toggle');
-
 }
 
 async function fetch_user_subscription_list(){
@@ -208,7 +197,7 @@ async function fetch_user_subscription_list(){
 	    
 	    tbody.appendChild(tr);
 	})
-	remove_spinner($('#subscriptionsContainer')[0]);
+	remove_spinner($('#subscriptionsContainerSpinner')[0]);
     }
     catch(err) {
 	console.log(err);
