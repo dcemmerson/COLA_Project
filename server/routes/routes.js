@@ -14,19 +14,28 @@ module.exports = function (app) {
 
     app.get(`/account`, /* db.authenticationMiddleware(), */ function (req, res) {
 	let context = {};
+	let awaitPromises = [];
+	const temp_user_id = 1;
 	context.style = ['styles.css', 'font_size.css', 'account.css'];
-	context.script = ['account.js'];
+	context.script = ['account.js', 'account_ajax.js', 'utility.js'];
 	context.title = 'My Account';
 	context.account = true; //used for navivation.hbs
-	res.render('account', context);
+	
+	awaitPromises.push(
+	    db.get_user_email(temp_user_id)
+		.then(res => context.email = res[0].email)
+		.catch(err => console.log(err))
+	);
+	Promise.all(awaitPromises)
+	    .then(() => res.render('account', context))
     });
     
     app.get(`/subscriptions`, /*db.authenticationMiddleware(),*/ function (req, res) {
 	const temp_user_id = 1;
-	let await_promises = [];
+	let awaitPromises = [];
 	let context = {post_info: [], templates: []};
 	
-	await_promises.push(
+	awaitPromises.push(
 	    db.get_list_of_posts()
 		.then(posts => posts.forEach(post => {
 		    context.post_info.push(post);
@@ -46,9 +55,11 @@ module.exports = function (app) {
 	context.style = ['styles.css', 'font_size.css', 'subscriptions.css'];
 	context.title = 'My Subscriptions';
 	context.subscriptions = true; //used for navivation.hbs
-	context.script = ['subscriptions.js', 'subscriptions_ajax.js'];
+	context.script = ['subscriptions.js',
+			  'subscriptions_ajax.js',
+			  'utility.js'];
 	
-	Promise.all(await_promises)
+	Promise.all(awaitPromises)
 	    .then(() => res.render('subscriptions', context))
     });
 
@@ -176,8 +187,13 @@ module.exports = function (app) {
 				var email = req.body.email;
 				console.log(email);
 				var message=db.check_email(email,res, req);
-				if (message.length==0) 
-		{
+
+			    /////////////////////////////////////////////////
+			    // i think this if statement needs to be .then chained,
+			    // otherwise it's never going to return true
+			    if (message.length==0) 
+			    {
+
 			res.render('reset', {
 					error: "Email does not exist"
 				});

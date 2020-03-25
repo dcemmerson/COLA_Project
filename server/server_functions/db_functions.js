@@ -2,7 +2,7 @@ var passport = require('passport');
 var bcrypt = require('bcrypt');
 var LocalStrategy = require('passport-local').Strategy;
 
-require('../server.js');
+require('../server.js'); //seems like this is a bit of a circular reference?
 const saltRounds = 10;
 
 var mysql = require('../dbcon.js');
@@ -323,17 +323,6 @@ module.exports = {
 		.catch(err => console.log(err))
 	});
     },
-
-    /*temp for testing file upload - take out after 3/13*/
-/*    get_template: function(user_id){
-	return new Promise((resolve, reject) => {
-	    const sql = `SELECT * FROM template WHERE userId=?`;
-	    const values = [user_id];
-	    queryDB(sql, values, mysql)
-		.then(res => resolve(res[1]))
-		.catch(err => console.log(err))	    
-	});
-    },*/
     /*******************************************************************/
     /****************** END SUBSCRIPTION PAGE QUERIES ******************/
     /*******************************************************************/
@@ -341,7 +330,6 @@ module.exports = {
     /*******************************************************************/
     /******************** UNSUBSCRIBETOK PAGE QUERIES ******************/
     /*******************************************************************/
-    /*temp for testing file upload - take out after 3/13*/
     get_number_user_redundant_subscriptions: function(userId, postId){
 	return new Promise((resolve, reject) => {
 	    const sql = `SELECT COUNT(u.id) AS numberSubscriptions`
@@ -355,12 +343,42 @@ module.exports = {
 		.then(res => resolve(res[0]))
 		.catch(err => console.log(err))	    
 	});
-    }
+    },
     /*******************************************************************/
     /****************** END UNSUBSCRIBETOK PAGE QUERIES ****************/
     /*******************************************************************/
-
-
+    
+    /*******************************************************************/
+    /*********************** ACCOUNT PAGE QUERIES **********************/
+    /*******************************************************************/
+    get_user_from_id: function(userId){
+	return new Promise((resolve, reject) => {
+	    const sql = `SELECT email, password, created, modified`
+		  + ` FROM user WHERE id=?`;
+	    const values = [userId];
+	    queryDB(sql, values, mysql)
+		.then(res => resolve(res[0]))
+		.catch(err => console.log(err))	    
+	});
+    },
+    update_user_password: function(userId, hashedPwd){
+	return new Promise((resolve, reject) => {
+	    const sql = `UPDATE user SET password=? WHERE id=?`;
+	    const values = [hashedPwd, userId];
+	    queryDB(sql, values, mysql)
+		.then(res => {
+		    if(res.affectedRows == 1) resolve();
+		    else reject();
+		})
+		.catch(err => reject(err));
+	    
+	})
+    }
+    
+    /*******************************************************************/
+    /********************** END ACCOUNT PAGE QUERIES *******************/
+    /*******************************************************************/
+    
 }
 
 passport.serializeUser(function (user_id, done) {

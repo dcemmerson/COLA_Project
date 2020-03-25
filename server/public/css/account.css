@@ -58,3 +58,12 @@ input[type=submit] {
   left: -35px;
   content: "✖";
 } 
+#passwordFormContainer {
+}
+
+.hidden {
+    display: none;
+}
+.shown {
+    display: block;
+}

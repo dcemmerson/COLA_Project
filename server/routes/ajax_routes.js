@@ -145,7 +145,29 @@ module.exports = function(app,  mysql){
 		     })
 	     });
     /****************** End subscription page ajax routes *******************/
+    /*********************** Account page ajax routes ***********************/
+    app.post('/update_password', function (req, res) {
+	const tempUserId = 1;
+	var context = {};
+	
+	misc.validate_password(tempUserId, req.body.oldPassword,
+			       req.body.newPassword, req.body.newPasswordRe, context)
+	    .then(() => misc.hash_password(req.body.newPassword))
+	    .then(hashedPwd => db.update_user_password(tempUserId, hashedPwd))
+	    .then(() => {
+		context.passwordUpdated = true;
+		context.successMessage = 'Password changed';
+		res.send(context);
+	    })
+	    .catch(err => {
+		if(err) console.log(err);
 
+		context.passwordUpdated = false;
+		res.send(context);
+	    })
+    });
+    
+    /********************* End Account page ajax routes *********************/
     /****************** AJAX routes coming from email links *****************/
     app.get('/unsubscribetok', function (req, res) {
 	const temp_user_id = 1;
@@ -200,5 +222,3 @@ module.exports = function(app,  mysql){
     });
     /**************** End AJAX routes coming from email links ****************/
 }
-
-
