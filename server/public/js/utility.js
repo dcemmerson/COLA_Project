@@ -21,3 +21,9 @@ function remove_spinner(element){
 	console.log(err);
     }
 }
+function show_popover(el, time=5000){
+    el.popover('show');
+    setTimeout((popel) => {
+	popel.popover('dispose');
+    }, time, el);
+}

@@ -14,7 +14,8 @@ function show_password_form(){
     let passwordBtn = document.getElementById('changePasswordBtnDiv');
     let passwordForm = document.getElementById('passwordFormContainer');
     
-    passwordBtn.style.visibility = 'hidden';
+    passwordBtn.classList.add('hidden');
+    passwordBtn.classList.remove('shown');
 
     passwordForm.classList.remove('hidden');
     passwordForm.classList.add('shown');
@@ -25,14 +26,26 @@ function hide_password_form(){
 
     passwordForm.classList.remove('shown');
     passwordForm.classList.add('hidden');
-    passwordBtn.style.visibility = 'visible';
+    passwordBtn.classList.add('show');
+    passwordBtn.classList.remove('hidden');
 
 }
 async function update_password(){
-    let context = await submit_password();
-
-    //check if server found any issues with password
-    invalid_password_server(context);
+    try{
+	$('#submitNewPassword')[0].disabled = true;
+	show_spinner($('#submitBtnDiv')[0]);
+	let context = await submit_password();
+	
+	//check if server found any issues with password
+	invalid_password_server(context);
+    }
+    catch(err){
+	console.log(err);
+	$('#submitNewPassword')[0].setAttribute('data-content', 'Something went wrong');
+	show_popover($('#submitNewPassword'), 4000);
+    }
+    remove_spinner($('#submitBtnDiv')[0]);
+    $('#submitNewPassword')[0].disabled = false;
 }
 
 /* name: valid_password
@@ -90,10 +103,7 @@ function valid_password(){
     }
 
     if(!validPassword){
-	popoverField.popover('show');
-	setTimeout((popfie) => {
-	    popfie.popover('dispose');
-	}, 3000, popoverField);
+	show_popover(popoverField, 4000);
     }
 	
     return validPassword;
@@ -142,9 +152,6 @@ function invalid_password_server(context){
 	    popoverField = $('#oldPassword');
 	}
     }   
-
-    popoverField.popover('show');
-    setTimeout((popfie) => {
-	popfie.popover('dispose');
-    }, 3000, popoverField);
+    show_popover(popoverField, 4000);
 }
+
