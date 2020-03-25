@@ -39,17 +39,12 @@ function clear_user_subscriptions(){
 function new_subscription_success(post_id){
     let msg_div = document.getElementById('addSubscriptionMessageDiv');
 
-    let pop = $('#newSubscriptionPopover');
+    let pop = $('#submitNewSubscription');
     
     for (let [num, option] of Object.entries($('#searchPosts option'))) {
 	if(option.getAttribute('data-COLARatesId') == post_id){
 	    pop[0].setAttribute('data-content', `New subscription added: ${option.innerText}`);
-	    pop.popover('show');
-	    $('.popover').css('border-color', 'green');
-	    
-	    setTimeout(buPop => {
-		buPop.popover('dispose');
-	    }, 3500, pop)
+	    show_popover(pop, 4000, 'green')
 	    return;
 	}
     }
@@ -60,7 +55,7 @@ function validate_subscription(){
     const posts = document.getElementById('searchPosts');
     const upTemp = document.getElementById('uploadTemplate');
     const prevTemp = document.getElementById('choosePreviousTemplate');
-    let buttonPop = document.getElementById('newSubscriptionPopover');
+    let buttonPop = document.getElementById('submitNewSubscription');
     
     let reg = /(\.doc|\.docx)$/i;
     
@@ -85,20 +80,9 @@ function validate_subscription(){
     }
 
     if(!valid){
-	let pop = $('#newSubscriptionPopover');
-	pop.popover('show');
-	$('.popover').css('border-color', 'red');
-	
-	setTimeout(buPop => {
-	    buPop.popover('dispose');
-	}, 3500, pop)
+	let pop = $('#submitNewSubscription');
+	show_popover(pop, 4000, 'red');
     }
     return valid;
 }
 
-function set_error_border(el){
-    el.classList.add('errorBorder');
-    setTimeout(el => {
-	el.classList.remove('errorBorder');
-    }, 3500, el)
-}

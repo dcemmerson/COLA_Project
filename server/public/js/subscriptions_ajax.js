@@ -17,9 +17,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     $('#submitNewSubscription').on('click', async e => {
 	e.preventDefault();
+	$('#submitNewSubscription')[0].disabled = true;
 	show_spinner($('#addNewSubscriptionButtons')[0]);
+
 	if(validate_subscription())
 	    await submit_new_subscription();
+	
+	$('#submitNewSubscription')[0].disabled = false;
 	remove_spinner($('#addNewSubscriptionButtons')[0]);
     });
     
@@ -51,19 +55,15 @@ async function submit_new_subscription(){
 	    throw result; //something else went wrong
     }
     catch(err){
-	let pop = $('#newSubscriptionPopover');
+	let pop = $('#submitNewSubscription');
 	if(!result.success){
 	    console.log(err);
 	    pop[0].setAttribute('data-content', result.errorMessage);
 	}
 	else
-	    pop[0].setAttribute('data-content', 'Unknown error creating new subscription.');
-	pop.popover('show');
-	$('.popover').css('border-color', 'red');
-	
-	setTimeout(buPop => {
-	    buPop.popover('dispose');
-	}, 3500, pop)
+	    pop[0].setAttribute('data-content', 'Something went wrong.');
+
+	show_popover(pop, 4000, 'red');
     }
 
     //keep this in a separate try/catch statement. Will ensure if there is

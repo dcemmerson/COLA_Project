@@ -21,9 +21,22 @@ function remove_spinner(element){
 	console.log(err);
     }
 }
-function show_popover(el, time=5000){
+
+/* name: show_popover
+   preconditions: el is a jquery object containing the element on which to show popover
+   postconditions: popover with borderColor shown for time milliseconds
+*/
+function show_popover(el, time=5000, borderColor='rgba(0, 0, 0, 0.2'){
+    $('.popover').css('border-color', borderColor);
     el.popover('show');
     setTimeout((popel) => {
 	popel.popover('dispose');
     }, time, el);
+}
+
+function set_error_border(el){
+    el.classList.add('errorBorder');
+    setTimeout(el => {
+	el.classList.remove('errorBorder');
+    }, 3500, el)
 }
