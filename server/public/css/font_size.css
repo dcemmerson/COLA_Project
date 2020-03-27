@@ -47,6 +47,7 @@
 @media screen and (min-width: 600px){
     h1 {
 	font-size: 2.2em;
+	display: block;
     }
     h3 {
 	font-size: 1.6em;
@@ -91,6 +92,7 @@
 @media screen and (min-width: 768px){
     h1 {
 	font-size: 2.6em;
+	display: block;
     }
     h3 {
 	font-size: 2.0em;
@@ -135,6 +137,7 @@
 @media screen and (min-width: 992px){
     h1 {
 	font-size: 3.0em;
+	display: block;
     }
     h3 {
 	font-size: 2.2em;

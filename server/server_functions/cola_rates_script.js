@@ -144,9 +144,9 @@ module.exports = {
 	    midnight = new Date(Date.UTC(today.getFullYear(),
 					 today.getMonth(),
 					 today.getDate(),
-//					 today.getHours() + 7, today.getMinutes(),
-//					 today.getSeconds() + 1, 0));
-						 0, 0, 0, 0));
+					 today.getHours() + 7, today.getMinutes(),
+					 today.getSeconds() + 1, 0));
+//						 0, 0, 0, 0));
 	
 	schedule.scheduleJob(midnight, () => {
 	    start_cola_rate_change_script();
@@ -166,20 +166,18 @@ function start_cola_rate_change_script(){
 	after_load('https://aoprals.state.gov/Web920/cola.asp', html => {
 	    const scraped = parse_cola_page(html);
 	    check_rate_changes(scraped, changed_rates)
-		.then(() => {
-		    update_changed_rates(changed_rates)
-			.then(() => {
-			    console.log(new Date() + ': COLA rates updated');
-			    emails.start_sending_emails(changed_rates);
-			})  
+		.then(() => update_changed_rates(changed_rates))
+	    	.then(() => {
+		    console.log(new Date() + ': COLA rates updated');
+		    emails.start_sending_emails(changed_rates);
 		})
 		.catch(err => {
 		    console.log(err)
 		})
 	});
     },
-		       6000, 'update_cola_rates');
-//		       24 * 60 * 60 * 1000, 'update_cola_rates');
+//		       6000, 'update_cola_rates');
+		       24 * 60 * 60 * 1000, 'update_cola_rates');
 }
 /* name: update_changed_rates
    preconditions: changed_rates is array of objects for each post that has changed and
@@ -193,7 +191,7 @@ function update_changed_rates(changed_rates){
     let queries = [];
     
     changed_rates.forEach(changed => {
-	let query = db.update_cola_rate(changed.id, changed.allowance)
+	let query = db.update_cola_rate(changed.postId, changed.allowance)
 	    .catch(err => {
 		console.log(err);
 		reject(err);
@@ -228,7 +226,8 @@ function check_rate_changes(scraped_rates, changed_rates){
 		try{
 		    if(res[0] && res[0].allowance != element.allowance){
 			changed_rates.push({
-			    id: res[0].id,
+//			    id: res[0].id,
+			    postId: res[0].id,
 			    country: res[0].country,
 			    post: res[0].post,
 			    previous_allowance: res[0].allowance,
@@ -306,4 +305,7 @@ function parse_cola_page(html){
 	    });
     })
     return context;
+}
+function format_string(str){
+    
 }

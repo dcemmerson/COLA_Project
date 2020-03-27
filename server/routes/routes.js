@@ -16,39 +16,57 @@ module.exports = function (app) {
 	context.layout = 'login_layout.hbs';
 	res.render('login', context);
     });
+
+    app.get(`/account`, /* db.authenticationMiddleware(), */ function (req, res) {
+	let context = {};
+	let awaitPromises = [];
+	const temp_user_id = 1;
+	context.style = ['styles.css', 'font_size.css', 'account.css'];
+	context.script = ['account.js', 'account_ajax.js', 'utility.js'];
+	context.title = 'My Account';
+	context.account = true; //used for navivation.hbs
+	
+	awaitPromises.push(
+	    db.get_user_email(temp_user_id)
+		.then(res => context.email = res[0].email)
+		.catch(err => console.log(err))
+	);
+	Promise.all(awaitPromises)
+	    .then(() => res.render('account', context))
+    });
     
-    app.get(`/subscriptions`, /*db.authenticationMiddleware(),*/
-	    function (req, res) {
-		const temp_user_id = 1;
-		let await_promises = [];
-		let context = {post_info: [], templates: []};
-		
-		await_promises.push(
-		    db.get_list_of_posts()
-			.then(posts => posts.forEach(post => {
-			    context.post_info.push(post);
-			}))
-			.catch(err => console.log(err))
-		    ,
-		    db.get_user_template_names(temp_user_id)
-			.then(templates => templates.forEach(template => {
-			    context.templates.push(template);
-			}))
-		    	.catch(err => console.log(err))
-		    ,
-		    db.get_user_email(temp_user_id)
-			.then(res => context.email = res[0].email)
-			.catch(err => console.log(err))
-		)
-		context.style = ['styles.css', 'font_size.css', 'subscriptions.css'];
-		context.title = 'My Subscriptions';
-		context.subscriptions = true; //used for navivation.hbs
-		context.script = ['subscriptions.js', 'subscriptions_ajax.js'];
-//		context.nonlocal_script = ['https://appsforoffice.microsoft.com/lib/1/hosted/office.js']
-		
-		Promise.all(await_promises)
-		    .then(() => res.render('subscriptions', context))
-	    });
+    app.get(`/subscriptions`, /*db.authenticationMiddleware(),*/ function (req, res) {
+	const temp_user_id = 1;
+	let awaitPromises = [];
+	let context = {post_info: [], templates: []};
+	
+	awaitPromises.push(
+	    db.get_list_of_posts()
+		.then(posts => posts.forEach(post => {
+		    context.post_info.push(post);
+		}))
+		.catch(err => console.log(err))
+	    ,
+	    db.get_user_template_names(temp_user_id)
+		.then(templates => templates.forEach(template => {
+		    context.templates.push(template);
+		}))
+		.catch(err => console.log(err))
+	    ,
+	    db.get_user_email(temp_user_id)
+		.then(res => context.email = res[0].email)
+		.catch(err => console.log(err))
+	)
+	context.style = ['styles.css', 'font_size.css', 'subscriptions.css'];
+	context.title = 'My Subscriptions';
+	context.subscriptions = true; //used for navivation.hbs
+	context.script = ['subscriptions.js',
+			  'subscriptions_ajax.js',
+			  'utility.js'];
+	
+	Promise.all(awaitPromises)
+	    .then(() => res.render('subscriptions', context))
+    });
 
     app.get(`/create_account`, function (req, res) {
 	let context = {};
@@ -176,6 +194,21 @@ module.exports = function (app) {
 				var email = req.body.email;
 				console.log(email);
 				db.check_email(email, res, req);	
+				var message=db.check_email(email,res, req);
+
+			    /////////////////////////////////////////////////
+			    // i think this if statement needs to be .then chained,
+			    // otherwise it's never going to return true
+			    if (message.length==0) 
+			    {
+
+			res.render('reset', {
+					error: "Email does not exist"
+				});
+		}
+		else res.redirect('/login');
+				
+
 				
 			}
 

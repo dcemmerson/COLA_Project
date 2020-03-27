@@ -2,10 +2,8 @@ const db = require('../server_functions/db_functions.js');
 const misc = require('../server_functions/misc.js');
 const crs = require('../server_functions/cola_rates_script.js');
 const multer = require('multer');
-
 const upload = multer();
 
-/********************* MARKED FOR REMOVAL *******************/
 let after_load = require('after-load');
 
 module.exports = function(app,  mysql){
@@ -29,6 +27,7 @@ module.exports = function(app,  mysql){
        to GET cola rates webpage, followed by processing the data obtained. This
        route will be removed in near future.
     */
+    /*
     app.get(`/GET_cola_rates`, (req, res) => {
 	var context = {};
 	
@@ -42,6 +41,7 @@ module.exports = function(app,  mysql){
 		})
 	});
     });
+*/
     /********************* MARKED FOR REMOVAL *******************/
     /* name: UPDATE_cola_rates
        preconditions: None
@@ -51,7 +51,7 @@ module.exports = function(app,  mysql){
        to UPDATE cola rates webpage, followed by processing the data obtained. This
        route will be removed in near future.
     */
-    app.get(`/UPDATE_cola_rates`, (req, res) => {
+/*    app.get(`/UPDATE_cola_rates`, (req, res) => {
 	let changed_rates = [];
 	after_load('https://aoprals.state.gov/Web920/cola.asp', html => {
 	    const scraped = crs.parse_cola_page(html);
@@ -69,7 +69,7 @@ module.exports = function(app,  mysql){
 		})
 	});
     });
-
+*/
     /******************* Subscription page ajax routes *********************/
     app.get('/get_user_subscription_list', /*db.authenticationMiddleware(),*/
 	    function (req, res) {
@@ -90,40 +90,47 @@ module.exports = function(app,  mysql){
     app.post('/add_new_subscription_with_template_file', /*db.authenticationMiddleware(),*/ upload.single('upload'),
 	     function (req, res) {
 		 const temp_user_id = 1;
-		 db.insert_new_subscription_with_template_file(temp_user_id, req.body.post_id,
-							       req.file.originalname,
-							       req.file.buffer)
+		 var context = {};
+		 
+		 misc.validate_file(req.file, context)
+		     .then(() => db.insert_new_subscription_with_template_file(temp_user_id,
+									       req.body.post_id,
+									       req.file.originalname,
+									       req.file.buffer))
 		     .then(() => {
-			 console.log("sending success");
-			 res.send("Success");
+			 context.success = true;
+			 res.send(context);
 		     })
 		     .catch(err => {
-			 console.log(err);
-			 res.send("Error uploading file");
+			 if(err) console.log(err);
+			 context.success = false;
+			 context.error = err;
+			 res.send(context);
 		     })
 	     });
     app.post('/add_new_subscription_with_prev_template', /*db.authenticationMiddleware(),*/
 	     function (req, res) {
+		 var context = {};
 		 const temp_user_id = 1;
-		 console.log("post_id = " + req.body.post_id);
-		 console.log("tempalte id = " + req.body.template_id);
+
 		 db.insert_new_subscription_with_prev_template(temp_user_id,
 							       req.body.post_id,
 							       req.body.template_id)
 		     .then(() => {
-			 console.log("success add new sub");
-			 res.send("Success");
+			 context.success = true;
+			 res.send(context);
 		     })
 		     .catch(err => {
+			 context.success = false;
+			 context.error = err;
 			 console.log(err);
-			 res.send("Error uploading file");
+			 res.send(context);
 		     })
 	     });
     app.post('/delete_subscription', /*db.authenticationMiddleware(),*/
 	     function (req, res) {
 		 const temp_user_id = 1;
 		 var context = {};
-		 console.log(`subs id = ${req.body.subscriptionId}`);
 		 
 		 db.delete_user_subscription(req.body.subscriptionId, temp_user_id)
 		     .then(() => {
@@ -138,5 +145,80 @@ module.exports = function(app,  mysql){
 		     })
 	     });
     /****************** End subscription page ajax routes *******************/
-}
+    /*********************** Account page ajax routes ***********************/
+    app.post('/update_password', function (req, res) {
+	const tempUserId = 1;
+	var context = {};
+	
+	misc.validate_password(tempUserId, req.body.oldPassword,
+			       req.body.newPassword, req.body.newPasswordRe, context)
+	    .then(() => misc.hash_password(req.body.newPassword))
+	    .then(hashedPwd => db.update_user_password(tempUserId, hashedPwd))
+	    .then(() => {
+		context.passwordUpdated = true;
+		context.successMessage = 'Password changed';
+		res.send(context);
+	    })
+	    .catch(err => {
+		if(err) console.log(err);
 
+		context.passwordUpdated = false;
+		res.send(context);
+	    })
+    });
+    
+    /********************* End Account page ajax routes *********************/
+    /****************** AJAX routes coming from email links *****************/
+    app.get('/unsubscribetok', function (req, res) {
+	const temp_user_id = 1;
+	var context = {
+	    layout: 'login_layout.hbs',
+	    style: ['unsubscribetok.css', 'font_size.css', 'style.css']
+	}
+	var decrypted;
+	
+	if(!req.query.tok){
+	    console.log(`Invalid token: ${req.query.tok}`);
+	    context.error = true;
+	    context.deleted = false;
+	    res.render('unsubscribetok', context);
+	    return;
+	}
+	
+	misc.jwt_verify(req.query.tok)
+	    .then(dec => {
+		console.log(dec);
+		decrypted = dec;
+		
+		context.country = dec.country;
+		context.post = dec.post;
+		context.username = dec.username;
+
+		return db.delete_user_subscription(dec.subscriptionId, dec.userId);
+	    })
+	    .then(dbres => {
+		context.unsubscribed = true;
+		
+		if(dbres.affectedRows > 0)
+		    context.deleted = true;
+		else if(dbres.affectedRows == 0)
+		    context.alreadyUnsubscribed = true;
+
+		return db.get_number_user_redundant_subscriptions(decrypted.userId,
+								  decrypted.postId);
+	    })
+	    .then(dbres => {
+		if(dbres.numberSubscriptions > 0){
+		    context.additionalSubs = true;
+		    context.numberAdditionalSubs = dbres.numberSubscriptions;
+		}		
+		res.render('unsubscribetok',context);
+	    })
+	    .catch(err => {
+		console.log(err);
+		context.error = true;
+		res.render('unsubscribetok', context);
+	    })
+    });
+    /**************** End AJAX routes coming from email links ****************/
+}

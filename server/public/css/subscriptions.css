@@ -13,3 +13,12 @@
 #subscriptionsOuterContainer {
     max-width: 1000px;
 }
+#subscriptionFormContainer {
+    max-width: 700px;
+}
+.invalid::after {
+    position: relative;
+    content: " - template must be doc/docx";
+    left: 0.25rem;
+    display: inline-block;
+}
