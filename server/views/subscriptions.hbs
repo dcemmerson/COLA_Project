@@ -1,6 +1,7 @@
-<div class="container d-flex justify-content-center">
-  <h1 class="h2 inlineBlock border-bottom px-2 pt-4 pb-2"> Manage Subscriptions </h1>
+<div class="inlineBlock container d-flex">
+  <h1 class="h2 border-bottom px-2 pt-4 pb-2"> Manage Subscriptions </h1>
 </div>
+	
 <div class="container-fluid">
   <div class="row mt-4">
     <!-- left col -->
@@ -8,8 +9,8 @@
     </div>
     <!-- main center screen -->
     <div class="col-12 col-md-10 col-lg-8">
-      <div class="row justify-content-around">
-	<div class="col-12 col-md-4 col-lg-3 mb-3">
+      <div class="row justify-content-start">
+	<div class="col-12 col-md-5 col-lg-5 mb-3">
 	  <h2 class="h5 ml-4"><b>Email</b></h2>
 	  <span class="ml-4">
 	    {{#if email}}
@@ -19,51 +20,73 @@
 	    {{/if}}
 	  </span>
 	</div>
-	<div class="col-12 col-md-6 col-lg-5">
-	  <h2 class="h5 ml-4"><b>Add Subscription</b></h2>
-	  <form id="addPostForm">
-	    <div><p id="addSubscriptionMessageDiv"></p></div>
-	    <!-- 1. choose a post -->
-	    <div class="">
-	      <div class="">
-		<label for="searchPosts" class="mt-2 mr-2">1. Choose a post</label>
-		<select id="searchPosts" class="custom-select ml-4 input-max-width" placeholder="Search for post" style="max-width:400px">
-		  <option></option>
-		  {{#each post_info}}
-		  <option data-COLARatesId="{{this.id}}">{{this.country}} ({{this.post}})</option>
-		  {{/each}}
-		</select>
+	<div class="col-12 col-md-7 col-lg-7" id="subscriptionFormContainer">
+	  <!--	  <h2 class="h5 ml-4" id="addSubscription"><b>Add Subscription</b></h2>
+	    -->
+	  <div id="successContainer" style="display:none">
+	    <div class="usa-alert usa-alert--success">
+	      <div class="usa-alert__body">
+		<h3 class="usa-alert__heading">Subscribed!</h3>
+		<p class="usa-alert__text">You subscribed to <span id="subscribedSpan">{error}</span></p>
+		<p class="usa-alert__text"><a id="subscribeAdditional" href="#subscribeContainer">Subscribe to additional posts</a></p>
 	      </div>
-	      <!-- 2 upload template -->
-	      <div class="mt-3">
-		<label for="uploadTemplate" class="">2. Choose a template (doc/docx)</label>
-		<input type="file" accept=".doc, .docx" id="uploadTemplate" class="btn btn-sm ml-4 input-max-width" placeholder="Upload a template">
-	      </div>
-	      <!-- Or use one of my other templates... -->
-	      <div class="mt-2">
-		<label for="uploadTemplate" class="ml-2">...or reuse a previous templates...</label>
-		<select id="choosePreviousTemplate" class="form-control ml-4 input-max-width">
-		  <option></option>
-		  {{#each templates}}
-		  <option data-templateId="{{this.id}}">{{this.name}}</option>
-		  {{/each}}
-		</select>
-	      </div>
-	      <!-- Preview or upload... -->
-	      <div class="mt-3" id="addNewSubscriptionButtons">
-		<label for="uploadTemplate" class="">3. Subscribe </label>
-		<!--		<button id="previewNewSubscription" class="btn btn-sm btn-secondary ml-3">Preview</button>
-		  -->
-		<span id="newSubscriptionContainer">
-		  <button id="submitNewSubscription" class="ml-4 btn btn-sm btn-primary"
-			  data-container="body" data-toggle="popover"
-			  data-placement="right">Submit</button>
-		</span>
-	      </div>
-	  </form>
-	  
+	    </div>
+	    <br><br><br>
 	  </div>
 	  
+	  <div id="addSubscription">
+	    <div class="usa-alert usa-alert--info">
+	      <div class="usa-alert__body">
+		<h3 class="usa-alert__heading">New subscription</h3>
+		<p id="postVal" class="usa-alert__text val">Select a post</p>
+		<p id="templateVal" class="usa-alert__text val">Choose template</p>
+	      </div>
+	    </div>
+	    <form id="addPostForm" class="usa-form">
+	      
+	      <!-- 1. choose a post -->
+	      <div class="">
+		<div class="">
+		  <label for="postSelect" class="usa-label mt-2 mr-2">1. Post</label>
+		  <select id="postSelect" class="usa-select ml-4 input-max-width" placeholder="Search for post" style="max-width:400px" onchange="validate_subscription()">
+		    <option></option>
+		    {{#each post_info}}
+		    <option data-COLARatesId="{{this.id}}">{{this.country}} ({{this.post}})</option>
+		    {{/each}}
+		  </select>
+		</div>
+		<!-- 2 upload template -->
+		<div id="templateGroup">
+		  <div class="mt-3">
+		    <label for="uploadTemplate" class="usa-label">2. Template (doc/docx)</label>
+		    <input type="file" accept=".doc, .docx" id="uploadTemplate" class="usa-input btn btn-sm ml-4 input-max-width" placeholder="Upload a template" onchange="validate_subscription()">
+		  </div>
+		  <!-- Or use one of my other templates... -->
+		  <div class="mt-2">
+		    <label for="templateSelect" class="usa-label ml-2">...or reuse a previous templates...</label>
+		    <select id="templateSelect" class="usa-select ml-4 input-max-width" onchange="validate_subscription()">
+		      <option></option>
+		      {{#each templates}}
+		      <option data-templateId="{{this.id}}">{{this.name}}</option>
+		      {{/each}}
+		    </select>
+		  </div>
+		</div>
+		<!-- Preview or upload... -->
+		<div class="mt-3" id="addNewSubscriptionButtons">
+		  <!--		<label for="uploadTemplate" class="">3. Subscribe </label>
+		    -->
+		  <!--		<button id="previewNewSubscription" class="btn btn-sm btn-secondary ml-3">Preview</button>
+		    -->
+		  <span id="newSubscriptionContainer">
+		    <button id="submitNewSubscription" class="ml-4 btn usa-button"
+			    data-container="body" data-toggle="popover"
+			    data-placement="right">Subscribe</button>
+		  </span>
+		</div>
+	    </form>
+	    </div>
+	  </div>
 	</div>
       </div>
       <!-- second row in main screen -->
@@ -71,7 +94,7 @@
 	<div class="col-12">
 	  <div class="mt-4 corner-border px-4" id="subscriptionsOuterContainer">
 	    <div class="row">
-	      <h2 class="h5" id=""><b>Current Subscriptions</b></h2>
+	      <h2 class="h5" id="currentSubscriptions"><b>Current Subscriptions</b></h2>
 	    </div>
 	    <div id="subscriptionsContainer" class="row ml-1 mt-1">
 	      <table class="table" id="subscriptionsTable">

@@ -1,3 +1,114 @@
+<a class="usa-skipnav" href="#main-content">Skip to main content</a>
+<section class="usa-banner" aria-label="Official government website">
+  <div class="usa-accordion">
+    <header class="usa-banner__header">
+      <div class="usa-banner__inner">
+        <div class="grid-col-auto">
+          <img class="usa-banner__header-flag" src="/uswds/img/us_flag_small.png" alt="U.S. flag">
+        </div>
+        <div class="grid-col-fill tablet:grid-col-auto">
+          <p class="usa-banner__header-text">An official website of the United States government</p>
+          <p class="usa-banner__header-action" aria-hidden="true">Here’s how you know</p>
+        </div>
+        <button class="usa-accordion__button usa-banner__button"
+		aria-expanded="false" aria-controls="gov-banner">
+          <span class="usa-banner__button-text">Here’s how you know</span>
+        </button>
+      </div>
+    </header>
+    <div class="usa-banner__content usa-accordion__content" id="gov-banner">
+      <div class="grid-row grid-gap-lg">
+        <div class="usa-banner__guidance tablet:grid-col-6">
+          <img class="usa-banner__icon usa-media-block__img" src="/uswds/img/icon-dot-gov.svg" alt="Dot gov">
+          <div class="usa-media-block__body">
+            <p>
+              <strong>The .gov means it’s official.</strong>
+              <br>
+              Federal government websites often end in .gov or .mil. Before sharing sensitive information, make sure you’re on a federal government site.
+            </p>
+          </div>
+        </div>
+        <div class="usa-banner__guidance tablet:grid-col-6">
+          <img class="usa-banner__icon usa-media-block__img" src="/uswds/img/icon-https.svg" alt="Https">
+          <div class="usa-media-block__body">
+            <p>
+              <strong>The site is secure.</strong>
+              <br>
+              The <strong>https://</strong> ensures that you are connecting to the official website and that any information you provide is encrypted and transmitted securely.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="usa-overlay"></div>
+<header class="usa-header usa-header--basic">
+  <div class="usa-nav-container">
+    <div class="usa-navbar">
+      <div class="usa-logo" id="basic-logo">
+	<em class="usa-logo__text"><a href="/" title="Home" aria-label="Home">COLA Notifs</a></em>
+      </div>
+      <button class="usa-menu-btn">Menu</button>
+    </div>
+    <nav aria-label="Primary navigation" class="usa-nav">
+      <button class="usa-nav__close"><img src="/usdws/img/close.svg" alt="close"></button>
+      <ul class="usa-nav__primary usa-accordion">
+	<li class="usa-nav__primary-item">
+	  {{#if subscriptions}}
+	  <button class="usa-accordion__button usa-nav__link usa-current" aria-expanded="false" aria-controls="basic-nav-section-one"><span>Subscriptions</span></button>
+	  <ul id="basic-nav-section-one" class="usa-nav__submenu">
+	    <li class="usa-nav__submenu-item">
+              <a href="#addSubscription">Add subscription</a>
+            </li>
+	    <li class="usa-nav__submenu-item">
+              <a href="#currentSubscriptions">Current subscriptions</a>
+            </li>
+	  </ul>
+	  {{else}}
+	  <button class="usa-accordion__button usa-nav__link" aria-expanded="false" aria-controls="basic-nav-section-one"><span>Subscriptions</span></button>
+	  <ul id="basic-nav-section-one" class="usa-nav__submenu">
+	    <li class="usa-nav__submenu-item">
+              <a href="/subscriptions#addSubscription">Add subscription</a>
+            </li>
+	    <li class="usa-nav__submenu-item">
+              <a href="/subscriptions#currentSubscriptions">Current subscriptions</a>
+            </li>
+	  </ul>
+	  {{/if}}
+	</li>
+	<li class="usa-nav__primary-item">
+	  {{#if account}}
+	  <button class="usa-accordion__button usa-nav__link" aria-expanded="false" aria-controls="basic-nav-section-two"><span>Account</span></button>
+	  <ul id="basic-nav-section-two" class="usa-nav__submenu">
+	    <li class="usa-nav__submenu-item">
+	    <a href="/account">Change password</a>
+	    </li>
+	    <li class="usa-nav__submenu-item">
+	      <a href="/logout">Logout</a>
+	    </li>
+	  </ul>
+	  {{else}}
+	  	  <button class="usa-accordion__button usa-nav__link" aria-expanded="false" aria-controls="basic-nav-section-two"><span>Account</span></button>
+	  <ul id="basic-nav-section-two" class="usa-nav__submenu">
+	    <li class="usa-nav__submenu-item">
+	    <a href="/account">Change password</a>
+	    </li>
+	    <li class="usa-nav__submenu-item">
+	      <a href="/logout">Logout</a>
+	    </li>
+	  </ul>
+	  {{/if}}
+	</li>
+	<li class="usa-nav__primary-item">
+	  <a class="usa-nav__link" href="javascript:void(0)"><span>FAQ</span></a>
+	</li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<!--
 <nav id="custom-bootstrap-menu" class="navbar navbar-expand-md navbar-default navbar-light">
   <div class="container-fluid">
     <div class="navbar-header">      
@@ -41,4 +152,4 @@
     </div>
   </div>
 </nav>
-
+-->

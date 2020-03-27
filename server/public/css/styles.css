@@ -1,3 +1,6 @@
+html {
+    scroll-behavior: smooth;
+}
 /* navbar css */
 #custom-bootstrap-menu.navbar-default .navbar-brand {
     color: rgba(77, 75, 75, 1);
@@ -52,11 +55,61 @@
     max-width: 400px;
 }
 .inlineBlock {
-    display: inline-block;
-}
+    display: inline;
+/*    display: inline-block;
+*/
+ }
 .normalBSBorder {
     border: 1px solid #ced4da;
 }
 .errorBorder {
     border: 1px solid red;
+}
+.border-bottom{
+/*    border-color: red; !important
+*/
+}
+#formCheckmark{
+    position: relative;
+    width: 16px;
+    float: left;
+    left: -20px;
+}
+.val::before {
+    position: relative;
+    content: "";
+    background-image: url(/uswds/img/correct9.svg), linear-gradient(transparent, transparent);
+    left: -0.25rem;
+    margin-right: 0.75rem;
+    width: 2rem;
+    height: 1rem;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 1.25rem;
+    display: inline-block;
+}
+.invalBlank::before {
+    position: relative;
+    content: "";
+    left: -0.25rem;
+    margin-right: 0.75rem;
+    width: 2rem;
+    height: 1rem;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 1.25rem;
+    display: inline-block;
+}
+.invalid::before {
+    position: relative;
+    content: "";
+    background-image: url(/img/close-red-90-cust.png), linear-gradient(transparent, transparent);
+    left: -0.25rem;
+    margin-right: 0.75rem;
+    width: 2rem;
+    height: 1rem;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 1rem;
+    display: inline-block;
 }

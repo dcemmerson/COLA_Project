@@ -19,7 +19,7 @@ var MySQLStore = require('express-mysql-session')(session);
 
 
 //var auth = require('./auth/auth');
-
+//require('uswds');
 let hbs = require('express-handlebars').create({
 	defaultLayout: 'main',
 	extname: 'hbs',
@@ -87,7 +87,11 @@ app.get(`/img/${imgFile}`, function (req, res) {
 	res.send(`/img/${imgFile}`);
 	res.end();
 });
-
+let uswdsFile;
+app.get(`/uswds/${uswdsFile}`, function (req, res) {
+	res.send(`/uswds/${uswdsFile}`);
+	res.end();
+});
 
 /* Error routes only used if none of the above routes return */
 app.use(function (req, res) {

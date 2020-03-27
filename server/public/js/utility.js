@@ -1,7 +1,7 @@
-function hidden_timer(element){
+function hidden_timer(element, time=5000){
     setTimeout(() => {
 	element.hidden = true;
-    }, 3000);
+    }, time);
 }
 function show_spinner(element){
     let i = document.createElement('i');
@@ -34,9 +34,38 @@ function show_popover(el, time=5000, borderColor='rgba(0, 0, 0, 0.2'){
     }, time, el);
 }
 
-function set_error_border(el){
+function set_error_border(el, time=5000){
     el.classList.add('errorBorder');
     setTimeout(el => {
 	el.classList.remove('errorBorder');
-    }, 3500, el)
+    }, time, el)
+}
+
+/* name: scroll_save
+   preconditions: arr is an array of elements for which we want to save the scroll x/y values
+   postconditions: return an array of objects that contains references to each element along
+                   with the saved scroll x/y values.
+*/
+function scroll_save(arr){
+    var context = []
+    arr.forEach(el => {
+	context.push({
+	    element: el,
+	    scrollY: el.scrollTop,
+	    scrollX: el.scrollLeft
+	});
+    });
+    return context;
+}
+
+/* name: scroll_restore
+   preconditions: arr is array of objects. Each object should be of format:
+                    {element: element, scrollY: scrollY, scrollX: scrollX}. Best when
+		    used in combination wiht scroll_save
+   postconditions: scroll x/y values updated for all elements in arr
+*/
+function scroll_restore(arr){
+    arr.forEach(el => {
+	el.element.scrollTo(el.scrollX, el.scrollY);
+    })
 }
