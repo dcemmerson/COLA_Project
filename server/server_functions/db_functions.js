@@ -1,10 +1,11 @@
 var passport = require('passport');
 var bcrypt = require('bcrypt');
 var LocalStrategy = require('passport-local').Strategy;
+const em=require('../server_functions/emails.js');
 
 require('../server.js');
 const saltRounds = 10;
-
+var jwt = require('jwt-simple');
 var mysql = require('../dbcon.js');
 /* name: queryDB
    preconditions: sql contains string sql query
@@ -48,22 +49,78 @@ module.exports = {
     },
 	
 	check_email: function (email, res, req) {
-	    var sql = "SELECT email FROM USER WHERE email= ?"
+	    var sql = "SELECT id, password, created FROM USER WHERE email= ?"
 	    var values = [email];
 	    queryDB(sql, values, mysql).then((message) => {
 		console.log(message);
-		return message;
 		if (message.length==0) 
 		{
 			res.render('reset', {
 					error: "Email does not exist"
 				});
 		}
-		else res.redirect('/login');
+		else 
+		{
+			const user_id=(message[0].id);
+			const user_pwd=(message[0].password);
+			const user_created=(message[0].created);
+			em.password_reset_email(email, user_id, user_pwd, user_created);
+			let context = {};
+			context.layout = 'login_layout.hbs';
+			res.render('resetSent');
+		}
 		
 
-	    });
+	    }).catch(err => console.log(err));
     },
+	
+	
+	get_user: function (req, res, id, token) {
+		var sql = "SELECT password, created FROM USER WHERE id= ?"
+	    var values = [id];
+	    queryDB(sql, values, mysql).then((message) => {
+		if (message.length==0) 
+		{
+			console.log("error");
+			res.redirect('/login');
+		}
+		else 
+		{
+			const user_pwd=(message[0].password);
+			const user_created=(message[0].created);
+			var secret = user_pwd +user_created;
+			
+			try{
+				const decoded = jwt.decode(token, secret);
+				let context = {};
+				context.layout = 'login_layout.hbs';
+				res.render('recover', {
+					id: id,
+				//	token: token
+				});
+			}catch(err) {if(err) res.redirect('/login');
+			
+			};
+			
+		}
+		
+
+	    })
+    },
+	
+	update_user: function (id, pwd) {
+	return new Promise((resolve, reject) => {
+		bcrypt.hash(pwd, saltRounds, function (err, hash) {
+		const now = new Date().toISOString().replace(/\..+/, '')
+	    const sql = `UPDATE user SET password=?, modified=? WHERE id=?`
+	    const values = [hash, now, id];
+	    queryDB(sql, values, mysql)
+		.then(res => resolve(res))
+		.catch(err => console.log(err))
+		})
+	});
+    },
+	
 	
 
 
@@ -255,6 +312,8 @@ ORDER BY t.name ASC`;
 		.catch(err => console.log(err))
 	});
     },
+	
+	
     /* name: insert_new_subscription_with_template_file
        preconditions: userId should be id of logged in user.
                       name will be stored in name field - should match name of file

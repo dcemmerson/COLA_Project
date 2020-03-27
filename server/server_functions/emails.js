@@ -19,6 +19,57 @@ const transporter = nodemailer.createTransport({
 */
 
 module.exports = {
+	
+	password_reset_email: function (email, id, pwd, created) {
+	console.log(id);
+	var jwt = require('jwt-simple');
+
+	var payload = { userId: id,
+					email:email};
+	var secret = pwd+created;
+	var token = jwt.encode(payload, secret);
+	
+	console.log(payload.userId, token);
+
+		const forgot_email = new Email({
+			message: {
+				from: 'gunrock2018@gmail.com'
+			},
+			// uncomment below to send emails in development/test env:
+			send: true,
+			transport: transporter,
+			//	transport: {
+			//	jsonTransport: true
+			//	}
+			 views: {
+		options: {
+		    extension: 'handlebars'
+		}
+	    },
+	    juice: true,
+	    juiceResources: {
+		preserveImportant: true,
+		webResources: {
+		    relativeTo: path.join(__dirname, '..', '/emails/build'),
+		    images: true
+		}
+	    }
+	});
+
+		forgot_email.send({
+				template: `forgot_pwd`,
+				message: {
+					to: 'shif.schectman@gmail.com'
+				},
+				locals: {
+					locale: 'en',
+				id: payload.userId ,
+				token: token,
+				}
+			})
+			.then(console.log)
+			.catch(console.error);
+},
     /* name: send_emails
        preconditions: changed_rates contains array of objects that contains each
                       post that has changed cola rate, including information db id,
@@ -174,3 +225,6 @@ function send_email(username, filename, file, changed, jwt='not_implemented'){
 	    })
     })
 }
+
+
+
