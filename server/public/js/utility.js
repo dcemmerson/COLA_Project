@@ -65,7 +65,29 @@ function scroll_save(arr){
    postconditions: scroll x/y values updated for all elements in arr
 */
 function scroll_restore(arr){
+    document.getElementsByTagName('html')[0].style.scrollBehavior = "auto";
     arr.forEach(el => {
 	el.element.scrollTo(el.scrollX, el.scrollY);
     })
+    document.getElementsByTagName('html')[0].style.scrollBehavior = "smooth";
+}
+function add_classes(elements, classes){
+    for(let i = 0; i < elements.length; i++){
+	classes.forEach(cl => {
+	    elements[i].classList.add(cl);
+	})
+    }
+}
+function remove_classes(elements, classes){
+    for(let i = 0; i < elements.length; i++){
+	classes.forEach(cl => {
+	    elements[i].classList.remove(cl);
+	})
+    }
+}
+
+function hide_elements(elements){
+    for(let i = 0; i < elements.length; i++){
+	elements[i].style.display = 'none';
+    }
 }

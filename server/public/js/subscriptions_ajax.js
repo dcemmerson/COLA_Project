@@ -6,10 +6,12 @@ document.addEventListener('DOMContentLoaded', () => {
     */
     $('#templateSelect').change(() => {
 	document.getElementById('uploadTemplate').value = '';
+	validate_subscription();
     });
     $('#uploadTemplate').on('input', () => {
 	let select = document.getElementById('templateSelect');
 	select.selectedIndex = 0;
+	validate_subscription();
     });
 /*    $('#previewNewSubscription').on('click', e => {
 	e.preventDefault();
@@ -44,9 +46,11 @@ async function submit_new_subscription(){
 
     try{
 	if(upload_temp[0].value){
+	    var upload = true;
 	    var result = await add_new_subscription_with_template_file(post_id, upload_temp);
 	}
 	else if(prev_temp[0].selectedIndex != 0){
+	    var previous = true;
 	    var result = await add_new_subscription_prev_template(post_id, prev_temp[0]);
 	}
 
@@ -62,17 +66,25 @@ async function submit_new_subscription(){
 	    throw result; //something else went wrong
     }
     catch(err){
-	let pop = $('#submitNewSubscription');
+	hide_elements($('.alert'));
 	if(!result.success){
-	    console.log(err);
-	    pop[0].setAttribute('data-content', result.errorMessage);
+	    $('#warningContainer')[0].style.display = 'block';
+	    if(upload){
+		$('#uploadTemplateErrorMsg')[0].innerText = result.errorMessage;
+		$('#uploadTemplateErrorMsg')[0].style.display = 'block';
+	    }
+	    else{
+		$('#previousTemplateErrorMsg')[0].innerText = result.errorMessage;
+		$('#previousTemplateErrorMsg')[0].style.display = 'block';
+	    }
 	}
-	else
-	    pop[0].setAttribute('data-content', 'Something went wrong.');
-
-	show_popover(pop, 4000, 'red');
+	else{
+	    $('#errorContainer')[0].style.display = 'block';
+	    
+	}
     }
-
+    
+    
     //keep this in a separate try/catch statement. Will ensure if there is
     //an error at some point in the above try catch, the subscription list
     //will remain accurate, even if we deleted the subscription on server
@@ -137,33 +149,6 @@ async function add_new_subscription_with_template_file(post_id, upload_temp){
 
 
 
-
-function preview_new_subscription(){
-    let uploadTemp = $('#uploadTemplate');
-    let prevTemp = $('#templateSelect');
-    //figure out if user is uploading new template or using previous template
-    if(uploadTemp[0].value){
-	if(!window.File || !window.FileReader || !window.FileList || !window.Blob){
-	    console.log("File API not supoprted by broser");
-	    return;
-	}
-	
-	let fileSelected = uploadTemp[0].files;
-	
-	let fileReader = new FileReader();
-	fileReader.onload = function (e) {
-	    console.log(fileReader.result);
-	}
-	fileReader.readAsText(uploadTemp[0].files[0]);
-    }
-    else{
-	template = prevTemp[0][prevTemp[0].selectedIndex].getAttribute('data-templateId');
-	fetch_template('/previewTemplate'); 
-    }
-    console.log(template);
-    //	$('#previewModal').modal('toggle');
-}
-
 async function fetch_user_subscription_list(){
     try{
 	clear_user_subscriptions();
@@ -183,6 +168,22 @@ function populate_subscription_table(res){
 	let last_mod_month = new Intl.DateTimeFormat('en-US', {month: 'short'}).format(last_mod);
 	let tr = document.createElement('tr');
 	tr.setAttribute('data-subscriptionId', sub.subscriptionId);
+	
+	let td5 = document.createElement('td');
+	let del_btn = document.createElement('button');
+	del_btn.setAttribute('class', 'btn-clear btn-minus-tiny');
+	del_btn.setAttribute('data-subscriptionId', sub.subscriptionId); 
+	del_btn.addEventListener('click', () =>{
+	    delete_subscription(sub.subscriptionId, sub.post, sub.country);
+	});
+	del_btn.setAttribute('title', `Delete ${sub.country} (${sub.post}) subscription`);
+	let minimg = document.createElement('img');
+	minimg.setAttribute('src', '/img/minus-cust.png');
+
+	del_btn.appendChild(minimg);
+	td5.appendChild(del_btn);
+	tr.appendChild(td5);
+
 	let td1 = document.createElement('td');
 	td1.innerText = sub.post;
 	tr.appendChild(td1);
@@ -197,42 +198,39 @@ function populate_subscription_table(res){
 	    + last_mod_month + ' '
 	    + last_mod.getFullYear();
 	tr.appendChild(td4);
-	let td5 = document.createElement('td');
-	let del_btn = document.createElement('button');
-	del_btn.setAttribute('class', ' usa-button usa-button--secondary');
-	del_btn.setAttribute('data-subscriptionId', sub.subscriptionId); 
-	del_btn.addEventListener('click', delete_subscription);
-	let del_btn_text = document.createElement('span');
-	del_btn_text.innerText = 'Remove';
-
-	del_btn.appendChild(del_btn_text);
-	td5.appendChild(del_btn);
-	tr.appendChild(td5);
 	
 	tbody.appendChild(tr);
     })
     size_table();
 }
-async function delete_subscription(){
-    var context = {};
+async function delete_subscription(subscriptionId, post, country){
+    try{
+	var context = {};
+	hide_elements($('.unsubscribeAlert'));
+	var scroll = scroll_save([
+	    document.getElementsByTagName('html')[0],
+	    document.getElementById('subscriptionsContainer')
+	]);
+	
+	context.subscriptionId = subscriptionId;
+	
+	clear_user_subscriptions();
+	show_spinner($('#subscriptionsContainerSpinner')[0]);
+	
+	let response = await fetch('/delete_subscription', {
+	    method: 'POST',
+	    headers: {
+		'Content-Type': 'application/JSON'
+	    },
+	    body: JSON.stringify(context)
+	})
 
-    var scroll = scroll_save([
-	document.getElementsByTagName('body')[0],
-	document.getElementById('subscriptionsContainer')
-    ]);
-
-    context.subscriptionId = this.getAttribute('data-subscriptionId');
-
-    clear_user_subscriptions();
-    show_spinner($('#subscriptionsContainerSpinner')[0]);
-    
-    let response = await fetch('/delete_subscription', {
-	method: 'POST',
-	headers: {
-	    'Content-Type': 'application/JSON'
-	},
-	body: JSON.stringify(context)
-    })
+	display_unsubscribe_alert($('#unsubscribeAlertSuccess')[0], $('.unsubscribeMsgSpan'), post, country)
+    }
+    catch(err){
+	if(err) console.log(err);
+	display_unsubscribe_alert($('#unsubscribeAlertError')[0], $('.unsubscribeMsgSpan'), post, country)	
+    }
     await fetch_user_subscription_list();
     
     scroll_restore(scroll);

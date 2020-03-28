@@ -1,14 +1,13 @@
-
 const LINESPACING = 10;
 document.addEventListener('DOMContentLoaded', async () => {
-    let subscription_list = fetch_user_subscription_list();
+    let subscription_list = await fetch_user_subscription_list();
 
-    await subscription_list;
     set_window_prefs();
     initialize_form();
     $('#subscribeAdditional').on('click', () => {
-	$('#successContainer')[0].style.display = "none";
-	$('#addSubscription')[0].style.display = "block";
+	hide_elements($('.alert'));
+	$('#infoContainer')[0].style.display = "block";
+	$('#subscriptionFormContainer')[0].style.display = "block";
     })
 });
 function set_window_prefs(){
@@ -42,19 +41,26 @@ function clear_user_subscriptions(){
 
 
 function new_subscription_success(postId){
-    let subscribeContainer = $('#subscribeContainer')[0];
+    hide_elements($('.alert'));
+    hide_elements($('#subscriptionFormContainer'));
     let successContainer = $('#successContainer')[0];
-    subscribeContainer.style.display = 'none';
     successContainer.style.display = 'block';
-
+   
 	/////////////// find which post this postId corresponds to ////////////////
     for (let [num, option] of Object.entries($('#postSelect option'))) {
 	if(option.getAttribute('data-COLARatesId') == postId){
-	    $('#subscribedSpan')[0].innerText = option.innerText;
+	    $('#successSpan')[0].innerText = option.innerText;
 	    return;
 	}
     }
-    
+}
+function new_subscription_fail(cont, postId){
+    let valAlert = $('#infoCont')[0];
+    let postVal = $('#postVal')[0];
+    let tempVal = $('#templateVal')[0];
+    let postSelect = $('#postSelect')[0];
+    let upTemp = $('#uploadTemplate')[0];
+    let prevTemp = $('#templateSelect')[0];
 }
 /*
 function new_subscription_success(post_id){
@@ -71,96 +77,77 @@ function new_subscription_success(post_id){
     }
 }
 */
-function validate_subscription_soft(){
-    const postVal = $('#postVal')[0];
-    const postSelect = $('#postSelect')[0];
 
-    const tempVal = $('#templateVal')[0];
-    const tempSelect = $('#templateSelect')[0];
-    const tempUp = $('#uploadTemplate')[0];
-    
-    let reg = /(\.doc|\.docx)$/i;
-
-    //////////////////// check for selected post ///////////////////
-    if(postSelect.selectedIndex === 0){
-	postVal.classList.remove('val');
-	postVal.classList.add('invalBlank');
-    }
-    else{
-	postVal.classList.remove('invalBlank');
-	postVal.classList.add('val');
-	postSelect.classList.remove('usa-input--error');
-    }
-
-    ////////////////// check for template /////////////////
-    if(!tempUp.value && tempSelect.selectedIndex === 0){
-	tempVal.classList.remove('val');
-	tempVal.classList.add('invalBlank');
-    }
-    else{
-	tempVal.classList.remove('invalBlank');
-	tempVal.classList.add('val');
-	tempUp.classList.remove('usa-input--error');
-	tempSelect.classList.remove('usa-input--error');
-//	$('#templateGroup')[0].classList.remove('usa-input--error');
-    }
-}
 /* name: initialize_form
    preconditions: subscription html DOM content has loaded
    postcondition: if user refreshed page and has a template still selected,
                   check if that template is of type doc/docx. If not, then
 		  highlight it with red border and place x in alert box.
+		  We didn't use refresh flag on window to ensure there is
+		  no browser incapatability, as not running this initial
+		  validation check could cause user confusion if they
+		  refresh page.
 */
 function initialize_form(){
-    let tempVal = $('#templateVal')[0];
+    let tempVal = $('.templateVal');
+//    let postVal = $('.postVal');
     let upTemp = $('#uploadTemplate')[0];
     let prevTemp = $('#templateSelect')[0];
 
     const reg = /(\.doc|\.docx)$/i;
-    
+    // check if there is a template selected, if so, run
+    // post validation, otherwise don't and just leave checkmarks
+    // on alert validation to help user understand the alert is responsive
     if(upTemp.value && !reg.exec(upTemp.value)){
 	//ending of file is not .doc or .doc
-	tempVal.classList.remove('val', 'invalBlank');
-	tempVal.classList.add('invalid');
+	remove_classes(tempVal, ['val', 'invalBlank']);
+	add_classes(tempVal, ['invalid']);
 	upTemp.classList.add('usa-input--error');
+	validate_post();
     }
     else if(prevTemp.selectedIndex !== 0
 	    && !reg.exec(prevTemp[prevTemp.selectedIndex].value)){
 	//ending of file is not .doc or .doc
-	tempVal.classList.remove('val', 'invalBlank');
-	tempVal.classList.add('invalid');
+	remove_classes(tempVal, ['val', 'invalBlank']);
+	add_classes(tempVal, ['invalid']);
 	prevTemp.classList.add('usa-input--error');
+	validate_post();
     }
+}
+function validate_post(submit=false){
+    let postVals = $('.postVal');
+    let postSelect = $('#postSelect')[0];
+
+    //////////////////// check for selected post ///////////////////
+    if(postSelect.selectedIndex === 0){
+	remove_classes(postVals, ['val']);
+	add_classes(postVals, ['invalBlank']);
+	var valid = false;
+	if(submit) postSelect.classList.add('usa-input--error');
+    }
+    else{
+	remove_classes(postVals, ['invalBlank']);
+	add_classes(postVals, ['val']);
+	postSelect.classList.remove('usa-input--error');
+	
+	var valid = true;
+    }
+    return valid;
 }
 function validate_subscription(submit=false){
     let valid = false;
-    let valAlert = $('#valAlert')[0];
-    let postVal = $('#postVal')[0];
-    let tempVal = $('#templateVal')[0];
-    let postSelect = $('#postSelect')[0];
+    let tempVals = $('.templateVal');
     let upTemp = $('#uploadTemplate')[0];
     let prevTemp = $('#templateSelect')[0];
     
     const reg = /(\.doc|\.docx)$/i;
-
-    //////////////////// check for selected post ///////////////////
-    if(postSelect.selectedIndex === 0){
-	postVal.classList.remove('val');
-	postVal.classList.add('invalBlank');
-	if(submit) postSelect.classList.add('usa-input--error');
-    }
-    else{
-	postVal.classList.remove('invalBlank');
-	postVal.classList.add('val');
-	postSelect.classList.remove('usa-input--error');
-
-	valid = true;
-    }
+    valid = validate_post(submit);
 
     ////////////////// check for template - ensure doc/docx ending ///////
     if(!upTemp.value && prevTemp.selectedIndex === 0){
-	tempVal.classList.remove('val', 'invalid');
-	tempVal.classList.add('invalBlank');
+	remove_classes(tempVals, ['val', 'invalid']);
+	add_classes(tempVals, ['invalBlank']);
+
 	if(submit){
 	    upTemp.classList.add('usa-input--error');
 	    prevTemp.classList.add('usa-input--error');
@@ -170,11 +157,12 @@ function validate_subscription(submit=false){
     else if(!reg.exec(upTemp.value)
 	    && !reg.exec(prevTemp[prevTemp.selectedIndex].value)){
 	//ending of file is not .doc or .doc
-	tempVal.classList.remove('val', 'invalBlank');
-	tempVal.classList.add('invalid');
+	remove_classes(tempVals, ['val', 'invalBlank']);
+	add_classes(tempVals, ['invalid']);
+
 	if(submit){
-	    valAlert.classList.remove('usa-alert--info');
-	    valAlert.classList.add('usa-alert--warning');
+	    $('#infoContainer')[0].style.display = 'none';
+	    $('#warningContainer')[0].style.display = 'block';
 	}
 
 	if(upTemp.value){
@@ -186,11 +174,14 @@ function validate_subscription(submit=false){
 	valid = false;
     }
     else{ //everything looks okay
-	tempVal.classList.remove('invalBlank', 'invalid');
-	tempVal.classList.add('val');
+	remove_classes(tempVals, ['invalBlank', 'invalid']);
+	add_classes(tempVals, ['val']);
+
 	upTemp.classList.remove('usa-input--error');
 	prevTemp.classList.remove('usa-input--error');
 	valid = valid && true;
+	$('#uploadTemplateErrorMsg')[0].style.display = 'none';
+	$('#previousTemplateErrorMsg')[0].style.display = 'none';
     }
     
     
@@ -234,3 +225,9 @@ function validate_subscription_old(){
     return valid;
 }
 
+function display_unsubscribe_alert(element, spanClass, post, country){
+    for(let i = 0; i < spanClass.length; i++){
+	spanClass[i].innerText = `${country} (${post}) `;
+    }
+    element.style.display = 'block';
+}

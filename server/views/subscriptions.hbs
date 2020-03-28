@@ -1,7 +1,7 @@
 <div class="inlineBlock container d-flex">
   <h1 class="h2 border-bottom px-2 pt-4 pb-2"> Manage Subscriptions </h1>
 </div>
-	
+
 <div class="container-fluid">
   <div class="row mt-4">
     <!-- left col -->
@@ -20,28 +20,50 @@
 	    {{/if}}
 	  </span>
 	</div>
-	<div class="col-12 col-md-7 col-lg-7" id="subscriptionFormContainer">
+	<div class="col-12 col-md-7 col-lg-7" id="subscriptionContainer">
 	  <!--	  <h2 class="h5 ml-4" id="addSubscription"><b>Add Subscription</b></h2>
 	    -->
-	  <div id="successContainer" style="display:none">
+	  <div id="successContainer" class="alert" style="display:none">
 	    <div class="usa-alert usa-alert--success">
 	      <div class="usa-alert__body">
 		<h3 class="usa-alert__heading">Subscribed!</h3>
-		<p class="usa-alert__text">You subscribed to <span id="subscribedSpan">{error}</span></p>
+		<p class="usa-alert__text">You subscribed to <span id="successSpan">{error}</span></p>
 		<p class="usa-alert__text"><a id="subscribeAdditional" href="#subscribeContainer">Subscribe to additional posts</a></p>
 	      </div>
 	    </div>
 	    <br><br><br>
 	  </div>
-	  
-	  <div id="addSubscription">
-	    <div class="usa-alert usa-alert--info">
+	  <div id="infoContainer" class="alert">
+	    <div class="usa-alert usa-alert--info" id="addSubscription">
 	      <div class="usa-alert__body">
 		<h3 class="usa-alert__heading">New subscription</h3>
-		<p id="postVal" class="usa-alert__text val">Select a post</p>
-		<p id="templateVal" class="usa-alert__text val">Choose template</p>
+		<p class="usa-alert__text val postVal">Select a post</p>
+		<p class="usa-alert__text templateVal val">Choose template</p>
 	      </div>
 	    </div>
+	    <br>
+	  </div>
+	  <div id="warningContainer" class="alert" style="display:none">
+	    <div class="usa-alert usa-alert--warning" id="">
+	      <div class="usa-alert__body">
+		<h3 class="usa-alert__heading">New subscription</h3>
+		<p class="usa-alert__text"><strong>Invalid file type</strong></p>
+		<p class="usa-alert__text val postVal">Select a post</p>
+		<p class="usa-alert__text templateVal val">Choose template</p>
+	      </div>
+	    </div>
+	  </div>
+	  <div id="errorContainer" class="alert" style="display:none">
+	    <div class="usa-alert usa-alert--error" id="">
+	      <div class="usa-alert__body">
+		<h3 class="usa-alert__heading">New subscription - error</h3>
+		<p class="usa-alert__text"><strong>Something has gone wrong!</strong></p>
+		<p class="usa-alert__text val postVal">Select a post</p>
+		<p class="usa-alert__text templateVal val">Choose template</p>
+	      </div>
+	    </div>
+	  </div>
+	  <div id="subscriptionFormContainer">
 	    <form id="addPostForm" class="usa-form">
 	      
 	      <!-- 1. choose a post -->
@@ -59,11 +81,18 @@
 		<div id="templateGroup">
 		  <div class="mt-3">
 		    <label for="uploadTemplate" class="usa-label">2. Template (doc/docx)</label>
-		    <input type="file" accept=".doc, .docx" id="uploadTemplate" class="usa-input btn btn-sm ml-4 input-max-width" placeholder="Upload a template" onchange="validate_subscription()">
+		    <span class="usa-error-message" id="uploadTemplateErrorMsg" role="alert"
+			  style="display:none">File does not appear to be doc/docx</span>
+		    <input type="file" accept=".doc, .docx" id="uploadTemplate"
+			   class="usa-input btn btn-sm ml-4 input-max-width"
+			   placeholder="Upload a template" onchange="validate_subscription()">
 		  </div>
 		  <!-- Or use one of my other templates... -->
 		  <div class="mt-2">
-		    <label for="templateSelect" class="usa-label ml-2">...or reuse a previous templates...</label>
+		    <label for="templateSelect" class="usa-label ml-2">
+		      ...or reuse a previous templates...</label>
+		    <span class="usa-error-message" id="previousTemplateErrorMsg" role="alert"
+			  style="display:none">File does not appear to be doc/docx</span>
 		    <select id="templateSelect" class="usa-select ml-4 input-max-width" onchange="validate_subscription()">
 		      <option></option>
 		      {{#each templates}}
@@ -74,10 +103,6 @@
 		</div>
 		<!-- Preview or upload... -->
 		<div class="mt-3" id="addNewSubscriptionButtons">
-		  <!--		<label for="uploadTemplate" class="">3. Subscribe </label>
-		    -->
-		  <!--		<button id="previewNewSubscription" class="btn btn-sm btn-secondary ml-3">Preview</button>
-		    -->
 		  <span id="newSubscriptionContainer">
 		    <button id="submitNewSubscription" class="ml-4 btn usa-button"
 			    data-container="body" data-toggle="popover"
@@ -91,8 +116,35 @@
       </div>
       <!-- second row in main screen -->
       <div class="row justify-content-around mt-4 mb-4">
+	<div class="col-12 mb-3">
+	  <div class="row justify-content-start">
+	    <div class="col-12">
+	      <div id="unsubscribeAlertBlank" class="unsubscribeAlert">
+		<br><br><br><br>
+	      </div>
+	      
+	      <div id="unsubscribeAlertSuccess" class="unsubscribeAlert" style="display:none">
+		<div class="usa-alert usa-alert--success">
+		  <div class="usa-alert__body">
+		    <h3 class="usa-alert__heading">Unsubscribed!</h3>
+		    <p class="usa-alert__text">You have been unsubscribed from <span class="unsubscribeMsgSpan">{error}</span></p>
+		  </div>
+		</div>
+	      </div>
+
+	      <div id="unsubscribeAlertError" class="unsubscribeAlert" style="display:none">
+		<div class="usa-alert usa-alert--error">
+		  <div class="usa-alert__body">
+		    <h3 class="usa-alert__heading">Error unsubscribing!</h3>
+		    <p class="usa-alert__text">Unable to unsubscribe from <span class="unsubscribeMsgSpan">{error}</span> at this time</p>
+		  </div>
+		</div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
 	<div class="col-12">
-	  <div class="mt-4 corner-border px-4" id="subscriptionsOuterContainer">
+	  <div class="corner-border px-4" id="subscriptionsOuterContainer">
 	    <div class="row">
 	      <h2 class="h5" id="currentSubscriptions"><b>Current Subscriptions</b></h2>
 	    </div>
@@ -100,11 +152,11 @@
 	      <table class="table" id="subscriptionsTable">
 		<thead>
 		  <tr>
+		    <th scope="col"></th>
 		    <th scope="col">Post</th>
 		    <th scope="col">Country</th>
 		    <th scope="col">Allowance</th>
 		    <th scope="col">Last Adjusted</th>
-		    <th scope="col"></th>
 		  </tr>
 		</thead>
 		
@@ -126,27 +178,4 @@
     </div>
   </div>
 </div>
-
-<!-- modal stuff -->
-<div id="previewModal" class="modal" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="h5 modal-title">Preview</h2>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p class="center-text">
-	  <i class="fa fa-spinner fa-spin spinner"></i>
-	</p>
-      </div>
-      <div class="modal-footer">
-	<button type="button" class="btn btn-primary">Save changes</button>
-	<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-
+<br>

@@ -16,9 +16,21 @@
 #subscriptionFormContainer {
     max-width: 700px;
 }
+.unsubscribeAlert {
+    max-width: 1000px;
+}
 .invalid::after {
     position: relative;
     content: " - template must be doc/docx";
     left: 0.25rem;
     display: inline-block;
+}
+
+.btn-clear {
+    background-color: rgba(255,255,255,0);
+    border: none;
+}
+.btn-minus-tiny {
+    max-width: 2.5rem;
+    min-width: 1.7rem;
 }
