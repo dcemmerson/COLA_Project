@@ -48,22 +48,12 @@ input[type=submit] {
 }
 
 /* Add a red text color and an "x" icon when the requirements are wrong */
-.invalid {
-    color: red;
-    left: 30px;
-}
 
-.invalid:before {
-  position: relative;
-  left: -35px;
-  content: "✖";
-} 
 #passwordFormContainer {
 }
-
-.hidden {
-    display: none;
+#changePasswordForm {
+    max-width: 26rem;
 }
-.shown {
-    display: block;
+.changePasswordAlert {
+    max-width: 28rem;
 }

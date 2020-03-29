@@ -19,7 +19,6 @@ var MySQLStore = require('express-mysql-session')(session);
 
 
 //var auth = require('./auth/auth');
-//require('uswds');
 let hbs = require('express-handlebars').create({
 	defaultLayout: 'main',
 	extname: 'hbs',

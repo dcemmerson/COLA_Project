@@ -117,7 +117,7 @@ module.exports = {
 	    else if(!newPwd.match(special)){
 		context.invalidNewPassword = true;
 		context.invalidMessage = 'Must contain at least one special'
-					 + ' character (eg ^!@#$%^&*+=._-+)';
+		    + ' character (eg ^!@#$%^&*+=._-+)';
 	    }
 	    else if(newPwd.length < minLength){
 		context.invalidNewPassword = true;
@@ -130,6 +130,13 @@ module.exports = {
 	    else{
 		console.log('get user pword from db');
 		//then the new pwd is valid. now check if user entered prev password correctly
+		console.log('call get_user_from_id');
+		console.log('userId = ' + userId);
+		for(let i = 0; i < db.length; i++){
+		    console.log(i + ' ' + db[i]);
+		}
+		console.log('db[0] = ' + db[0]);
+		
 		db.get_user_from_id(userId)
 		    .then(res => compare_password(oldPwd, res.password))
 		    .then(compRes => {
@@ -159,14 +166,14 @@ module.exports = {
 	})
     },
     hash_password: function(pwd){
-    return new Promise((resolve, reject) => {
-	bcrypt.hash(pwd, saltRounds, (err, hash) => {
-	    console.log(hash);
-	    if(err) reject(err);
-	    else resolve(hash);
+	return new Promise((resolve, reject) => {
+	    bcrypt.hash(pwd, saltRounds, (err, hash) => {
+		console.log(hash);
+		if(err) reject(err);
+		else resolve(hash);
+	    })
 	})
-    })
-}
+    }
 }
 
 function compare_password(pwd, hashed){

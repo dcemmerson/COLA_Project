@@ -1,12 +1,13 @@
 var passport = require('passport');
 var bcrypt = require('bcrypt');
 var LocalStrategy = require('passport-local').Strategy;
-const em=require('../server_functions/emails.js');
+//const em=require('../server_functions/emails.js');
 
 require('../server.js'); //seems like this is a bit of a circular reference?
 const saltRounds = 10;
 var jwt = require('jwt-simple');
 var mysql = require('../dbcon.js');
+
 /* name: queryDB
    preconditions: sql contains string sql query
                   values is array of arguments for sql statement
@@ -16,14 +17,14 @@ var mysql = require('../dbcon.js');
    description: queryDB is a helper function for querying database.
 */
 function queryDB(sql, values, mysql) {
-	return new Promise((resolve, reject) => {
-		mysql.pool.query(sql, values, (err, results, fields) => {
-			if (err) {
-				console.log('db query rejecting');
-				reject(err);
-			} else resolve(results);
-		});
+    return new Promise((resolve, reject) => {
+	mysql.pool.query(sql, values, (err, results, fields) => {
+	    if (err) {
+		console.log('db query rejecting');
+		reject(err);
+	    } else resolve(results);
 	});
+    });
 }
 
 module.exports = {
@@ -41,87 +42,87 @@ module.exports = {
 		console.log(message.insertId);
 		const user_id=message.insertId;
 		req.login(user_id, function (err) {
-			res.redirect('subscriptions');
-		    })
+		    res.redirect('subscriptions');
+		})
 
 	    });
 	})
     },
-	
-	check_email: function (email, res, req) {
-	    var sql = "SELECT id, password, created FROM USER WHERE email= ?"
-	    var values = [email];
-	    queryDB(sql, values, mysql).then((message) => {
-		console.log(message);
-		if (message.length==0) 
-		{
-			res.render('reset', {
-					error: "Email does not exist"
-				});
-		}
-		else 
-		{
-			const user_id=(message[0].id);
-			const user_pwd=(message[0].password);
-			const user_created=(message[0].created);
-			em.password_reset_email(email, user_id, user_pwd, user_created);
-			let context = {};
-			context.layout = 'login_layout.hbs';
-			res.render('resetSent');
-		}
-		
+    
+    check_email: function (email, res, req) {
+	var sql = "SELECT id, password, created FROM USER WHERE email= ?"
+	var values = [email];
+	queryDB(sql, values, mysql).then((message) => {
+	    console.log(message);
+	    if (message.length==0) 
+	    {
+		res.render('reset', {
+		    error: "Email does not exist"
+		});
+	    }
+	    else 
+	    {
+		const user_id=(message[0].id);
+		const user_pwd=(message[0].password);
+		const user_created=(message[0].created);
+		em.password_reset_email(email, user_id, user_pwd, user_created);
+		let context = {};
+		context.layout = 'login_layout.hbs';
+		res.render('resetSent');
+	    }
+	    
 
-	    }).catch(err => console.log(err));
+	}).catch(err => console.log(err));
     },
-	
-	
-	get_user: function (req, res, id, token) {
-		var sql = "SELECT password, created FROM USER WHERE id= ?"
-	    var values = [id];
-	    queryDB(sql, values, mysql).then((message) => {
-		if (message.length==0) 
-		{
-			console.log("error");
-			res.redirect('/login');
-		}
-		else 
-		{
-			const user_pwd=(message[0].password);
-			const user_created=(message[0].created);
-			var secret = user_pwd +user_created;
-			
-			try{
-				const decoded = jwt.decode(token, secret);
-				let context = {};
-				context.layout = 'login_layout.hbs';
-				res.render('recover', {
-					id: id,
-				//	token: token
-				});
-			}catch(err) {if(err) res.redirect('/login');
-			
-			};
-			
-		}
+    
+    
+    get_user: function (req, res, id, token) {
+	var sql = "SELECT password, created FROM USER WHERE id= ?"
+	var values = [id];
+	queryDB(sql, values, mysql).then((message) => {
+	    if (message.length==0) 
+	    {
+		console.log("error");
+		res.redirect('/login');
+	    }
+	    else 
+	    {
+		const user_pwd=(message[0].password);
+		const user_created=(message[0].created);
+		var secret = user_pwd +user_created;
 		
+		try{
+		    const decoded = jwt.decode(token, secret);
+		    let context = {};
+		    context.layout = 'login_layout.hbs';
+		    res.render('recover', {
+			id: id,
+			//	token: token
+		    });
+		}catch(err) {if(err) res.redirect('/login');
+			     
+			    };
+		
+	    }
+	    
 
-	    })
+	})
     },
-	
-	update_user: function (id, pwd) {
+    
+    update_user: function (id, pwd) {
 	return new Promise((resolve, reject) => {
-		bcrypt.hash(pwd, saltRounds, function (err, hash) {
+	    bcrypt.hash(pwd, saltRounds, function (err, hash) {
 		const now = new Date().toISOString().replace(/\..+/, '')
-	    const sql = `UPDATE user SET password=?, modified=? WHERE id=?`
-	    const values = [hash, now, id];
-	    queryDB(sql, values, mysql)
-		.then(res => resolve(res))
-		.catch(err => console.log(err))
-		})
+		const sql = `UPDATE user SET password=?, modified=? WHERE id=?`
+		const values = [hash, now, id];
+		queryDB(sql, values, mysql)
+		    .then(res => resolve(res))
+		    .catch(err => console.log(err))
+	    })
 	});
     },
-	
-	
+    
+    
 
 
     authenticationMiddleware: function () {
@@ -216,9 +217,9 @@ module.exports = {
     },
     /* name: get_users_subsribed_to_post
        preconditions: post is name of post in db
-                      country is name of country that corresponds to post
+       country is name of country that corresponds to post
        postconditions: return list of users subscribed to post, along with
-                       the template file for each user.
+       the template file for each user.
     */
     get_users_subscribed_to_post: function (postId) {
 	return new Promise((resolve, reject) => {
@@ -247,7 +248,7 @@ module.exports = {
     /* name: get_list_of_posts
        preconditions: None 
        postconditions:  return Promise that returns list of posts when
-                        fulfilled
+       fulfilled
     */
     get_list_of_posts: function () {
 	return new Promise((resolve, reject) => {
@@ -260,9 +261,9 @@ module.exports = {
     },
     /* name: get_user_subscription_list
        preconditions: user_id is current logged in user, which should be
-                      obtained from open sesssion.
+       obtained from open sesssion.
        postconditions:  return Promise that returns list of user's 
-                        subscription when fulfilled
+       subscription when fulfilled
     */
     get_user_subscription_list: function (user_id) {
 	return new Promise((resolve, reject) => {
@@ -284,7 +285,7 @@ module.exports = {
        preconditions: user_id is current logged in user, which should be
        obtained from open sesssion.
        postconditions:  return Promise that returns names and ids of all user's
-                        uploaded templates, plus the default system template.
+       uploaded templates, plus the default system template.
     */
     get_user_template_names: function (user_id) {
 	return new Promise((resolve, reject) => {
@@ -301,9 +302,9 @@ module.exports = {
     },
     /* name: get_user_email
        preconditions: user_id is current logged in user, which should be
-                      obtained from open sesssion.
+       obtained from open sesssion.
        postconditions:  return Promise that returns email that corresponds
-                        to user_id in user table.
+       to user_id in user table.
     */
     get_user_email: function (user_id) {
 	return new Promise((resolve, reject) => {
@@ -314,13 +315,13 @@ module.exports = {
 		.catch(err => console.log(err))
 	});
     },
-	
-	
+    
+    
     /* name: insert_new_subscription_with_template_file
        preconditions: userId should be id of logged in user.
-                      name will be stored in name field - should match name of file
-                      file is validated docx file template uploaded by user
-		      comment is any comment the user added when uploading file.
+       name will be stored in name field - should match name of file
+       file is validated docx file template uploaded by user
+       comment is any comment the user added when uploading file.
        postconditions:  return Promise that fulfills after new subscription added
     */
     insert_new_subscription_with_template_file: function (user_id, post_id, filename, file, comment="") {
@@ -344,10 +345,10 @@ module.exports = {
 		.catch(err => console.log(err))
 	});
     },
-        /* name: insert_new_subscription_with_prev_template
+    /* name: insert_new_subscription_with_prev_template
        preconditions: user_id should be id of logged in user.
-		      comment is any comment the user added when uploading file.
-		      template_id is id corresponding to primary key in template table
+       comment is any comment the user added when uploading file.
+       template_id is id corresponding to primary key in template table
        postconditions:  return Promise that fulfills after new subscription added
     */
     insert_new_subscription_with_prev_template: function (user_id, post_id, template_id, comment="") {
@@ -367,7 +368,7 @@ module.exports = {
     /* name: delete_user_subscription
        preconditions: user_id should be id of logged in user.
        subscription_id is id corresponding to primary key in subscription table
-                      that user wishes to delete
+       that user wishes to delete
        postconditions:  return Promise that fulfills after subscription is deleted
     */
     delete_user_subscription: function (subscriptionId, userId) {
@@ -412,6 +413,7 @@ module.exports = {
     /*******************************************************************/
     get_user_from_id: function(userId){
 	return new Promise((resolve, reject) => {
+	    console.log('inside get_user_from_id');
 	    const sql = `SELECT email, password, created, modified`
 		  + ` FROM user WHERE id=?`;
 	    const values = [userId];
@@ -441,12 +443,12 @@ module.exports = {
 }
 
 passport.serializeUser(function (user_id, done) {
-	done(null, user_id);
+    done(null, user_id);
 });
 
 
 passport.deserializeUser(function (user_id, done) {
-	done(null, user_id);
+    done(null, user_id);
 });
 
 

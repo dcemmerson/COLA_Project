@@ -85,7 +85,7 @@ html {
     height: 1rem;
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 1.25rem;
+    background-size: 1rem;
     display: inline-block;
 }
 .invalBlank::before {
@@ -110,6 +110,6 @@ html {
     height: 1rem;
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 1rem;
+    background-size: 0.85rem;
     display: inline-block;
 }

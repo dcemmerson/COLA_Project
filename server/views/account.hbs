@@ -1,15 +1,15 @@
-<div class="container d-flex justify-content-center">
-  <h1 class="h2 inlineBlock border-bottom px-2 pt-4 pb-2"> My Account </h1>
+<div class="container d-flex inlineBlock">
+  <h1 class="h2 border-bottom px-2 pt-4 pb-2"> My Account </h1>
 </div>
 <div class="container-fluid">
   <div class="row mt-4">
     <!-- left col -->
-    <div class="col-0 col-md-1 col-lg-2">
+    <div class="col-0 col-lg-1">
     </div>
     <!-- main center screen -->
-    <div class="col-12 col-md-10 col-lg-8">
+    <div class="col-12">
       <div class="row justify-content-around">
-	<div class="col-12 col-md-6 col-lg-4 mb-3">
+	<div class="col-12 col-md-3 col-lg-4 mb-3">
 	  <div class="row">
 	    <div class="col">
 	      <h2 class="h5 ml-4"><b>Email</b></h2>
@@ -23,47 +23,83 @@
 	    </div>
 	  </div>
 	</div>
-	<div class="col-12 col-md-6 col-lg-5">
-	  <div id="changePasswordBtnDiv" class="mt-3">
-	    <button type="button" class="btn btn-secondary btn-sm" id="changePasswordBtn"
-		    data-toggle="popover" data-container="body" data-placement="right">
-	      Change Password</button>
-	  </div>
-	  <div id="passwordFormContainer" class="hidden">
+	<div class="col-12 col-md-8 col-lg-6">
+	  <div id="passwordFormContainer" class="mb-4">
 	    <h2 class="h5 ml-4"><b>Change Password</b></h2>
-	    <form id="changePasswordForm" class="">
-	      <div><p id="changePasswordMessageDiv"></p></div>
+	    <div id="alertInfo" class="usa-alert usa-alert--info changePasswordAlert">
+	      <div class="usa-alert__body">
+		<h3 class="usa-alert__heading">Password requirements</h3>
+		<p class="usa-alert__text">Must contain the following:</p>
+		<p class="usa-alert__text lowercaseReq val">A lowercase letter</p>
+		<p class="usa-alert__text uppercaseReq val">An uppercase letter</p>
+		<p class="usa-alert__text numberReq val">A number</p>
+		<p class="usa-alert__text specialReq val">A nonletter character (!@#$%^&*.?)</p>
+		<p class="usa-alert__text minCharReq val">8+ characters</p>
+	      </div>
+	    </div>
+	    <div id="alertSuccess" class="usa-alert usa-alert--success changePasswordAlert"
+		 style="display:none">
+	      <div class="usa-alert__body">
+		<h3 class="usa-alert__heading">Password updated!</h3>
+		<p class="usa-alert__text">Your password has been successfully updated</p>
+	      </div>
+	    </div>
+	    <div id="alertWarning" class="usa-alert usa-alert--warning changePasswordAlert"
+		 style="display:none">
+	      <div class="usa-alert__body">
+		<h3 class="usa-alert__heading">Unable to update password</h3>
+		<p class="usa-alert__text">Password must contain the following:</p>
+		<p class="usa-alert__text lowercaseReq val">A lowercase letter</p>
+		<p class="usa-alert__text uppercaseReq val">An uppercase letter</p>
+		<p class="usa-alert__text numberReq val">A number</p>
+		<p class="usa-alert__text specialReq val">A nonletter character (!@#$%^&*.?)</p>
+		<p class="usa-alert__text minCharReq val">8+ characters</p>
+	      </div>
+	    </div>
+	    
+	    <div id="alertError" class="usa-alert usa-alert--error changePasswordAlert"
+		 style="display:none">
+	      <div class="usa-alert__body">
+		<h3 class="usa-alert__heading">Error updating password</h3>
+		<p class="usa-alert__text">We are unable to change your password at this time.</p>
+		<p class="usa-alert__text">Please <a href="/account">refresh</a> page and try again.</p>
+	      </div>
+	    </div>
+	    
+	    <form id="changePasswordForm" class="usa-form">
 	      <!-- 1. old password -->
 	      <div class="form-group">
-		<label for="oldPassword" class="mt-2 mr-2">Old Password</label>
-		<input id="oldPassword" type="password" class="form-control"
-		       data-toggle="popover" data-container="body" data-placement="bottom" required>
+		<label for="oldPassword" class="usa-label mt-2 mr-2">Old password</label>
+		<span class="usa-error-message passwordError" id="oldPasswordError" role="alert"
+		      style="display:none"></span>
+		<input id="oldPassword" type="password" class="usa-input" required>
 	      </div>
 	      <!-- 2. new password -->
 	      <div class="form-group">
-		<label for="newPassword" class="mt-2 mr-2">New Password</label>
-		<input id="newPassword" type="password" class="form-control"
-		       data-toggle="popover" data-container="body" data-placement="bottom" required>
+		<label for="newPassword" class="usa-label mt-2 mr-2">New password</label>
+ 		<span class="usa-error-message passwordError" id="newPasswordError" role="alert"
+		      style="display:none"></span>
+		<input id="newPassword" type="password" class="usa-input" oninput="valid_password()" required>
 	      </div>
 	      <!-- 3. new password re-enter -->
 	      <div class="form-group">
-		<label for="newPasswordRe" class="mt-2 mr-2">Re-enter New Password</label>
-		<input id="newPasswordRe" type="password" class="form-control"
-		       data-toggle="popover"  data-container="body" data-placement="bottom" required>
+		<label for="newPasswordRe" class="usa-label mt-2 mr-2">Re-enter new password</label>
+		<span class="usa-error-message passwordError" id="newPasswordReError" role="alert"
+			  style="display:none"></span>
+		<input id="newPasswordRe" type="password" class="usa-input" required>
 	      </div>
 	      <!-- 4. submit... -->
-	      <div class="" id="submitBtnDiv" data-toggle="popover" data-placement="right">
-		<button type="submit" id="submitNewPassword" class="btn btn-sm btn-primary"
-			data-toggle="popover" data-container="body" data-placement="right">Submit</button>
+	      <div class="" id="submitBtnDiv">
+		<button type="submit" id="submitNewPassword"
+			class="usa-button btn btn-sm">Update</button>
 	      </div>
 	    </form>
 	  </div>
 	</div>	  
       </div>
     </div>
-    
-  </div>
-  <!-- right col -->
-  <div class="col-0 col-md-1 col-lg-2">
+    <!-- right col -->
+    <div class="col-0">
+    </div>    
   </div>
 </div>

@@ -1,4 +1,5 @@
 const db = require('../server_functions/db_functions.js');
+
 const misc = require('../server_functions/misc.js');
 const crs = require('../server_functions/cola_rates_script.js');
 const multer = require('multer');
@@ -149,7 +150,7 @@ module.exports = function(app,  mysql){
     app.post('/update_password', function (req, res) {
 	const tempUserId = 1;
 	var context = {};
-	
+
 	misc.validate_password(tempUserId, req.body.oldPassword,
 			       req.body.newPassword, req.body.newPasswordRe, context)
 	    .then(() => misc.hash_password(req.body.newPassword))

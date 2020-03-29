@@ -91,3 +91,8 @@ function hide_elements(elements){
 	elements[i].style.display = 'none';
     }
 }
+function clear_inner_text(elements){
+    for(let i = 0; i < elements.length; i++){
+	elements[i].innerText = '';
+    }
+}
