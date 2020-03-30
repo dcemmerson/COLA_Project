@@ -42,6 +42,12 @@
     .spinnerlg {
 	font-size: 1.6em;
     }
+    .font-xl {
+	font-size: 2em;
+    }
+    #syntaxTable {
+	font-size: 0.8rem;
+    }
 }
 /* tablet - ish */
 @media screen and (min-width: 600px){
@@ -86,6 +92,12 @@
     }
     .spinnerlg {
 	font-size: 1.8em;
+    }
+    .font-xl {
+	font-size: 2.5em;
+    }
+    #syntaxTable {
+	font-size: 0.9rem;
     }
 }
 /* laptop - ish */
@@ -132,6 +144,12 @@
     .spinnerlg {
 	font-size: 2em;
     }
+    .font-xl {
+	font-size: 3em;
+    }
+    #syntaxTable {
+	font-size: 1.0rem;
+    }
 }
 /* laptop - ish */
 @media screen and (min-width: 992px){
@@ -177,6 +195,13 @@
     .spinnerlg {
 	font-size: 2em;
     }
+    .font-xl {
+	font-size: 3em;
+    }
+    #syntaxTable {
+	font-size: 1.1rem;
+    }
+    
 }
 .center-text {
     text-align:center;

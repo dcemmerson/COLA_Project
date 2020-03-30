@@ -16,7 +16,15 @@ module.exports = function (app) {
 	context.layout = 'login_layout.hbs';
 	res.render('login', context);
     });
-
+    app.get(`/FAQ`, function (req, res) {
+	let context = {};
+	context.style = ['style.css', 'font_size.css', 'FAQ.css'];
+	context.script = ['FAQ.js', 'utility.js'];
+	context.title = 'FAQ - COLA';
+	context.FAQ = true;
+	res.render('FAQ', context);
+    });
+    
     app.get(`/account`, /* db.authenticationMiddleware(), */ function (req, res) {
 	let context = {};
 	let awaitPromises = [];

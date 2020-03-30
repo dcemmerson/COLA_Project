@@ -1,0 +1,102 @@
+<div class="container d-flex inlineBlock">
+  <h1 class="h2 border-bottom px-2 pt-4 pb-2"> Frequently Asked Questions </h1>
+</div>
+<div class="container mb-4">
+  <div class="row mt-4">
+    <div class="col">
+      <div class="usa-accordion">
+	<h2 class="usa-accordion__heading">
+          <button class="usa-accordion__button"
+		  aria-expanded="true"
+		  aria-controls="a1">
+	    <span class="font-xl" style="font-weight: lighter">Q.</span>
+            What is this website?
+          </button>
+	</h2>
+	<div id="a1" class="usa-accordion__content usa-prose">
+          <p>This website is a tool created that allows users to sign up to receive notifcations when post cost of living allowance (COLA) rates for change. This app monitors COLA rates found at <a href="https://aoprals.state.gov/Web920/cola.asp">aoprals.state.gov</a>. Users can subscribe to one or more posts and will receive email notifications when COLA rates to these posts change. </p>
+	</div>
+      </div>
+      <div class="usa-accordion">
+	<h2 class="usa-accordion__heading">
+          <button class="usa-accordion__button"
+		  aria-expanded="false"
+		  aria-controls="a2">
+	    <span class="font-xl" style="font-weight: lighter">Q.</span>
+            What are the templates?
+          </button>
+	</h2>
+	<div id="a2" class="usa-accordion__content usa-prose">
+          <p>Templates are .doc or .docx files that will be updated with new COLA rates and emailed to subscriber upon COLA rates changing.</p>
+	  <p>When creating a new subscription to a post, users are presented with the option of either using a default template, shown <a href="/">here</a>, or uploading a customized template. <a id="jumpToTemplateLooks" href="#templateLooks">What should my customized template look like?</a></p>
+	</div>
+      </div>
+      <div id="templateLooks" class="usa-accordion">
+	<h2 class="usa-accordion__heading">
+          <button class="usa-accordion__button"
+		  aria-expanded="false"
+		  aria-controls="a3">
+	    <span class="font-xl" style="font-weight: lighter">Q.</span>
+            What should my template look like?
+          </button>
+	</h2>
+	<div id="a3" class="usa-accordion__content usa-prose">
+          <p>A sample template can be viewed <a href="/">here</a>.</p>
+	  <p>Uploaded templates should be .doc or .docx format. Prior to sending email to subscriber, the app will complete various fields in the user's template. Fields are shown below. Each field must be wrapped in curly braces (eg {field} in uploaded template file. </p>
+	  <p>
+	    <div class="row ml-4">
+	      <table id="syntaxTable" class="usa-table">
+		<thead>
+		  <tr>
+		    <th scope="col">Field</th>
+		    <th scope="col">File syntax</th>
+		  </tr>
+		</thead>
+		<tbody>
+		  <tr>
+		    <th scope="row">Old COLA rate</th>
+		    <td>{old_cola}</td>
+		  </tr>
+		  <tr>
+		    <th scope="row">New COLA rate</th>
+		    <td>{new_cola}</td>
+		  </tr>
+		  <tr>
+		    <th scope="row">Date adjusted</th>
+		    <td>{date}</td>
+		  </tr>
+		</tbody>
+	      </table>
+	    </div>
+	  </p>
+	</div>
+      </div>
+      <div class="usa-accordion">
+	<h2 class="usa-accordion__heading">
+          <button class="usa-accordion__button"
+		  aria-expanded="false"
+		  aria-controls="a4">
+	    <span class="font-xl" style="font-weight: lighter">Q.</span>
+            Do I have to upload a template?
+          </button>
+	</h2>
+	<div id="a4" class="usa-accordion__content usa-prose">
+          <p>No, you do not have to upload a template to use this tool. We provide a default template in the template dropdown, <a href="/subscriptions#templateFormContainer">here</a>, which users may choose as the preferred template for a subscription.</p>
+	</div>
+      </div>
+      <div class="usa-accordion">
+	<h2 class="usa-accordion__heading">
+          <button class="usa-accordion__button"
+		  aria-expanded="false"
+		  aria-controls="a5">
+	    <span class="font-xl" style="font-weight: lighter">Q.</span>
+            Can I reuse templates?
+          </button>
+	</h2>
+	<div id="a5" class="usa-accordion__content usa-prose">
+          <p>Yes! After uploading a template on the <a href="/subscriptions">subscriptions</a> page (while creating a new subscription), we will save this template for you and you will then be able to select this template, <a href="/subscriptions#templateFormContainer">here</a>, when creating or modifying subscriptions.</p>
+	</div>
+      </div>
+    </div>
+  </div> 
+</div>
