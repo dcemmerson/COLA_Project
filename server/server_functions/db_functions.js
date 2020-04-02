@@ -1,10 +1,6 @@
 var passport = require('passport');
 var bcrypt = require('bcrypt');
 var LocalStrategy = require('passport-local').Strategy;
-//const em=require('../server_functions/emails.js');// commented out because this is a circular
-//reference and causes multiple parts of system to break.
-
-require('../server.js'); //seems like this is a bit of a circular reference?
 const saltRounds = 10;
 var jwt = require('jwt-simple');
 var mysql = require('../dbcon.js');
