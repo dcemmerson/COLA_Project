@@ -49,6 +49,17 @@ module.exports = {
 	    });
 	})
     },
+	
+	check_emails: function (email, res, req) {
+	return new Promise((resolve, reject) => {
+	    const sql = "SELECT id, password, modified FROM USER WHERE email= ?"
+		const values = [email];
+	    queryDB(sql, values, mysql)
+		.then(res => resolve(res))
+		.catch(err => console.log(err))
+	})
+
+    },
     
     check_email: function (email, res, req) {
 	var sql = "SELECT id, password, modified FROM USER WHERE email= ?"
