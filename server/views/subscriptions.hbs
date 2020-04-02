@@ -124,16 +124,40 @@
 	      </div>
 	      
 	      <div id="unsubscribeAlertSuccess" class="unsubscribeAlert" style="display:none">
-		<div class="usa-alert usa-alert--success">
+		<div class="usa-alert usa-alert--warning">
+		  <div class="dismiss-alert"
+		       onclick="dismiss_alert(this.parentNode.parentNode)">
+		    <span role="button" class="dismiss-alert-button"></span>
+		  </div>
 		  <div class="usa-alert__body">
-		    <h3 class="usa-alert__heading">Unsubscribed!</h3>
-		    <p class="usa-alert__text">You have been unsubscribed from <span class="unsubscribeMsgSpan">{error}</span></p>
+		    <span>
+		      <h3 class="usa-alert__heading">Unsubscribed!
+			<button id="undoLink" class="btn btn-link sm">undo</a>
+		      </h3>
+		    </span>
+		    <p class="usa-alert__text">You have unsubscribed from <span class="unsubscribeMsgSpan">{error}</span></p>
+		  </div>
+		</div>
+	      </div>
+	      <div id="resubscribeAlertSuccess" class="unsubscribeAlert" style="display:none">
+		<div class="usa-alert usa-alert--success">
+		  <div class="dismiss-alert"
+		       onclick="dismiss_alert(this.parentNode.parentNode)">
+		    <span role="button" class="dismiss-alert-button"></span>
+		  </div>
+		  <div class="usa-alert__body">
+		    <h3 class="usa-alert__heading">Undone!</h3>
+		    <p class="usa-alert__text">You have resubscribed to <span class="unsubscribeMsgSpan">{error}</span></p>
 		  </div>
 		</div>
 	      </div>
 
 	      <div id="unsubscribeAlertError" class="unsubscribeAlert" style="display:none">
 		<div class="usa-alert usa-alert--error">
+		  <div class="dismiss-alert"
+		       onclick="dismiss_alert(this.parentNode.parentNode)">
+		    <span role="button" class="dismiss-alert-button"></span>
+		  </div>
 		  <div class="usa-alert__body">
 		    <h3 class="usa-alert__heading">Error unsubscribing!</h3>
 		    <p class="usa-alert__text">Unable to unsubscribe from <span class="unsubscribeMsgSpan">{error}</span> at this time</p>
@@ -164,6 +188,9 @@
 
 		</tbody>
 	      </table>
+	      <div id="noActiveSubscriptions" style="display:none;">
+		You have no active subscriptions. <a href="#addSubscription">Add subscriptions</a>
+	      </div>
 	      <div id="subscriptionsContainerSpinner">
 		<i class="fa fa-spinner fa-spin spinner"></i>
 	      </div>

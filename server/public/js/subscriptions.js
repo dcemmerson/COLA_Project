@@ -37,6 +37,10 @@ function clear_user_subscriptions(){
     let tbody = document.getElementById('subscriptionTbody');
     while(tbody.firstChild)
 	tbody.removeChild(tbody.firstChild);
+
+    $('#subscriptionsTable')[0].style.display = 'none';
+    $('#noActiveSubscriptions')[0].style.display = 'none';
+ 
 }
 
 
@@ -225,9 +229,45 @@ function validate_subscription_old(){
     return valid;
 }
 
-function display_unsubscribe_alert(element, spanClass, post, country){
-    for(let i = 0; i < spanClass.length; i++){
-	spanClass[i].innerText = `${country} (${post}) `;
-    }
+function display_unsubscribe_alert(element, post, country, tok){
+    element.getElementsByClassName('unsubscribeMsgSpan')[0].innerText = `${country} (${post})`;
     element.style.display = 'block';
+    
+    $('#undoLink')[0].setAttribute('data-tok', tok);
+    $('#undoLink')[0].setAttribute('data-post', post);
+    $('#undoLink')[0].setAttribute('data-country', country);
+    
+    $('#undoLink')[0].removeEventListener('click', restore_subscription);    
+    $('#undoLink')[0].addEventListener('click', restore_subscription);
+}
+
+function restore_subscription(e){
+    e.preventDefault();
+    console.log($('#undoLink')[0].getAttribute('data-tok'));
+    let undoLink = $('#undoLink')[0];
+    
+    delete_subscription(undoLink.getAttribute('data-tok'),
+			undoLink.getAttribute('data-post'),
+			undoLink.getAttribute('data-country'));
+			
+}
+
+function check_empty_subscriptions(){
+    let table = $('#subscriptionsTable')[0];
+    let tbody = $('#subscriptionTbody')[0];
+    let msgDiv = $('#noActiveSubscriptions')[0];
+    
+    if(!tbody.firstChild){
+	table.style.display = 'none';
+	msgDiv.style.display = 'block';
+    }
+    else{
+	table.style.display = 'table';
+	msgDiv.style.display = 'none';
+    }
+}
+
+function dismiss_alert(alert){
+    alert.style.display = 'none';
+    $('#unsubscribeAlertBlank')[0].style.display = 'block';
 }

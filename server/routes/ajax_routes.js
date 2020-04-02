@@ -79,13 +79,29 @@ module.exports = function(app,  mysql){
 		let context = {subscription_list: []};
     		await_promises.push(
 		    db.get_user_subscription_list(temp_user_id)
-			.then(subs => subs.forEach(sub => {
-			    context.subscription_list.push(sub);
-			}))
+			.then(subs => {
+			    //this is ugly but necessary to send to client at right time
+			    return new Promise((resolve, reject) => {
+				let await_signing = [];
+				subs.forEach(sub => {
+				    await_signing.push(misc.jwt_sign({post:sub.post,
+								      country:sub.country,
+								      subscriptionId:sub.subscriptionId
+								     })
+						       .then(tok => {
+							   sub.tok = tok;
+							   context.subscription_list.push(sub);
+						       }))
+				})
+				Promise.all(await_signing).then(resolve);
+			    })  
+			})
 			.catch(err => console.log(err))
 		);
 		Promise.all(await_promises)
-		    .then(() => res.send(context))
+		    .then(() => {
+			res.send(context);
+		    })
 	    });
     
     app.post('/add_new_subscription_with_template_file', /*db.authenticationMiddleware(),*/ upload.single('upload'),
@@ -128,23 +144,46 @@ module.exports = function(app,  mysql){
 			 res.send(context);
 		     })
 	     });
-    app.post('/delete_subscription', /*db.authenticationMiddleware(),*/
-	     function (req, res) {
-		 const temp_user_id = 1;
-		 var context = {};
-		 
-		 db.update_user_subscription(req.body.subscriptionId, temp_user_id, false)
-		     .then(() => {
-			 console.log("deleted new sub (set active = 0)");
-			 res.deleted = true;
-			 res.send(context);
-		     })
-		     .catch(err => {
-			 console.log(err);
-			 context.deleted = false;
-			 res.send(context);
-		     })
-	     });
+    app.get('/delete_subscription', /*db.authenticationMiddleware(),*/
+	    function (req, res) {
+		const temp_user_id = 1;
+		var context = {};
+		var decrypted;
+		
+		misc.jwt_verify(req.query.tok)
+		    .then(dec => {
+			context.country = dec.country;
+			context.post = dec.post;
+			decrypted = dec;
+			return db.update_user_subscription(dec.subscriptionId,
+							   temp_user_id,
+							   !!dec.makeActive);
+		    })
+		    .then(res => {
+			if(res.changedRows > 0){
+			    decrypted.makeActive = !decrypted.makeActive;
+			    context.deleted = decrypted.makeActive;
+			    context.restored = !decrypted.makeActive;
+			}
+			else{
+			    throw new Error(`Unable to update subscriptionId`
+					  + `=${decrypted.subscriptionId} to`
+					  + ` active=${!!decrypted.makeActive}`
+					  + ` for userId=${temp_user_id}`);
+			}
+			
+			return misc.jwt_sign(decrypted);
+		    })
+		    .then(tok => {
+			context.tok = tok;
+			res.send(context);
+		    })
+		    .catch(err => {
+			console.log(err);
+			context.error = true;
+			res.send(context);
+		    })
+	    });
     /****************** End subscription page ajax routes *******************/
     /*********************** Account page ajax routes ***********************/
     app.post('/update_password', function (req, res) {
@@ -244,4 +283,8 @@ module.exports = function(app,  mysql){
 	    })
     });
     /**************** End AJAX routes coming from email links ****************/
+}
+
+function sign(){
+
 }

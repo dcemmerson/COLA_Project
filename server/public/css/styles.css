@@ -88,6 +88,7 @@ html {
     background-size: 1rem;
     display: inline-block;
 }
+
 .invalBlank::before {
     position: relative;
     content: "";

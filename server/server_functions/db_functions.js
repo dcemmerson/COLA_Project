@@ -378,8 +378,7 @@ module.exports = {
 	return new Promise((resolve, reject) => {
 	    let sql = `UPDATE subscription SET active=? WHERE id=? AND userId=?;`
 	    let values = [active, subscriptionId, userId];
-	    console.log(sql);
-	    console.log(values);
+	    
 	    queryDB(sql, values, mysql)
 	    	.then(res => {
 		    console.log(`subscriptions modified - active = ${active},`

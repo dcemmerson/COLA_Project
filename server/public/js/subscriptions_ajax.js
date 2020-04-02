@@ -156,11 +156,13 @@ async function fetch_user_subscription_list(){
 	let res = await response.json();
 	remove_spinner($('#subscriptionsContainerSpinner')[0]);
 	populate_subscription_table(res);
+	check_empty_subscriptions();
     }
     catch(err) {
 	console.log(err);
     }
 }
+
 function populate_subscription_table(res){
     let tbody = document.getElementById('subscriptionTbody');
     res.subscription_list.forEach(sub => {
@@ -174,7 +176,7 @@ function populate_subscription_table(res){
 	del_btn.setAttribute('class', 'btn-clear btn-minus-tiny');
 	del_btn.setAttribute('data-subscriptionId', sub.subscriptionId); 
 	del_btn.addEventListener('click', () =>{
-	    delete_subscription(sub.subscriptionId, sub.post, sub.country);
+	    delete_subscription(sub.tok, sub.post, sub.country);
 	});
 	del_btn.setAttribute('title', `Delete ${sub.country} (${sub.post}) subscription`);
 	let minimg = document.createElement('img');
@@ -203,7 +205,16 @@ function populate_subscription_table(res){
     })
     size_table();
 }
-async function delete_subscription(subscriptionId, post, country){
+
+/* name: delete_subscription
+   preconditions: tok contains all necessary info needed in /delete_subscriptions route,
+                    most importantly subscriptionId and makeActive (bool)
+		  post/country technically not necessary, and will only be required if an
+		    unexpected error occurs, to display to user - else, not needed.
+   postconditions: subscription has been either deactivated or reactivated, depending on
+                   calling context and token
+*/
+async function delete_subscription(tok, post, country){
     try{
 	var context = {};
 	hide_elements($('.unsubscribeAlert'));
@@ -212,24 +223,30 @@ async function delete_subscription(subscriptionId, post, country){
 	    document.getElementById('subscriptionsContainer')
 	]);
 	
-	context.subscriptionId = subscriptionId;
+//	context.subscriptionId = subscriptionId;
 	
 	clear_user_subscriptions();
 	show_spinner($('#subscriptionsContainerSpinner')[0]);
 	
-	let response = await fetch('/delete_subscription', {
-	    method: 'POST',
-	    headers: {
-		'Content-Type': 'application/JSON'
-	    },
-	    body: JSON.stringify(context)
-	})
+	let response = await fetch(`/delete_subscription?tok=${tok}`)
+	let res = await response.json();
 
-	display_unsubscribe_alert($('#unsubscribeAlertSuccess')[0], $('.unsubscribeMsgSpan'), post, country)
+	if(res.deleted){
+	    display_unsubscribe_alert($('#unsubscribeAlertSuccess')[0],
+				      res.post, res.country, res.tok);
+	}
+	else if(res.restored){
+	    display_unsubscribe_alert($('#resubscribeAlertSuccess')[0],
+				      res.post, res.country);
+	}
+	else
+	    throw new Error(`Error updating ${res.country} (${res.post})`);
+	
+
     }
     catch(err){
 	if(err) console.log(err);
-	display_unsubscribe_alert($('#unsubscribeAlertError')[0], $('.unsubscribeMsgSpan'), post, country)	
+	display_unsubscribe_alert($('#unsubscribeAlertError')[0], post, country)	
     }
     await fetch_user_subscription_list();
     
