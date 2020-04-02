@@ -125,7 +125,8 @@ function send_email(user, changed, file){
 		       userId: user.userId,
 		       post: changed.post,
 		       country: changed.country,
-		       postId: changed.postId
+		       postId: changed.postId,
+		       makeActive: false
 		      })
 	    .then(token => {
 		const email = new Email({

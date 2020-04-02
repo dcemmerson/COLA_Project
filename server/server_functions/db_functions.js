@@ -1,7 +1,8 @@
 var passport = require('passport');
 var bcrypt = require('bcrypt');
 var LocalStrategy = require('passport-local').Strategy;
-//const em=require('../server_functions/emails.js');
+//const em=require('../server_functions/emails.js'); commented out because this is a circular
+//reference and causes multiple parts of system to break.
 
 require('../server.js'); //seems like this is a bit of a circular reference?
 const saltRounds = 10;
@@ -230,7 +231,7 @@ module.exports = {
 		  + ` INNER JOIN COLARates_subscription cs ON s.id=cs.subscriptionId`
 		  + ` INNER JOIN COLARates cr ON cs.COLARatesId=cr.id`
 		  + ` INNER JOIN template t ON s.templateId=t.id` 
-		  + ` WHERE cr.id=?`;
+		  + ` WHERE cr.id=? AND s.active=1`;
 	    const values = [postId];
 	    queryDB(sql, values, mysql)
 		.then(res => resolve(res))
@@ -273,7 +274,7 @@ module.exports = {
 		  + ` INNER JOIN subscription s ON u.id=s.userId`
 		  + ` INNER JOIN COLARates_subscription crs ON s.id=crs.subscriptionId`
 		  + ` INNER JOIN COLARates cr ON crs.COLARatesId=cr.id`
-		  + ` WHERE u.id=?`
+		  + ` WHERE u.id=? AND s.active=1`
 		  + ` ORDER BY cr.country ASC, cr.post ASC`;
 	    const values = [user_id];
 	    queryDB(sql, values, mysql)
@@ -332,8 +333,8 @@ module.exports = {
 	    
 	    queryDB(sql, values, mysql)
 		.then(res => {
-		    sql = `INSERT INTO subscription (name, comment, userId, templateId) VALUES (?, ?, ?, ?);`
-		    values = ["", "", user_id, res.insertId];
+		    sql = `INSERT INTO subscription (name, comment, userId, templateId, active) VALUES (?, ?, ?, ?, ?);`
+		    values = ["", "", user_id, res.insertId, 1];
 		    return queryDB(sql,values, mysql);
 		})
 	    	.then(res => {
@@ -353,8 +354,8 @@ module.exports = {
     */
     insert_new_subscription_with_prev_template: function (user_id, post_id, template_id, comment="") {
 	return new Promise((resolve, reject) => {
-	    let sql = `INSERT INTO subscription (name, comment, userId, templateId) VALUES (?, ?, ?, ?);`
-	    let values = ["", "", user_id, template_id];	    
+	    let sql = `INSERT INTO subscription (name, comment, userId, templateId, active) VALUES (?, ?, ?, ?, ?);`
+	    let values = ["", "", user_id, template_id, 1];
 	    queryDB(sql, values, mysql)
 	    	.then(res => {
 		    sql = ` INSERT INTO COLARates_subscription (subscriptionId, COLARatesId) VALUES (?, ?);`
@@ -365,19 +366,24 @@ module.exports = {
 		.catch(err => console.log(err))
 	});
     },
-    /* name: delete_user_subscription
+    /* name: update_user_subscription
        preconditions: user_id should be id of logged in user.
        subscription_id is id corresponding to primary key in subscription table
        that user wishes to delete
-       postconditions:  return Promise that fulfills after subscription is deleted
+       active should be set to 1 or true if we want to reactive a subscription, 0 or false if
+       we need to deactive/delete subscription
+       postconditions:  return Promise that fulfills after subscription active field updated
     */
-    delete_user_subscription: function (subscriptionId, userId) {
+    update_user_subscription: function (subscriptionId, userId, active=true) {
 	return new Promise((resolve, reject) => {
-	    let sql = `DELETE FROM subscription WHERE id=? AND userId=?;`
-	    let values = [subscriptionId, userId];	    
+	    let sql = `UPDATE subscription SET active=? WHERE id=? AND userId=?;`
+	    let values = [active, subscriptionId, userId];
+	    console.log(sql);
+	    console.log(values);
 	    queryDB(sql, values, mysql)
 	    	.then(res => {
-		    console.log('subscriptions deleted: ' + res.affectedRows);
+		    console.log(`subscriptions modified - active = ${active},`
+				+ ` affectedRow = ${res.affectedRows}`);
 		    resolve(res);
 		})
 		.catch(err => console.log(err))
@@ -390,15 +396,15 @@ module.exports = {
     /*******************************************************************/
     /******************** UNSUBSCRIBETOK PAGE QUERIES ******************/
     /*******************************************************************/
-    get_number_user_redundant_subscriptions: function(userId, postId){
+    get_number_user_redundant_subscriptions: function(userId, postId, post, country){
 	return new Promise((resolve, reject) => {
 	    const sql = `SELECT COUNT(u.id) AS numberSubscriptions`
 		  + ` FROM user u`
 		  + ` INNER JOIN subscription s ON u.id=s.userId`
 		  + ` INNER JOIN COLARates_subscription crs ON s.id=crs.subscriptionId`
 		  + ` INNER JOIN COLARates cr ON crs.COLARatesId=cr.id`
-		  + ` WHERE u.id=? AND cr.id=?`;
-	    const values = [userId, postId];
+		  + ` WHERE (u.id=? AND cr.id=? AND s.active=1) || (u.id=? AND cr.post=? AND cr.country=? AND s.active=1)`;
+	    const values = [userId, postId, userId, post, country];
 	    queryDB(sql, values, mysql)
 		.then(res => resolve(res[0]))
 		.catch(err => console.log(err))	    
@@ -413,7 +419,6 @@ module.exports = {
     /*******************************************************************/
     get_user_from_id: function(userId){
 	return new Promise((resolve, reject) => {
-	    console.log('inside get_user_from_id');
 	    const sql = `SELECT email, password, created, modified`
 		  + ` FROM user WHERE id=?`;
 	    const values = [userId];

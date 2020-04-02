@@ -1,46 +1,88 @@
 <div class="container mt-2">
-  {{#if unsubscribed}}
-  {{#if deleted}}
-  <h1 class="text-center mt-2">Unsubscribed!</h1>
+{{#if unsubscribed}}
+
+  {{#if updated}}
+  <h1 class="text-center mt-2 sr-only">Unsubscribed!</h1>
   <div>
-    {{username}} has been successfully unsubscribed from this subscription
-    to {{country}} ({{post}}).
+    <div class="usa-alert usa-alert--success max-width-900">
+      <div class="usa-alert__body">
+	<span>
+	  <h2 class="h3 usa-alert__heading">Unsubscribed! <a class="sm" href="/unsubscribeTok?tok={{doTok}}">undo</a></h2>
+	</span>
+	<p class="usa-alert__text">{{username}} has been successfully unsubscribed from this subscription to {{country}} ({{post}}).</p>
+      </div>
+    </div>
   </div>
-  {{else if alreadyUnsubscribed}}
-  <h1 class="text-center mt-2">Unsubscribed Already!</h1>
+  {{else if alreadyUpdated}}
+  <h1 class="text-center mt-2 sr-only">Unsubscribed Already!</h1>
+  <div class="usa-alert usa-alert--info max-width-900">
+    <div class="usa-alert__body">
+      <span>
+	<h2 class="h3 usa-alert__heading">Already unsubscribed! <a class="sm" href="/unsubscribeTok?tok={{doTok}}">undo</a></h2>
+      </span>
+      <p class="usa-alert__text">{{username}} has already been successfully unsubscribed from this subscription to {{country}} ({{post}}).</p>
+    </div>
+  </div>
+  
+  {{/if}}<!-- end of updated -->
+  
+  
+{{else if resubscribed}}
+  {{#if updated}}
+  <h1 class="text-center mt-2 sr-only">Resubscribed!</h1>
   <div>
-    {{username}} has already been successfully unsubscribed from this
-     subscription to {{country}} ({{post}}).
+    <div class="usa-alert usa-alert--success max-width-900">
+      <div class="usa-alert__body">
+	<span>
+	  <h2 class="h3 usa-alert__heading">Resubscribed! <a class="sm" href="/unsubscribeTok?tok={{doTok}}">undo</a></h2>
+	</span>
+	<p class="usa-alert__text">{{username}} has been successfully resubscribed to this subscription to {{country}} ({{post}}).</p>
+      </div>
+    </div>
   </div>
-  {{/if}}
+  {{else if alreadyUpdated}}
+  <h1 class="text-center mt-2 sr-only">Unsubscribed Already!</h1>
+  <div class="usa-alert usa-alert--info max-width-900">
+    <div class="usa-alert__body">
+      <span>
+	<h2 class="h3 usa-alert__heading">Already resubscribed! <a class="sm" href="/unsubscribeTok?tok={{doTok}}">undo</a></h2>
+      </span>
+      <p class="usa-alert__text">{{username}} has already been successfully resubscribed to this subscription to {{country}} ({{post}}).</p>
+    </div>
+  </div>
+  
+  {{/if}}<!-- end of updated -->
+{{else if error}}
+  <br><br>
+  <h1 class="text-center mt-2 sr-only">An error has occurred</h1>
+  <div class="usa-alert usa-alert--error max-width-900" >
+    <div class="usa-alert__body">
+      <h2 class="h3 usa-alert__heading">Something went wrong...</h2>
+      <p class="usa-alert__text">A technical error has occured. Please try again.</p>
+    </div>
+  </div>
+
+{{/if}} <!-- end of unsubscribed -->
+
+  
   {{#if additionalSubs}}
   <!-- if user has more than one active subscription to the post they just tried
        to unsubscribe from, we should let them know to avoid confusion when they
        still receive emails about that post's rate changes
     -->
-  <div>
-    <p class="error">
-      Note: {{username}} has {{numberAdditionalSubs}} additonal active subscriptions
-      to {{country}} ({{post}}).
-    </p>
+  <div class="usa-alert usa-alert--warning max-width-900" >
+    <div class="usa-alert__body">
+      <h2 class="h3 usa-alert__heading">Additional subscriptions</h2>
+      <p class="usa-alert__text">{{username}} has {{numberAdditionalSubs}} additonal active subscriptions to {{country}} ({{post}}).</p>
+    </div>
   </div>
   {{/if}}
+  
   <br>
   <div>
     <p>
       <a href="/login">Login</a> to manage other subscriptions.
     </p>
   </div>
-  
-  {{else if error}}
-  <br><br>
-  <div mt-4>Something terrible has happened!</div>
-  <div>
-    Unable to unsubscribe from  {{country}} ({{post}}) subscription.
-    <br><br>
-    <p>Try <a href="/login">logging in</a> to manage subscriptions. If problem
-      persists, contact webmaster@somewhere.com
-    </p>
-  </div> 
-  {{/if}}
+
 </div>

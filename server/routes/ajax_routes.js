@@ -133,9 +133,9 @@ module.exports = function(app,  mysql){
 		 const temp_user_id = 1;
 		 var context = {};
 		 
-		 db.delete_user_subscription(req.body.subscriptionId, temp_user_id)
+		 db.update_user_subscription(req.body.subscriptionId, temp_user_id, false)
 		     .then(() => {
-			 console.log("deleted new sub");
+			 console.log("deleted new sub (set active = 0)");
 			 res.deleted = true;
 			 res.send(context);
 		     })
@@ -169,13 +169,21 @@ module.exports = function(app,  mysql){
     });
     
     /********************* End Account page ajax routes *********************/
-    /****************** AJAX routes coming from email links *****************/
+    /************************************************************************
+    AJAX routes coming from email links and/or
+       coming from one-click unsubscribe/undo unsubscribe
+    *************************************************************************/
     app.get('/unsubscribetok', function (req, res) {
+	console.log(req.session.passport);
 	const temp_user_id = 1;
 	var context = {
-	    layout: 'login_layout.hbs',
-	    style: ['unsubscribetok.css', 'font_size.css', 'style.css']
+	    style: ['unsubscribetok.css', 'font_size.css', 'styles.css']
 	}
+
+	//if not logged in
+	context.layout = 'login_layout.hbs';
+	//else deliver logged in navbar
+	
 	var decrypted;
 	
 	if(!req.query.tok){
@@ -195,18 +203,32 @@ module.exports = function(app,  mysql){
 		context.post = dec.post;
 		context.username = dec.username;
 
-		return db.delete_user_subscription(dec.subscriptionId, dec.userId);
+		return db.update_user_subscription(dec.subscriptionId, dec.userId, dec.makeActive);
 	    })
 	    .then(dbres => {
-		context.unsubscribed = true;
+		console.log(dbres);
+		context.unsubscribed = !decrypted.makeActive;
+		context.resubscribed = decrypted.makeActive;
+		if(dbres.changedRows == 0)
+		    context.alreadyUpdated = true;
+		else if(dbres.changedRows > 0)
+		    context.updated = true;
 		
-		if(dbres.affectedRows > 0)
-		    context.deleted = true;
-		else if(dbres.affectedRows == 0)
-		    context.alreadyUnsubscribed = true;
-
+		return misc.jwt_sign({username: decrypted.username,
+				      subscriptionId: decrypted.subscriptionId,
+				      userId: decrypted.userId,
+				      post: decrypted.post,
+				      country: decrypted.country,
+				      postId: decrypted.postId,
+				      makeActive: !decrypted.makeActive
+				     });
+	    })
+	    .then(tok => {
+		context.doTok = tok;
 		return db.get_number_user_redundant_subscriptions(decrypted.userId,
-								  decrypted.postId);
+								  decrypted.postId,
+								  decrypted.post,
+								  decrypted.country);
 	    })
 	    .then(dbres => {
 		if(dbres.numberSubscriptions > 0){
