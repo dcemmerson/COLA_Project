@@ -1,6 +1,6 @@
 
 const db = require('../server_functions/db_functions.js');
-//const em=require('../server_functions/emails.js');
+const em=require('../server_functions/emails.js');
 var jwt = require('jwt-simple');
 
 
@@ -201,23 +201,30 @@ module.exports = function (app) {
 			else {
 				var email = req.body.email;
 				console.log(email);
-				db.check_email(email, res, req);	
-				var message=db.check_email(email,res, req);
-
-			    /////////////////////////////////////////////////
-			    // i think this if statement needs to be .then chained,
-			    // otherwise it's never going to return true
-			    if (message.length==0) 
-			    {
-
-			res.render('reset', {
+				var message=db.check_email(email,res, req).then((message) => {
+				console.log(message);
+				if (message.length==0) 
+				{
+					res.render('reset', {
 					error: "Email does not exist"
-				});
-		}
-		else res.redirect('/login');
+					});
+				}
+				else 
+				{
+					const user_id=(message[0].id);
+					const user_pwd=(message[0].password);
+					const user_modified=(message[0].modified);
+					em.password_reset_email(email, user_id, user_pwd, user_modified);
+					let context = {};
+					context.layout = 'login_layout.hbs';
+					res.render('resetSent');
+				}
 				
-
 				
+			});
+			  
+		
+								
 			}
 
 		});
