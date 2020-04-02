@@ -201,7 +201,7 @@ module.exports = function (app) {
 			else {
 				var email = req.body.email;
 				console.log(email);
-				var message=db.check_emails(email,res, req).then((message) => {
+				var message=db.check_email(email,res, req).then((message) => {
 				console.log(message);
 				if (message.length==0) 
 				{

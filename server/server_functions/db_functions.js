@@ -46,7 +46,7 @@ module.exports = {
 	})
     },
 	
-	check_emails: function (email, res, req) {
+	check_email: function (email, res, req) {
 	return new Promise((resolve, reject) => {
 	    const sql = "SELECT id, password, modified FROM USER WHERE email= ?"
 		const values = [email];
@@ -56,32 +56,7 @@ module.exports = {
 	})
 
     },
-    
-    check_email: function (email, res, req) {
-	var sql = "SELECT id, password, modified FROM USER WHERE email= ?"
-	var values = [email];
-	queryDB(sql, values, mysql).then((message) => {
-	    console.log(message);
-	    if (message.length==0) 
-	    {
-		res.render('reset', {
-		    error: "Email does not exist"
-		});
-	    }
-	    else 
-	    {
-		const user_id=(message[0].id);
-		const user_pwd=(message[0].password);
-		const user_modified=(message[0].modified);
-		em.password_reset_email(email, user_id, user_pwd, user_modified);
-		let context = {};
-		context.layout = 'login_layout.hbs';
-		res.render('resetSent');
-	    }
-	    
-
-	}).catch(err => console.log(err));
-    },
+   
     
     
     get_user: function (req, res, id, token) {
