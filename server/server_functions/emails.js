@@ -52,7 +52,7 @@ module.exports = {
 		forgot_email.send({
 				template: `forgot_pwd`,
 				message: {
-					to: 'shif.schectman@gmail.com'
+					to: email
 				},
 				locals: {
 					locale: 'en',

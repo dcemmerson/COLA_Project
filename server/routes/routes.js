@@ -201,13 +201,13 @@ module.exports = function (app) {
 			else {
 				var email = req.body.email;
 				console.log(email);
-				db.check_email(email, res, req);	
+			//	db.check_email(email, res, req);	
 				var message=db.check_email(email,res, req);
 
 			    /////////////////////////////////////////////////
 			    // i think this if statement needs to be .then chained,
 			    // otherwise it's never going to return true
-			    if (message.length==0) 
+		/*	    if (message.length==0) 
 			    {
 
 			res.render('reset', {
@@ -215,9 +215,7 @@ module.exports = function (app) {
 				});
 		}
 		else res.redirect('/login');
-				
-
-				
+					*/			
 			}
 
 		});

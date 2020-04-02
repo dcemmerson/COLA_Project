@@ -1,7 +1,7 @@
 var passport = require('passport');
 var bcrypt = require('bcrypt');
 var LocalStrategy = require('passport-local').Strategy;
-//const em=require('../server_functions/emails.js'); commented out because this is a circular
+//const em=require('../server_functions/emails.js');// commented out because this is a circular
 //reference and causes multiple parts of system to break.
 
 require('../server.js'); //seems like this is a bit of a circular reference?
@@ -51,7 +51,7 @@ module.exports = {
     },
     
     check_email: function (email, res, req) {
-	var sql = "SELECT id, password, created FROM USER WHERE email= ?"
+	var sql = "SELECT id, password, modified FROM USER WHERE email= ?"
 	var values = [email];
 	queryDB(sql, values, mysql).then((message) => {
 	    console.log(message);
@@ -65,8 +65,8 @@ module.exports = {
 	    {
 		const user_id=(message[0].id);
 		const user_pwd=(message[0].password);
-		const user_created=(message[0].created);
-		em.password_reset_email(email, user_id, user_pwd, user_created);
+		const user_modified=(message[0].modified);
+		em.password_reset_email(email, user_id, user_pwd, user_modified);
 		let context = {};
 		context.layout = 'login_layout.hbs';
 		res.render('resetSent');
@@ -78,7 +78,7 @@ module.exports = {
     
     
     get_user: function (req, res, id, token) {
-	var sql = "SELECT password, created FROM USER WHERE id= ?"
+	var sql = "SELECT password, modified FROM USER WHERE id= ?"
 	var values = [id];
 	queryDB(sql, values, mysql).then((message) => {
 	    if (message.length==0) 
@@ -89,8 +89,8 @@ module.exports = {
 	    else 
 	    {
 		const user_pwd=(message[0].password);
-		const user_created=(message[0].created);
-		var secret = user_pwd +user_created;
+		const user_modified=(message[0].modified);
+		var secret = user_pwd +user_modified;
 		
 		try{
 		    const decoded = jwt.decode(token, secret);
