@@ -1,0 +1,12 @@
+.modal-dialog {
+    max-width: 80%;
+    height: 95%;
+
+}
+.modal-content {
+    height: 95%
+}
+.iframe-docx {
+    width: 95%;
+    height: 100%;
+}
