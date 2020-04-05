@@ -3,14 +3,14 @@ function hidden_timer(element, time=5000){
 	element.hidden = true;
     }, time);
 }
-function show_spinner(element){
+function show_spinner(element, lg=''){
     let i = document.createElement('i');
-    i.setAttribute('class', 'fa fa-spinner fa-spin spinner');
+    i.setAttribute('class', `fa fa-spinner fa-spin spinner${lg}`);
     element.appendChild(i);
 }
-function remove_spinner(element){
+function remove_spinner(element, lg=''){
     try{
-	let spinners = element.getElementsByClassName('fa fa-spinner fa-spin spinner');
+	let spinners = element.getElementsByClassName(`fa fa-spinner fa-spin spinner${lg}`);
 	
 	for(let i = 0; i < spinners.length; i++){
 	    element.removeChild(spinners[i]);	
@@ -95,4 +95,10 @@ function clear_inner_text(elements){
     for(let i = 0; i < elements.length; i++){
 	elements[i].innerText = '';
     }
+}
+function clear_canvas(canvas){
+    var context = canvas.getContext('2d');
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    canvas.classList.remove('light-border');
+    canvas.height = '1rem';
 }

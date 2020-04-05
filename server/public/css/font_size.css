@@ -39,7 +39,7 @@
     .spinner {
 	font-size: 0.9em;
     }
-    .spinnerlg {
+    .spinner-lg {
 	font-size: 1.6em;
     }
     .font-xl {
@@ -90,7 +90,7 @@
     .spinner {
 	font-size: 1.1em;
     }
-    .spinnerlg {
+    .spinner-lg {
 	font-size: 1.8em;
     }
     .font-xl {
@@ -138,10 +138,10 @@
     .filterLink {
 	font-size: 0.75em;
     }
-    .spinnerlg {
+    .spinner {
 	font-size: 1.2em;
     }
-    .spinnerlg {
+    .spinner-lg {
 	font-size: 2em;
     }
     .font-xl {
@@ -192,8 +192,8 @@
     .spinner {
 	font-size: 1.2em;
     }
-    .spinnerlg {
-	font-size: 2em;
+    .spinner-lg {
+	font-size: 2.2em;
     }
     .font-xl {
 	font-size: 3em;

@@ -90,19 +90,28 @@
 		  <!-- Or use one of my other templates... -->
 		  <div class="mt-2">
 		    <label for="templateSelect" class="usa-label ml-2">
-		      ...or reuse a previous templates...</label>
+		      ...or use a previous templates...</label>
 		    <span class="usa-error-message" id="previousTemplateErrorMsg" role="alert"
 			  style="display:none">File does not appear to be doc/docx</span>
+		    <span class="usa-error-message" id="previousTemplateErrorMsgPreview"
+			  role="alert" style="display:none">
+		      Must select previous template to preview</span>
 		    <select id="templateSelect" class="usa-select ml-4 input-max-width" onchange="validate_subscription()">
 		      <option></option>
 		      {{#each templates}}
 		      <option data-templateId="{{this.id}}">{{this.name}}</option>
 		      {{/each}}
 		    </select>
+		    <div class="text-right">
+<!--		      <a href="http://localhost:10000/test.pdf">Preview</a>
+-->
+		      <button type="button" class="btn btn-link" id="previewPrevTemplate">Preview</button>
+
+		    </div>
 		  </div>
 		</div>
 		<!-- Preview or upload... -->
-		<div class="mt-3" id="addNewSubscriptionButtons">
+		<div class="" id="addNewSubscriptionButtons">
 		  <span id="newSubscriptionContainer">
 		    <button id="submitNewSubscription" class="ml-4 btn usa-button"
 			    data-container="body" data-toggle="popover"
@@ -206,3 +215,33 @@
   </div>
 </div>
 <br>
+
+<!-- Modal -->
+<div class="modal fade" id="previewTemplateModal" tabindex="-1" role="dialog" aria-labelledby="previewTemplates" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="h5 modal-title" id="previewTemplateLabel"></h2>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+	<div id="previewCanvasContainer" class="d-flex justify-content-center">
+	  <div id="canvasSpinnerContainer">
+	  </div>
+	  <canvas id="previewCanvas" style="overflow:auto"></canvas>
+	  <!-- 	<iframe id="previewTemplateModal" src="" type="application/pdf" width="100%" height="100%" style="overflow: auto;">
+		
+		</iframe>
+	  -->
+	  
+	</div>
+      </div>
+      <!--      <div class="modal-footer">
+		<button type="button" class="usa-button usa-button--base" data-dismiss="modal">Close</button>
+		-->
+    </div>
+  </div>
+</div>
+

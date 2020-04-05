@@ -2,14 +2,62 @@ const LINESPACING = 10;
 document.addEventListener('DOMContentLoaded', async () => {
     let subscription_list = await fetch_user_subscription_list();
 
-    set_window_prefs();
+//    set_window_prefs();
     initialize_form();
-    $('#subscribeAdditional').on('click', () => {
+    document.getElementById('subscribeAdditional').addEventListener('click', () => {
 	hide_elements($('.alert'));
 	$('#infoContainer')[0].style.display = "block";
 	$('#subscriptionFormContainer')[0].style.display = "block";
-    })
+    });
+    
+    document.getElementById('previewPrevTemplate').addEventListener('click', e => {
+	e.preventDefault();
+	let tempSelect = document.getElementById('templateSelect');
+	let templateId = tempSelect[tempSelect.selectedIndex].getAttribute('data-templateId');
+
+	if(valid_preview()){
+	    template_preview(templateId);
+	}
+    });
+
+    //when user exits modal, reset modal to be ready to user to preview
+    //another template
+    $('#previewTemplateModal').on('hidden.bs.modal', () => {
+	clear_canvas(document.getElementById('previewCanvas'));
+	document.getElementById('previewTemplateLabel').innerText = "";
+    });
+    
 });
+function pdf_to_canvas(uint8arr){
+    return new Promise((resolve, reject) => {
+	var loadingTask = pdfjsLib.getDocument(uint8arr);
+	loadingTask.promise.then(function(pdf) {
+	    pdf.getPage(1)
+		.then(function(page) {
+		    var scale = 1;
+		    var viewport = page.getViewport({scale:scale});
+
+		    var canvas = document.getElementById('previewCanvas');
+		    var context = canvas.getContext('2d');
+		    canvas.height = viewport.height;
+		    canvas.width = viewport.width;
+
+		    var renderContext = {
+			canvasContext: context,
+			viewport: viewport
+		    };
+		    page.render(renderContext);
+		    resolve();
+		    
+		})
+		.catch(err => {
+		    console.log(err);
+		    reject("Error generating preview");
+		})
+	});
+    })
+}
+
 function set_window_prefs(){
     size_table();
     let in_progress = false;
@@ -24,7 +72,7 @@ function set_window_prefs(){
     })
 }
 function size_table(){
-    let size = $('#subscriptionsTable')[0].clientHeight;
+    let size = document.getElementById('subscriptionsTable').clientHeight;
 
     if(size > (0.6 * window.innerHeight)) size = 0.6 * window.innerHeight;
     if(size < 200) size = 200;
@@ -66,21 +114,6 @@ function new_subscription_fail(cont, postId){
     let upTemp = $('#uploadTemplate')[0];
     let prevTemp = $('#templateSelect')[0];
 }
-/*
-function new_subscription_success(post_id){
-    let msg_div = document.getElementById('addSubscriptionMessageDiv');
-
-    let pop = $('#submitNewSubscription');
-    
-    for (let [num, option] of Object.entries($('#searchPosts option'))) {
-	if(option.getAttribute('data-COLARatesId') == post_id){
-	    pop[0].setAttribute('data-content', `New subscription added: ${option.innerText}`);
-	    show_popover(pop, 4000, 'green')
-	    return;
-	}
-    }
-}
-*/
 
 /* name: initialize_form
    preconditions: subscription html DOM content has loaded
@@ -94,7 +127,6 @@ function new_subscription_success(post_id){
 */
 function initialize_form(){
     let tempVal = $('.templateVal');
-//    let postVal = $('.postVal');
     let upTemp = $('#uploadTemplate')[0];
     let prevTemp = $('#templateSelect')[0];
 
@@ -116,6 +148,20 @@ function initialize_form(){
 	add_classes(tempVal, ['invalid']);
 	prevTemp.classList.add('usa-input--error');
 	validate_post();
+    }
+}
+
+function valid_preview(){
+    let prevTemp = document.getElementById('templateSelect');
+    
+    if(prevTemp.selectedIndex === 0){
+	prevTemp.classList.add('usa-input--error');
+	document.getElementById('previousTemplateErrorMsgPreview').style.display = 'block';
+	return false;
+    }
+    else{
+	prevTemp.classList.remove('usa-input--error');
+	return true;
     }
 }
 function validate_post(submit=false){
@@ -184,48 +230,12 @@ function validate_subscription(submit=false){
 	upTemp.classList.remove('usa-input--error');
 	prevTemp.classList.remove('usa-input--error');
 	valid = valid && true;
-	$('#uploadTemplateErrorMsg')[0].style.display = 'none';
-	$('#previousTemplateErrorMsg')[0].style.display = 'none';
+	document.getElementById('uploadTemplateErrorMsg').style.display = 'none';
+	document.getElementById('previousTemplateErrorMsg').style.display = 'none';
+	document.getElementById('previousTemplateErrorMsgPreview').style.display = 'none';
     }
     
     
-    return valid;
-}
-
-function validate_subscription_old(){
-    console.log('val called');
-    let valid = false;
-    const posts = document.getElementById('searchPosts');
-    const upTemp = document.getElementById('uploadTemplate');
-    const prevTemp = document.getElementById('choosePreviousTemplate');
-    let buttonPop = document.getElementById('submitNewSubscription');
-    
-    let reg = /(\.doc|\.docx)$/i;
-    
-    if(posts.selectedIndex === 0){
-	buttonPop.setAttribute('data-content', '1. Must select a post.');
-	set_error_border(posts);
-    }
-    else if(!upTemp.value && prevTemp.selectedIndex === 0){
-	buttonPop.setAttribute('data-content', '2. Must choose a template.');
-	set_error_border(upTemp);
-	set_error_border(prevTemp);
-    }
-    else if(!reg.exec(upTemp.value)
-	    && !reg.exec(prevTemp[prevTemp.selectedIndex].value)){
-		//check if ending of file is not .doc or .doc
-	buttonPop.setAttribute('data-content', 'Unsupported file type');
-	if(upTemp.value) set_error_border(upTemp);
-	else if(prevTemp.value) set_error_border(prevTemp);
-    }
-    else{ //otherwise the post/file combo looks fine to upload
-	valid = true;
-    }
-
-    if(!valid){
-	let pop = $('#submitNewSubscription');
-	show_popover(pop, 4000, 'red');
-    }
     return valid;
 }
 

@@ -1,7 +1,9 @@
 const db = require('../server_functions/db_functions.js');
-
+const tm = require('../server_functions/template_manip.js');
 const misc = require('../server_functions/misc.js');
 const crs = require('../server_functions/cola_rates_script.js');
+const fs = require('fs'); //can be removed after 4/3 - testing purposesv
+
 const multer = require('multer');
 const upload = multer();
 
@@ -144,6 +146,35 @@ module.exports = function(app,  mysql){
 			 res.send(context);
 		     })
 	     });
+    app.get('/preview_template', /*db.authenticationMiddleware(),*/
+	    function (req, res) {
+		const temp_user_id = 1;
+		var context = {};
+		db.get_user_template(temp_user_id, req.query.templateId)
+		    .then(response => {
+			if(!response[0]){
+			    throw(new Error(`Error: template does not exist`
+					    + ` (userId=${temp_user_id},`
+					    + ` templateId=${req.query.templateId})`));
+			}
+			context.filename = response[0].name;
+			context.uploaded = response[0].uploaded;
+			return tm.docx_to_pdf(response[0].file);
+		    })
+		    .then(pdfBuf => {
+			context.success = true;
+			context.file = pdfBuf;
+			
+		    })
+		    .catch(err => {
+			if(err) console.log(err);
+			context.success = false;
+			context.msg = "Error retrieving file";
+		    })
+		    .finally(() => {
+			res.send(context);
+		    })
+	    });
     app.get('/delete_subscription', /*db.authenticationMiddleware(),*/
 	    function (req, res) {
 		const temp_user_id = 1;
@@ -156,7 +187,7 @@ module.exports = function(app,  mysql){
 			context.post = dec.post;
 			decrypted = dec;
 			return db.update_user_subscription(dec.subscriptionId,
-							   temp_user_id,
+						   temp_user_id,
 							   !!dec.makeActive);
 		    })
 		    .then(res => {
@@ -283,8 +314,4 @@ module.exports = function(app,  mysql){
 	    })
     });
     /**************** End AJAX routes coming from email links ****************/
-}
-
-function sign(){
-
 }

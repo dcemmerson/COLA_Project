@@ -1,8 +1,8 @@
 {{#each script}}
 <script src="/js/{{this}}" type="text/javascript"></script>
 {{/each}}
-{{#each nonlocal_script}}
-<script src="{{this}}" type="text/javascript"></script>
+{{#each deferScript}}
+<script src="/js/{{this}}" type="text/javascript" defer></script>
 {{/each}}
 
 <script src="/uswds/js/uswds.min.js"></script>

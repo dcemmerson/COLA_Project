@@ -13,11 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	select.selectedIndex = 0;
 	validate_subscription();
     });
-/*    $('#previewNewSubscription').on('click', e => {
-	e.preventDefault();
-	preview_new_subscription();
-    });
-*/
+
     $('#submitNewSubscription').on('click', async e => {
 	e.preventDefault();
 	$('#submitNewSubscription')[0].disabled = true;
@@ -37,6 +33,44 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
 });
+
+async function template_preview(templateId){
+    var label = document.getElementById('previewTemplateLabel');
+    var docContainer = document.getElementById('canvasSpinnerContainer');
+    
+    label.innerText = "Loading ";
+    show_spinner(docContainer, '-lg');
+    show_spinner(label);
+    $('#previewTemplateModal').modal({keyboard: true, focus: true});
+
+    
+    fetch(`preview_template?templateId=${templateId}`)
+	.then(response => {
+	    if(response.status == 200)
+		return response.json();
+	    throw new Error("Error retrieving file");
+	})
+	.then(res => {
+	    if(!res.success)
+		throw new Error("Error retrieving file");
+	    remove_spinner(label);
+	    label.innerText = res.filename;
+	    let uint8arr = new Uint8Array(res.file.data);
+	    return pdf_to_canvas(uint8arr);
+	})
+	.then(() => {
+	    document.getElementById('previewCanvas').classList.add('light-border');
+	})
+	.catch(err => {
+	    console.log(err);
+	    label.innerText = err;
+	})
+	.finally(() =>{
+	    remove_spinner(docContainer, '-lg');
+	    docContainer.innerText = "";
+	})
+    
+}
 
 async function submit_new_subscription(){
     let upload_temp = $('#uploadTemplate');
@@ -161,11 +195,15 @@ async function fetch_user_subscription_list(){
     catch(err) {
 	console.log(err);
     }
+    finally{
+	size_table();
+    }
 }
 
 function populate_subscription_table(res){
     let tbody = document.getElementById('subscriptionTbody');
     res.subscription_list.forEach(sub => {
+	console.log('running foreach');
 	let last_mod = new Date(sub.last_modified);
 	let last_mod_month = new Intl.DateTimeFormat('en-US', {month: 'short'}).format(last_mod);
 	let tr = document.createElement('tr');
@@ -203,7 +241,6 @@ function populate_subscription_table(res){
 	
 	tbody.appendChild(tr);
     })
-    size_table();
 }
 
 /* name: delete_subscription

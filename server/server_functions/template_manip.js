@@ -2,6 +2,7 @@ require('dotenv').config();
 const DocxTemplater = require('docxtemplater');
 const PizZip = require('pizzip');
 const HOST = process.env.HOST || 'http://localhost:10000';
+var toPdf = require('office-to-pdf');
 
 module.exports = {
     /* name: manip_template
@@ -56,5 +57,18 @@ module.exports = {
 		    + `\n\nIt is recommended that you unsubscribe from this post`
 		    + ` and create a new subscription to this post with a new template file.`);
 	}
+    },
+    docx_to_pdf: function(docxBuffer){
+	return new Promise((resolve, reject) => {
+	    toPdf(docxBuffer)
+		.then(pdfBuffer => {
+		    resolve(pdfBuffer);
+		})
+		.catch(err => {
+		    console.log(err);
+		    reject();
+		})
+	});
     }
+    
 }

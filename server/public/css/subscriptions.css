@@ -32,7 +32,7 @@
 }
 .btn-minus-tiny {
     max-width: 2.5rem;
-    min-width: 1.7rem;
+    min-width: 1.9rem;
 }
 #uploadTemplate {
     border: none !important;
@@ -59,4 +59,19 @@
 }
 .dismiss-alert:hover::before {
     background-image: url(/uswds/img/close-blue-30-alt.svg), linear-gradient(transparent,transparent);
+}
+
+.modal-dialog {
+    max-width: 1000px;
+    width: 95%;
+    height: 95%;
+}
+.modal-content {
+    height: 95%
+}
+.modal-body {
+    overflow: auto;
+}
+.light-border {
+    border: 1px solid #EEEEEE;
 }

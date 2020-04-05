@@ -4,6 +4,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'add_pw_to_dotenv';
 const Magic = require('mmmagic').Magic;
 const db = require('./db_functions.js');
 
+
 //max file upload size set to 2MB. Note mysql medium blob data type allows up to
 //16MB blob size, but that seems a bit excessive and unnecessary.
 const MAX_FILE_SIZE = 4000000; 
@@ -68,7 +69,7 @@ module.exports = {
 			+ ` ${Math.floor(MAX_FILE_SIZE / BYTES_PER_MEGABYTE)} MB`;
 		    reject(context.errorMessage);
 		}
-		else if(!result.match('microsoft') || !result.match('word')){
+		else if(!result.match('microsoft') || (!result.match('word') && !result.match('ooxml'))){
 		    context.errorMessage = `Invalid file type: ${result.substring(0, 12)}`;
 		    reject(result);
 		}
