@@ -18,7 +18,7 @@ module.exports = function (app) {
     });
     app.get(`/FAQ`, function (req, res) {
 	let context = {};
-	context.style = ['style.css', 'font_size.css', 'FAQ.css'];
+	context.style = ['styles.css', 'font_size.css', 'FAQ.css'];
 	context.script = ['FAQ.js', 'utility.js'];
 	context.deferScript = ['../pdfjs/pdf.js'];
 	
