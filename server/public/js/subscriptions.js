@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	document.getElementById('previewTemplateLabel').innerText = "";
     });
     
+    
 });
 function pdf_to_canvas(uint8arr){
     return new Promise((resolve, reject) => {

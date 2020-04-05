@@ -1,5 +1,5 @@
 const db = require('../server_functions/db_functions.js');
-const tm = require('../server_functions/template_manip.js');
+
 const misc = require('../server_functions/misc.js');
 const crs = require('../server_functions/cola_rates_script.js');
 const fs = require('fs'); //can be removed after 4/3 - testing purposesv
@@ -148,9 +148,23 @@ module.exports = function(app,  mysql){
 	     });
     app.get('/preview_template', /*db.authenticationMiddleware(),*/
 	    function (req, res) {
-		const temp_user_id = 1;
+		const tempUserId = 1;
 		var context = {};
-		db.get_user_template(temp_user_id, req.query.templateId)
+
+		misc.preview_template(tempUserId, req.query.templateId, context)
+		    .then(() => {
+			context.success = true;
+		    })
+		    .catch(err => {
+			if(err) console.log(err);
+			
+			context.msg = "Error retrieving file";
+			context.success = false;
+		    })
+		    .finally(() => {
+			res.send(context);
+		    })
+/*		db.get_user_template(temp_user_id, req.query.templateId)
 		    .then(response => {
 			if(!response[0]){
 			    throw(new Error(`Error: template does not exist`
@@ -174,6 +188,7 @@ module.exports = function(app,  mysql){
 		    .finally(() => {
 			res.send(context);
 		    })
+*/
 	    });
     app.get('/delete_subscription', /*db.authenticationMiddleware(),*/
 	    function (req, res) {
@@ -237,8 +252,28 @@ module.exports = function(app,  mysql){
 		res.send(context);
 	    })
     });
-    
     /********************* End Account page ajax routes *********************/
+    /********************* Start FAQ page ajax routes *********************/
+    app.get('/preview_default_template', /*db.authenticationMiddleware(),*/
+	    function (req, res) {
+		const defaultUserId = process.env.DEFAULT_USER_ID || 1;
+		const defaultTemplateId = process.env.DEFAULT_TEMPLATE_ID || 6;
+		var context = {};
+		misc.preview_template(defaultUserId, defaultTemplateId, context)
+		    .then(() => {
+			context.success = true;
+		    })
+		    .catch(err => {
+			if(err) console.log(err);
+			
+			context.msg = "Error retrieving file";
+			context.success = false;
+		    })
+		    .finally(() => {
+			res.send(context);
+		    })
+	    });
+    /************************* End FAQ page ajax ****************************/
     /************************************************************************
     AJAX routes coming from email links and/or
        coming from one-click unsubscribe/undo unsubscribe
@@ -315,3 +350,4 @@ module.exports = function(app,  mysql){
     });
     /**************** End AJAX routes coming from email links ****************/
 }
+

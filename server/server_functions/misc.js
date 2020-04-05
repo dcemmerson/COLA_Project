@@ -3,9 +3,9 @@ const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'add_pw_to_dotenv';
 const Magic = require('mmmagic').Magic;
 const db = require('./db_functions.js');
+const tm = require('../server_functions/template_manip.js');
 
-
-//max file upload size set to 2MB. Note mysql medium blob data type allows up to
+//max file upload size set to 4MB. Note mysql medium blob data type allows up to
 //16MB blob size, but that seems a bit excessive and unnecessary.
 const MAX_FILE_SIZE = 4000000; 
 const BYTES_PER_MEGABYTE = 1000000;
@@ -164,6 +164,29 @@ module.exports = {
 	    //If we get to this point, user entered invalid newPwd/newPwdRe
 	    //We can just reject without an error
 	    if(context.invalidNewPassword || context.invalidNewPasswordRe) reject();
+	})
+    },
+    preview_template: function(userId, templateId, context){
+	return new Promise((resolve, reject) => {
+	    db.get_user_template(userId, templateId)
+		.then(response => {
+		    if(!response[0]){
+			throw(new Error(`Error: template does not exist`
+					+ ` (userId=${userId},`
+					+ ` templateId=${templateId})`));
+		    }
+		    context.filename = response[0].name;
+		    context.uploaded = response[0].uploaded;
+		    return tm.docx_to_pdf(response[0].file);
+		})
+		.then(pdfBuf => {
+		    context.file = pdfBuf;
+		    resolve();
+		})
+		.catch(err => {
+		    if(err) console.log(err);
+		    reject();
+		})
 	})
     },
     hash_password: function(pwd){

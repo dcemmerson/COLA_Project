@@ -20,6 +20,8 @@ module.exports = function (app) {
 	let context = {};
 	context.style = ['style.css', 'font_size.css', 'FAQ.css'];
 	context.script = ['FAQ.js', 'utility.js'];
+	context.deferScript = ['../pdfjs/pdf.js'];
+	
 	context.title = 'FAQ - COLA';
 	context.FAQ = true;
 	res.render('FAQ', context);

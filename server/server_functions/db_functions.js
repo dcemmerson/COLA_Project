@@ -1,6 +1,7 @@
 var passport = require('passport');
 var bcrypt = require('bcrypt');
 var LocalStrategy = require('passport-local').Strategy;
+
 //const em=require('../server_functions/emails.js'); commented out because this is a circular
 //reference and causes multiple parts of system to break.
 
@@ -395,9 +396,10 @@ module.exports = {
        postconditions:  return Promise that returns user template when fulfilled
     */
     get_user_template: function (userId, templateId) {
+	
 	return new Promise((resolve, reject) => {
 	    const sql = `SELECT name, file, uploaded FROM template `
-	    + ` WHERE id=? AND userId=?`;
+	    + ` WHERE (id=? AND userId=?)`;
 	    const values = [templateId, userId];
 
 	    queryDB(sql, values, mysql)
