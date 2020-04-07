@@ -1,15 +1,139 @@
-<!DOCTYPE html>
-<html>
-<head>
-  {{> head}}
-</head>
-<body>
-  <span class="">
-    {{> header}}
-  </span>
-  <div class="container-fluid">
-  {{{body}}}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page title</title>
+    <!-- Update the link path to where your stylesheet file is located. For example: /path/to/your/assets/css/lib/uswds.min.css -->
+    <link rel="stylesheet" href="/fs-fork-uswds-site/css/styleguide.css">
+  </head>
+  <body class="layout-demo">
+    <a class="usa-skipnav" href="#main-content">Skip to main content</a>
+
+
+<div class="usa-banner">
+  <div class="usa-accordion">
+    <header class="usa-banner-header">
+      <div class="usa-grid usa-banner-inner">
+      <img src="/fs-fork-uswds-site/assets/img/favicons/favicon-57.png" alt="U.S. flag">
+      <p>An official website of the United States government</p>
+      <button class="usa-accordion-button usa-banner-button"
+        aria-expanded="false" aria-controls="gov-banner">
+        <span class="usa-banner-button-text">Here's how you know</span>
+      </button>
+      </div>
+    </header>
+    <div class="usa-banner-content usa-grid usa-accordion-content" id="gov-banner">
+      <div class="usa-banner-guidance-gov usa-width-one-half">
+        <img class="usa-banner-icon usa-media_block-img" src="/fs-fork-uswds-site/assets/img/icon-dot-gov.svg" alt="Dot gov">
+        <div class="usa-media_block-body">
+          <p>
+            <strong>The .gov means it’s official.</strong>
+            <br>
+            Federal government websites often end in .gov or .mil. Before sharing sensitive information, make sure you're on a federal government site.
+          </p>
+        </div>
+      </div>
+      <div class="usa-banner-guidance-ssl usa-width-one-half">
+        <img class="usa-banner-icon usa-media_block-img" src="/fs-fork-uswds-site/assets/img/icon-https.svg" alt="Https">
+        <div class="usa-media_block-body">
+          <p>
+            <strong>The site is secure.</strong>
+            <br>
+            The <strong>https://</strong> ensures that you are connecting to the official website and that any information you provide is encrypted and transmitted securely.
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
-  {{> footer}}
-</body>
+</div>
+
+
+
+
+<header class="usa-header usa-header-extended" role="banner">
+  <div class="usa-navbar">
+  <div class="usa-logo" id="extended-logo">
+    <em class="usa-logo-text">
+      <a href="/"
+        title="Home"
+        aria-label="Home">
+        Department of Web Design
+      </a>
+    </em>
+  </div>
+  <button class="usa-menu-btn">Menu</button>
+</div>
+
+  <nav role="navigation" class="usa-nav">
+    <div class="usa-nav-inner">
+      <button class="usa-nav-close">
+  <img src="/fs-fork-uswds-site/assets/img/close.svg" alt="close">
+</button>
+
+      </div>
+  </nav>
+</header>
+<div class="usa-overlay"></div>
+
+
+    <main id="main-content"></main>
+
+
+<section class="usa-hero">
+  <div class="usa-grid">
+    <div class="usa-hero-callout usa-section-dark">
+      <h2>
+
+          <span class="usa-hero-callout-alt">COLA Subscription Site:</span>
+      </h2>
+
+
+      <p>This website is a tool created that allows users to sign up to receive notifcations when post cost of living allowance (COLA) rates for change. This app monitors COLA rates found at <a href="https://aoprals.state.gov/Web920/cola.asp">aoprals.state.gov</a>. Users can subscribe to one or more posts and will receive email notifications when COLA rates to these posts change.</p>
+
+    </div>
+  </div>
+</section>
+
+
+      <section class="usa-grid usa-section">
+        <div class="usa-width-one-third">
+          <h2>How to Subscribe:</h2>
+        </div>
+        <div class="usa-width-two-thirds">
+            <p>Create an account with your email address <a href="http://localhost:10000/create_account">here</a>. You will then be taken to a webpage where you can select the posts you would like to subscribe to. The webpage also allows the option of uploading a custom template, which will be filled out upon COLA rate changes. </p>
+        </div>
+      </section>
+
+
+      <section class="usa-section">
+        <div class="usa-grid">
+          <h2>Office of Allowances Official Website:</h2>
+          <p class="usa-font-lead">To learn more about COLA rates or view past allowances, click <a href="https://aoprals.state.gov/">here.</a> </p>
+         </div>
+      </section>
+    </main>
+
+
+<footer class="usa-footer usa-footer-medium" role="contentinfo">
+  <div class="usa-grid usa-footer-return-to-top">
+    <a href="#">Return to top</a>
+  </div>
+ 
+
+  <div class="usa-footer-secondary_section">
+    <div class="usa-grid">
+      <div class="usa-footer-logo usa-width-one-half">
+        <img class="usa-footer-logo-img" src="/fs-fork-uswds-site/assets/img/logo-img.png" alt="Logo image">
+        <h3 class="usa-footer-logo-heading">Name of Agency</h3>
+      </div>
+     
+    </div>
+  </div>
+</footer>
+
+
+    <!-- Update the link path to where your JavaScript file is located. For example: /path/to/your/assets/js/lib/uswds.min.js -->
+    <script src="/fs-fork-uswds-site/assets/js/vendor/uswds.min.js"></script>
+  </body>
 </html>
