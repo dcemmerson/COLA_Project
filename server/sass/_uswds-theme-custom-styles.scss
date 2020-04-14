@@ -1,0 +1,36 @@
+/*
+* * * * * ==============================
+* * * * * ==============================
+* * * * * ==============================
+* * * * * ==============================
+========================================
+========================================
+========================================
+----------------------------------------
+USWDS THEME CUSTOM STYLES
+----------------------------------------
+!! Copy this file to your project's
+   sass root. Don't edit the version
+   in node_modules.
+----------------------------------------
+Custom project SASS goes here.
+
+i.e.
+@include u-padding-right('05');
+----------------------------------------
+*/
+
+.usa-hero {
+    background-image: url(/img/hero_cust.png);
+}
+.usa-section--dark {
+    background-color: color("primary-darker");
+    color: color("base-lightest");
+    .usa-media-block:hover {
+	color: #ffffff;
+    }
+    a {
+	color: color("base-light");
+	text-decoration: underline;
+    }
+}
