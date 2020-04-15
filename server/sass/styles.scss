@@ -71,16 +71,15 @@
 
 
  //@import "../node_modules/uswds/src/stylesheets/uswds";
- 
+
 @import "accordion-override";
 @import "banner-override";
 @import "header-override";
-
-
-
+@import "navigation-override.scss";
+@import "footer-override.scss";
 
 // -------------------------------------
 // Import theme custom styles
 
 @import "uswds-theme-custom-styles";
- 
+@import "subscriptions.scss";

@@ -1,0 +1,32 @@
+.usa-footer__primary-section {
+  background-color: color("primary-darker");
+}
+.usa-footer__primary-content {
+  border-top: 1px solid color("base-dark");
+
+  @include at-media("mobile-lg") {
+    border: none;
+  }
+}
+
+.usa-footer--big {
+
+}
+
+.usa-footer__primary-link {
+    @include u-text("base-lightest", "no-underline", "bold");
+}
+.usa-footer__secondary-section {
+    background-color: color("blue-warm-80");
+    color: color("base-lightest");
+    h3 {
+	color: color("base-light");
+    }
+    a {
+	color: color("base-light");
+	text-decoration: underline;
+    }
+    a:hover {
+	color: color("primary");
+    }
+}

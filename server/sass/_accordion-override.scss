@@ -8,20 +8,20 @@
 	    
 	    @include add-background-svg("minus-inv", "../../img");
 	    
-	    background-color: color("base-darker");
+	    background-color: color("blue-cool-40");
 	    color: color("base-lightest");
 	    
 	    &:hover {
-		background-color: color("base-dark");
+		background-color: color("blue-warm-40");
 		color: color("base-lightest");
 	    }
 	}
 	.usa-accordion__button[aria-expanded="false"] {
 	    @include add-background-svg("plus-inv", "../../img");
-	    background-color: color("base-darker");
+	    background-color: color("blue-cool-40");
 	    color: color("base-lightest");
 	    &:hover {
-		background-color: color("base-dark");
+		background-color: color("blue-warm-40");
 		color: color("base-lightest");
 	    }
 	}
@@ -37,7 +37,7 @@
 
 .usa-banner {
     .usa-accordion {
-	background-color: color("primary-darker");
+	background-color: color("base-darkest");
 	color: color("base-light");
     }
 }

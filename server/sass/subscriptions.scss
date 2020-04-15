@@ -1,23 +1,61 @@
-#addSubscriptionMessageDiv {
+#addSubscriptionsContainer {
+    //    background: linear-gradient(color("blue-cool-40"), color("blue-cool-40"), color("base-dark"));
+
+    #subscriptionContainer {
+	background: rgba(248,248,248, 0.95);
+	border-radius: 3px;
+	box-shadow: 5px 5px 5px color("base");
+    }
+    #addPostForm {
+	width: 100% !important;
+	max-width: 30rem;
+//	color: #f0f0f0;
+    }
 }
-.errorMessage {
-    color: red;
+
+#viewSubscriptionsContainer {
+    //    background: linear-gradient(#f8f8f8, color("base-lightest"));
+    background: linear-gradient(color("base-lightest"), color("white"), color("white"));
+    #tableContainer {
+//	background: color("base");
+//	background: linear-gradient( #4b596d, color("primary-darker"));
+//	color: color("base-lightest");
+/*	h2 {
+	    color: color("base-lighter");
+	}
+	a {
+	    color: color("base-light");
+	}
+	a:hover{
+	    color: color("primary");
+	}
+*/
+	table {
+	    border: 1px solid color("base-lighter");
+	}
+	tbody tr:nth-child(even){
+	    background: rgba(255,255,255,0.8);
+	}
+	tbody tr:nth-child(odd){
+	    background: rgba(255,255,255,0.9);
+	}
+	thead tr{
+	    background: rgba(255, 255, 255, 0.65);
+	}
+    }
 }
-.successMessage {
-    color: green;
-}
+
+
 #subscriptionsContainer {
     overflow: auto;
     min-height: 200px;
 }
-#subscriptionsOuterContainer {
-    max-width: 1000px;
-}
+
 #subscriptionFormContainer {
     max-width: 700px;
 }
 .unsubscribeAlert {
-    max-width: 1000px;
+    width: 100%;
 }
 .invalid::after {
     position: relative;

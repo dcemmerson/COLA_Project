@@ -33,7 +33,7 @@
           <div class="usa-media-block__body">
             <p>
               <strong>The site is secure.</strong>
-              <br>
+v              <br>
               The <strong>https://</strong> ensures that you are connecting to the official website and that any information you provide is encrypted and transmitted securely.
             </p>
           </div>
@@ -80,13 +80,13 @@
 	</li>
 	<li class="usa-nav__primary-item">
 	  {{#if account}}
-	  <button class="usa-accordion__button usa-nav__link" aria-expanded="false" aria-controls="basic-nav-section-two"><span>Account</span></button>
+	  <button class="usa-accordion__button usa-nav__link usa-current" aria-expanded="false" aria-controls="basic-nav-section-two"><span>Account</span></button>
 	  <ul id="basic-nav-section-two" class="usa-nav__submenu">
 	    <li class="usa-nav__submenu-item">
 	    <a href="/account">Change password</a>
 	    </li>
 	    <li class="usa-nav__submenu-item">
-	      <a href="/logout">Logout</a>
+	      <a href="/logout">Logout {{#if email}}<span class="sm ml-2">{{this.email}}</span>{{else}}{{/if}}</a>
 	    </li>
 	  </ul>
 	  {{else}}
@@ -96,14 +96,20 @@
 	    <a href="/account">Change password</a>
 	    </li>
 	    <li class="usa-nav__submenu-item">
-	      <a href="/logout">Logout</a>
+	      <a href="/logout">Logout {{#if email}}<span class="sm ml-2">{{this.email}}</span>{{else}}{{/if}}</a>
 	    </li>
 	  </ul>
 	  {{/if}}
 	</li>
+	{{#if FAQ}}
+	<li class="usa-nav__primary-item usa-current">
+	  <a class="usa-nav__link" href="/FAQ"><span>FAQ</span></a>
+	</li>
+	{{else}}
 	<li class="usa-nav__primary-item">
 	  <a class="usa-nav__link" href="/FAQ"><span>FAQ</span></a>
 	</li>
+	{{/if}}
       </ul>
     </nav>
   </div>

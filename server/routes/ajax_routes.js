@@ -286,7 +286,7 @@ module.exports = function(app,  mysql){
 	}
 
 	//if not logged in
-	context.layout = 'login_layout.hbs';
+	context.layout = 'loginLayout.hbs.hbs';
 	//else deliver logged in navbar
 	
 	var decrypted;

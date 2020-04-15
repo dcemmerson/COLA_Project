@@ -13,10 +13,20 @@ const {
 module.exports = function (app) {
     app.get(`/login`, function (req, res) {
 	let context = {};
-	context.layout = 'login_layout.hbs';
+	context.layout = 'loginLayout.hbs';
 	res.render('login', context);
     });
-    app.get(`/FAQ`, function (req, res) {
+    app.get('/', function (req, res) {
+	let context = {};
+	context.style = ['styles.css', 'font_size.css', 'home.css'];
+	context.script = ['utility.js'];
+
+	context.layout = 'landingLayout.hbs';
+	context.title = 'COLA Notifications';
+	context.homepage = true;
+	res.render('home', context);
+    });
+    app.get('/FAQ', function (req, res) {
 	let context = {};
 	context.style = ['styles.css', 'font_size.css', 'FAQ.css'];
 	context.script = ['FAQ.js', 'utility.js'];
@@ -27,7 +37,7 @@ module.exports = function (app) {
 	res.render('FAQ', context);
     });
     
-    app.get(`/account`, /* db.authenticationMiddleware(), */ function (req, res) {
+    app.get('/account', /* db.authenticationMiddleware(), */ function (req, res) {
 	let context = {};
 	let awaitPromises = [];
 	const temp_user_id = 1;
@@ -45,7 +55,7 @@ module.exports = function (app) {
 	    .then(() => res.render('account', context))
     });
     
-    app.get(`/subscriptions`, /*db.authenticationMiddleware(),*/ function (req, res) {
+    app.get('/subscriptions', /*db.authenticationMiddleware(),*/ function (req, res) {
 	const temp_user_id = 1;
 	let awaitPromises = [];
 	let context = {post_info: [], templates: []};
@@ -67,7 +77,7 @@ module.exports = function (app) {
 		.then(res => context.email = res[0].email)
 		.catch(err => console.log(err))
 	)
-	context.style = ['styles.css', 'font_size.css', 'subscriptions.css'];
+	context.style = ['styles.css', 'font_size.css', './uswds/css/subscriptions.css'];
 	context.title = 'My Subscriptions';
 	context.subscriptions = true; //used for navivation.hbs
 	context.script = ['subscriptions.js',
@@ -80,7 +90,7 @@ module.exports = function (app) {
 
     app.get(`/create_account`, function (req, res) {
 	let context = {};
-	context.layout = 'login_layout.hbs';
+	context.layout = 'loginLayout.hbs';
 	res.render('create', context);
     });
 	
@@ -160,7 +170,7 @@ module.exports = function (app) {
 	
 	app.get(`/reset`, function (req, res) {
 	let context = {};
-	context.layout = 'login_layout.hbs';
+	context.layout = 'loginLayout.hbs';
 	res.render('reset', context);
     });
 
