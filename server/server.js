@@ -94,6 +94,8 @@ app.get(`/uswds/${uswdsFile}`, function (req, res) {
 
 /* Error routes only used if none of the above routes return */
 app.use(function (req, res) {
+    console.log(req);
+    console.log('404 route');
 	res.status(404);
 	res.render('404');
 });
