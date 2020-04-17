@@ -1,0 +1,117 @@
+//@import 'packages/usa-banner';
+
+.usa-banner {
+    background-color: color("base-light");
+
+    .usa-media-block__body {
+	color: color("base-lightest");
+    }
+}
+
+.usa-banner__header-close-text {
+  color: color("base-lightest");
+}
+.usa-banner__header-text {
+    color: color("base-lightest");
+}
+.usa-banner__button-text {
+    color: color("base-light");
+}
+
+
+.usa-banner__header--expanded {
+  padding-right: units($size-touch-target + 1);
+
+  @include at-media("tablet") {
+    background-color: transparent;
+    color: color("base-lightest");
+    display: block;
+    font-size: font-size($theme-banner-font-family, 1);
+    font-weight: font-weight("normal");
+    min-height: units(0);
+    padding-right: units(0);
+  }
+
+  .usa-banner__inner {
+    margin-left: units(0);
+
+    @include at-media("tablet") {
+      margin-left: units(auto);
+    }
+  }
+
+  .usa-banner__header-action {
+    display: none;
+  }
+}
+
+.usa-banner__inner {
+  @include add-responsive-site-margins;
+  @include grid-container($theme-banner-max-width);
+  @include grid-row;
+  @include u-flex("align-start");
+  padding-right: units(0);
+
+  @include at-media("tablet") {
+    @include u-flex("align-center");
+  }
+}
+/*
+.usa-banner {
+    background-color: color("base-dark");
+
+    .usa-media-block__body {
+	color: color("base-lightest");
+    }
+}
+
+.usa-banner__header-close-text {
+  color: color("base-lightest");
+}
+.usa-banner__header-text {
+    color: color("base-lightest");
+}
+.usa-banner__button-text {
+    color: color("base-light");
+}
+
+
+.usa-banner__header--expanded {
+  padding-right: units($size-touch-target + 1);
+
+  @include at-media("tablet") {
+    background-color: transparent;
+    color: color("base-lightest");
+    display: block;
+    font-size: font-size($theme-banner-font-family, 1);
+    font-weight: font-weight("normal");
+    min-height: units(0);
+    padding-right: units(0);
+  }
+
+  .usa-banner__inner {
+    margin-left: units(0);
+
+    @include at-media("tablet") {
+      margin-left: units(auto);
+    }
+  }
+
+  .usa-banner__header-action {
+    display: none;
+  }
+}
+
+.usa-banner__inner {
+  @include add-responsive-site-margins;
+  @include grid-container($theme-banner-max-width);
+  @include grid-row;
+  @include u-flex("align-start");
+  padding-right: units(0);
+
+  @include at-media("tablet") {
+    @include u-flex("align-center");
+  }
+}
+
+*/

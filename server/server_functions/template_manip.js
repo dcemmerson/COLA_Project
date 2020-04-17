@@ -28,8 +28,8 @@ module.exports = {
 
 	    doc.loadZip(zip);
 	    doc.setData({
-		old_cola: changed.prev_allowance,
-		new_cola: changed.new_allowance,
+		old_cola: changed.previous_allowance,
+		new_cola: changed.allowance,
 		date: changed.last_modified.getUTCDate()
 		    + ` ${date_long} `
 		    + changed.last_modified.getUTCFullYear(),

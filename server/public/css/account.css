@@ -5,55 +5,18 @@ input {
     max-width: 500px;
 
 }
-/* Style the submit button */
-input[type=submit] {
-  background-color: #4CAF50;
-  color: white;
-}
 
-/* Style the container for inputs */
-.container {
 
-}
-
-/* The message box is shown when the user clicks on the password field */
-#message {
-  display:none;
-  background: #fff0b3;
-  color: #000;
-  position: relative;
-/*  padding: 20px;
-*/
-  margin-top: 10px;
-
-}
-
-#message p {
-  padding: 0px 35px;
-
-/*  font-size: 18px;
-*/
-}
-
-/* Add a green text color and a checkmark when the requirements are right */
-.valid {
-    color: green;
-    left: 30px;
-}
-
-.valid:before {
-  position: relative;
-  left: -35px;
-  content: "✔";
-}
-
-/* Add a red text color and an "x" icon when the requirements are wrong */
-
-#passwordFormContainer {
-}
 #changePasswordForm {
     max-width: 26rem;
 }
 .changePasswordAlert {
     max-width: 28rem;
+}
+#passwordFormContainer {
+    padding: 1rem;
+    width: 100%;
+    max-width: 525px;
+    border: 1px solid #f6f6f6;
+    border-radius: 6px;
 }

@@ -1,11 +1,17 @@
 footer {
-    background-color: #444444;
-    color: #CCCCCC;
+    background-color: #252f3e;
+    color: #f0f0f0;
     font-size: 10px;
     left: 0;
     bottom: 0;
     width: 100%;
     text-align: center;
+}
+footer a {
+    color: #a9aeb1;
+}
+footer a:hover {
+    color: #005ea2;
 }
 
 .p {

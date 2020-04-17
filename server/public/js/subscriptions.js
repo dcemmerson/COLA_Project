@@ -25,6 +25,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     $('#previewTemplateModal').on('hidden.bs.modal', () => {
 	clear_canvas(document.getElementById('previewCanvas'));
 	document.getElementById('previewTemplateLabel').innerText = "";
+//	show_spinner(document.getElementById('canvasSpinnerContainer'), '-lg');
+//	show_spinner(document.getElementById('previewTemplateLabel'));
     });
     
     

@@ -48,6 +48,13 @@
     #syntaxTable {
 	font-size: 0.8rem;
     }
+    #subscriptionsOuterContainer {
+	min-width: 300px;
+	max-width: 600px;
+    }
+    #subscriptionContainer {
+	max-width: 600px;
+    }
 }
 /* tablet - ish */
 @media screen and (min-width: 600px){
@@ -98,6 +105,13 @@
     }
     #syntaxTable {
 	font-size: 0.9rem;
+    }
+    #subscriptionsOuterContainer {
+	min-width: 590px;
+	max-width: 750px;
+    }
+    #subscriptionContainer {
+	max-width: 700px;
     }
 }
 /* laptop - ish */
@@ -150,6 +164,13 @@
     #syntaxTable {
 	font-size: 1.0rem;
     }
+    #subscriptionsOuterContainer {
+	min-width: 750px;
+	max-width: 980px;
+    }
+    #subscriptionContainer {
+	max-width: 750px;
+    }
 }
 /* laptop - ish */
 @media screen and (min-width: 992px){
@@ -201,7 +222,13 @@
     #syntaxTable {
 	font-size: 1.1rem;
     }
-    
+    #subscriptionsOuterContainer {
+	min-width: 980px;
+	max-width: 1050px;
+    }
+    #subscriptionContainer {
+	max-width: 750px;
+    }
 }
 .center-text {
     text-align:center;

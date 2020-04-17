@@ -56,60 +56,14 @@
       <button class="usa-nav__close"><img src="/uswds/img/close.svg" alt="close"></button>
       <ul class="usa-nav__primary usa-accordion">
 	<li class="usa-nav__primary-item">
-	  {{#if subscriptions}}
-	  <button class="usa-accordion__button usa-nav__link usa-current" aria-expanded="false" aria-controls="basic-nav-section-one"><span>Subscriptions</span></button>
-	  <ul id="basic-nav-section-one" class="usa-nav__submenu">
-	    <li class="usa-nav__submenu-item">
-              <a href="#subscriptionContainer">Add subscription</a>
-            </li>
-	    <li class="usa-nav__submenu-item">
-              <a href="#currentSubscriptions">Current subscriptions</a>
-            </li>
-	  </ul>
-	  {{else}}
-	  <button class="usa-accordion__button usa-nav__link" aria-expanded="false" aria-controls="basic-nav-section-one"><span>Subscriptions</span></button>
-	  <ul id="basic-nav-section-one" class="usa-nav__submenu">
-	    <li class="usa-nav__submenu-item">
-              <a href="/subscriptions">Add subscription</a>
-            </li>
-	    <li class="usa-nav__submenu-item">
-              <a href="/subscriptions#currentSubscriptions">Current subscriptions</a>
-            </li>
-	  </ul>
-	  {{/if}}
+	  <a class="usa-nav__link" href="/login"><span>Login</span></a>
 	</li>
 	<li class="usa-nav__primary-item">
-	  {{#if account}}
-	  <button class="usa-accordion__button usa-nav__link usa-current" aria-expanded="false" aria-controls="basic-nav-section-two"><span>Account</span></button>
-	  <ul id="basic-nav-section-two" class="usa-nav__submenu">
-	    <li class="usa-nav__submenu-item">
-	    <a href="/account">Change password</a>
-	    </li>
-	    <li class="usa-nav__submenu-item">
-	      <a href="/logout">Logout {{#if email}}<span class="sm ml-2">{{this.email}}</span>{{else}}{{/if}}</a>
-	    </li>
-	  </ul>
-	  {{else}}
-	  	  <button class="usa-accordion__button usa-nav__link" aria-expanded="false" aria-controls="basic-nav-section-two"><span>Account</span></button>
-	  <ul id="basic-nav-section-two" class="usa-nav__submenu">
-	    <li class="usa-nav__submenu-item">
-	    <a href="/account">Change password</a>
-	    </li>
-	    <li class="usa-nav__submenu-item">
-	      <a href="/logout">Logout {{#if email}}<span class="sm ml-2">{{this.email}}</span>{{else}}{{/if}}</a>
-	    </li>
-	  </ul>
-	  {{/if}}
+	  <a class="usa-nav__link" href="/create_account"><span>Sign up</span></a>
 	</li>
-	{{#if FAQ}}
-	<li class="usa-nav__primary-item usa-current">
+ 	<li class="usa-nav__primary-item">
 	  <a class="usa-nav__link" href="/FAQ"><span>FAQ</span></a>
 	</li>
-	{{else}}
-	<li class="usa-nav__primary-item">
-	  <a class="usa-nav__link" href="/FAQ"><span>FAQ</span></a>
-	</li>
-	{{/if}}
       </ul>
     </nav>
   </div>

@@ -1,0 +1,44 @@
+//@import 'packages/usa-accordion';
+
+// override accordion properties
+
+.usa-accordion{
+    .usa-accordion__heading {
+	.usa-accordion__button {
+	    
+	    @include add-background-svg("minus-inv", "../../img");
+	    
+	    background-color: color("blue-cool-40");
+	    color: color("base-lightest");
+	    
+	    &:hover {
+		background-color: color("blue-warm-40");
+		color: color("base-lightest");
+	    }
+	}
+	.usa-accordion__button[aria-expanded="false"] {
+	    @include add-background-svg("plus-inv", "../../img");
+	    background-color: color("blue-cool-40");
+	    color: color("base-lightest");
+	    &:hover {
+		background-color: color("blue-warm-40");
+		color: color("base-lightest");
+	    }
+	}
+	
+    }
+}
+.usa-banner{
+    .usa-accordion__button{
+ //	background-color: color("base-darkest");
+//	color: color("base-light");
+    }
+}
+
+.usa-banner {
+    .usa-accordion {
+	background-color: color("base-darkest");
+	color: color("base-light");
+    }
+}
+

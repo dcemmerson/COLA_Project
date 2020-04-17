@@ -1,4 +1,5 @@
-<div class="container mt-2">
+<div class="container mt-4">
+  <br>
 {{#if unsubscribed}}
 
   {{#if updated}}
@@ -25,7 +26,26 @@
   </div>
   
   {{/if}}<!-- end of updated -->
+  {{#if additionalSubs}}
+  <!-- if user has more than one active subscription to the post they just tried
+       to unsubscribe from, we should let them know to avoid confusion when they
+       still receive emails about that post's rate changes
+    -->
+  <div class="usa-alert usa-alert--warning max-width-900" >
+    <div class="usa-alert__body">
+      <h2 class="h3 usa-alert__heading">Additional subscriptions</h2>
+      <p class="usa-alert__text">{{username}} has {{numberAdditionalSubs}} additonal active subscriptions to {{country}} ({{post}}).</p>
+    </div>
+  </div>
+  {{/if}}
   
+  <br>
+  <div>
+    <p>
+      <a href="/login">Login</a> to manage other subscriptions.
+    </p>
+  </div>
+
   
 {{else if resubscribed}}
   {{#if updated}}
@@ -61,28 +81,5 @@
       <p class="usa-alert__text">A technical error has occured. Please try again.</p>
     </div>
   </div>
-
-{{/if}} <!-- end of unsubscribed -->
-
-  
-  {{#if additionalSubs}}
-  <!-- if user has more than one active subscription to the post they just tried
-       to unsubscribe from, we should let them know to avoid confusion when they
-       still receive emails about that post's rate changes
-    -->
-  <div class="usa-alert usa-alert--warning max-width-900" >
-    <div class="usa-alert__body">
-      <h2 class="h3 usa-alert__heading">Additional subscriptions</h2>
-      <p class="usa-alert__text">{{username}} has {{numberAdditionalSubs}} additonal active subscriptions to {{country}} ({{post}}).</p>
-    </div>
-  </div>
-  {{/if}}
-  
-  <br>
-  <div>
-    <p>
-      <a href="/login">Login</a> to manage other subscriptions.
-    </p>
-  </div>
-
+  {{/if}} <!-- end of unsubscribed -->
 </div>

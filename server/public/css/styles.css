@@ -1,50 +1,11 @@
 html {
     scroll-behavior: smooth;
 }
-/* navbar css */
-#custom-bootstrap-menu.navbar-default .navbar-brand {
-    color: rgba(77, 75, 75, 1);
+body {
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
 }
-#custom-bootstrap-menu.navbar-default {
-    font-size: 14px;
-    background-color: rgba(240, 240, 240, 1);
-    background: -webkit-linear-gradient(top, rgba(163, 163, 163, 1) 0%, rgba(240, 240, 240, 1) 100%);
-    background: linear-gradient(to bottom, rgba(163, 163, 163, 1) 0%, rgba(240, 240, 240, 1) 100%);
-    border-width: 1px;
-    border-radius: 2px;
-}
-#custom-bootstrap-menu.navbar-default .navbar-nav>li>a {
-    color: rgba(87, 87, 87, 1);
-    background-color: rgba(248, 248, 248, 0);
-}
-#custom-bootstrap-menu.navbar-default .navbar-nav>li>a:hover,
-#custom-bootstrap-menu.navbar-default .navbar-nav>li>a:focus {
-    color: rgba(26, 26, 26, 1);
-    background-color: rgba(248, 248, 248, 0.5);
-    border-radius: 4px;
-}
-#custom-bootstrap-menu.navbar-default .navbar-nav>.active>a,
-#custom-bootstrap-menu.navbar-default .navbar-nav>.active>a:hover,
-#custom-bootstrap-menu.navbar-default .navbar-nav>.active>a:focus {
-    color: rgba(23, 23, 23, 1);
-    background-color: rgba(231, 231, 231, 0.5);
-    border-radius: 4px;
-}
-#custom-bootstrap-menu.navbar-default .navbar-toggle {
-    border-color: #ddd;
-}
-#custom-bootstrap-menu.navbar-default .navbar-toggle:hover,
-#custom-bootstrap-menu.navbar-default .navbar-toggle:focus {
-    background-color: #ddd;
-}
-#custom-bootstrap-menu.navbar-default .navbar-toggle .icon-bar {
-    background-color: #888;
-}
-#custom-bootstrap-menu.navbar-default .navbar-toggle:hover .icon-bar
-							   #custom-bootstrap-menu.navbar-default .navbar-toggle:focus .icon-bar {
-    background-color: #f0f0f0;
-}
-
 .corner-border {
     border: 1px solid;
     border-color: #DDDDDD;
@@ -52,7 +13,8 @@ html {
     padding: 10px;
 }
 .input-max-width {
-    max-width: 400px;
+    /*    max-width: 400px;*/
+    width: 100% !important;
 }
 .inlineBlock {
     display: inline;

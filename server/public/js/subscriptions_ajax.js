@@ -203,7 +203,6 @@ async function fetch_user_subscription_list(){
 function populate_subscription_table(res){
     let tbody = document.getElementById('subscriptionTbody');
     res.subscription_list.forEach(sub => {
-	console.log('running foreach');
 	let last_mod = new Date(sub.last_modified);
 	let last_mod_month = new Intl.DateTimeFormat('en-US', {month: 'short'}).format(last_mod);
 	let tr = document.createElement('tr');
