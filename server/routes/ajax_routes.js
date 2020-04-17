@@ -279,14 +279,13 @@ module.exports = function(app,  mysql){
        coming from one-click unsubscribe/undo unsubscribe
     *************************************************************************/
     app.get('/unsubscribetok', function (req, res) {
-	console.log(req.session.passport);
 	const temp_user_id = 1;
 	var context = {
 	    style: ['unsubscribetok.css', 'font_size.css', 'styles.css']
 	}
 
 	//if not logged in
-	context.layout = 'loginLayout.hbs.hbs';
+	context.layout = 'loginLayout.hbs';
 	//else deliver logged in navbar
 	
 	var decrypted;
