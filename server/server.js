@@ -94,10 +94,13 @@ app.get(`/uswds/${uswdsFile}`, function (req, res) {
 
 /* Error routes only used if none of the above routes return */
 app.use(function (req, res) {
+    var context = {};
     console.log(req);
     console.log('404 route');
-	res.status(404);
-	res.render('404');
+    context.script = ['utility.js'];
+    context.style = ['styles.css', '404.css', 'font_size.css'];
+    res.status(404);
+    res.render('404', context);
 });
 
 app.use(function (err, req, res, next) {

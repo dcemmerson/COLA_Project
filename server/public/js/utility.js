@@ -1,3 +1,6 @@
+document.addEventListener('DOMContentLoaded', () => {
+    display_return_to_top();
+})
 function hidden_timer(element, time=5000){
     setTimeout(() => {
 	element.hidden = true;
@@ -101,4 +104,13 @@ function clear_canvas(canvas){
     context.clearRect(0, 0, canvas.width, canvas.height);
     canvas.classList.remove('light-border');
     canvas.height = '1rem';
+}
+function display_return_to_top(){
+    let html = document.getElementsByTagName('html')[0];
+    let body = document.getElementsByTagName('body')[0];
+
+    if(html.clientHeight + 100 < body.clientHeight){
+	let rtt = document.getElementsByClassName('usa-footer__return-to-top')[0];
+	rtt.style.display = 'block';
+    }
 }
