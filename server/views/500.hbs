@@ -1,1 +1,34 @@
-<h1>Error 500 - Something Has Gone Terribly Wrong</h1>
+<div id="mainContainer" class="">
+  <div id="mainContent" class="container mt-5">
+    <div class="row justify-content-around">
+      <h1>Server error</h1>
+      <span id="background404">500</span>
+    </div>
+    <div class="row justify-content-around">
+      <span>
+	Something terrible has happened
+	<a class="sm" href="#" onClick="window.location.reload(true);">refresh</a>
+      </span>
+    </div>
+  </div>
+  <br><br>
+  <div class="container d-flex justify-content-around mt-4">
+    <ul class="inline listOfLinks">
+      <li class="inline">
+	<a class="" href="/">Home</a>
+      </li>
+      {{#if loggedIn}}
+      <li class="inline">
+	<a class="" href="/subscriptions">Subscriptions</a>
+      </li>
+      <li class="inline">
+	<a class="" href="/logout">Logout</a>
+      </li>
+      {{else}}
+      <li class="inline">
+	<a class="" href="/login">Login</a>
+      </li>
+      {{/if}}
+    </ul>
+  </div>
+</div>

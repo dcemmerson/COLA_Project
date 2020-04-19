@@ -97,6 +97,9 @@ app.use(function (req, res) {
     var context = {};
     console.log(req);
     console.log('404 route');
+    
+    context.loggedIn = false;
+    
     context.script = ['utility.js'];
     context.style = ['styles.css', '404.css', 'font_size.css'];
     res.status(404);
@@ -104,10 +107,15 @@ app.use(function (req, res) {
 });
 
 app.use(function (err, req, res, next) {
-	console.error(err.stack);
-	res.type('plain/text');
-	res.status(500);
-	res.render('500');
+    console.error(err.stack);
+    console.log('500 route');
+
+    context.loggedIn = false;
+    
+    context.script = ['utility.js'];
+    context.style = ['styles.css', '404.css', 'font_size.css'];
+    res.status(500);
+    res.render('500');
 });
 
 app.listen(app.get('port'), function () {
