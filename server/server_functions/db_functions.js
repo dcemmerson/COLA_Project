@@ -52,7 +52,7 @@ module.exports = {
     },
     
     check_email: function (email, res, req) {
-	var sql = "SELECT id, password, created FROM USER WHERE email= ?"
+	var sql = "SELECT id, password, created FROM user WHERE email= ?"
 	var values = [email];
 	queryDB(sql, values, mysql).then((message) => {
 	    console.log(message);
@@ -79,7 +79,7 @@ module.exports = {
     
     
     get_user: function (req, res, id, token) {
-	var sql = "SELECT password, created FROM USER WHERE id= ?"
+	var sql = "SELECT password, created FROM user WHERE id= ?"
 	var values = [id];
 	queryDB(sql, values, mysql).then((message) => {
 	    if (message.length==0) 
