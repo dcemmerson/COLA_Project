@@ -2,7 +2,6 @@ var passport = require('passport');
 var bcrypt = require('bcrypt');
 var LocalStrategy = require('passport-local').Strategy;
 
-
 //const em=require('../server_functions/emails.js'); commented out because this is a circular
 //reference and causes multiple parts of system to break.
 
@@ -482,7 +481,7 @@ passport.use(new LocalStrategy(
 	values=[username]
 	queryDB(sql, values, mysql).then((message) => {
 	    console.log(message);
-	    if (message.length==0){ return done(null, false)};
+	    if (message.length==0){console.log("wrong keyword entry"); return done(null, false)};
 	    const hash=message[0].password.toString();
 	    bcrypt.compare(password, hash, function(err, response)
 			   {
