@@ -151,13 +151,9 @@ module.exports = function (app) {
 		var email = req.body.email;
 		var pwd = req.body.pwd;
 		var now = new Date().toISOString().replace(/\..+/, '');
-		db.insert_user(email, pwd, now, res, req);
+		db.add_user(email, pwd, now, res, req);
 		
-		//console.log(user_id);
-		
-		//return;
-		
-	    }
+		}
 
 	})
     
