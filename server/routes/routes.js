@@ -151,8 +151,7 @@ module.exports = function (app) {
 		var email = req.body.email;
 		var pwd = req.body.pwd;
 		var now = new Date().toISOString().replace(/\..+/, '');
-		console.log("userid");
-		db.add_user(email, pwd, now, res, req);
+		db.insert_user(email, pwd, now, res, req);
 		
 		//console.log(user_id);
 		

@@ -2,7 +2,8 @@ var passport = require('passport');
 var bcrypt = require('bcrypt');
 var LocalStrategy = require('passport-local').Strategy;
 
-//const em=require('../server_functions/emails.js'); commented out because this is a circular
+const em=require('../server_functions/emails.js'); 
+//commented out because this is a circular
 //reference and causes multiple parts of system to break.
 
 require('../server.js'); //seems like this is a bit of a circular reference?
@@ -40,6 +41,7 @@ module.exports = {
 	bcrypt.hash(pwd, saltRounds, function (err, hash) {
 	    var sql = "INSERT INTO user (`email`, `password`, `created`, `modified`) VALUES (?, ?, ?, ?)"
 	    var values = [email, hash, now, now];
+		
 	    queryDB(sql, values, mysql).then((message) => {
 		console.log(message.insertId);
 		const user_id=message.insertId;
@@ -50,6 +52,26 @@ module.exports = {
 	    });
 	})
     },
+	
+	
+	insert_user: function (email, pwd, now, res, req) {
+	return new Promise((resolve, reject) => {
+		//bcrypt.hash(pwd, saltRounds, function (err, hash) {
+	    const sql = "INSERT INTO user (`email`, `password`, `created`, `modified`) VALUES (?, ?, ?, ?)"
+	    let values = [email, pwd, now, now];
+	    queryDB(sql, values, mysql)
+		.then(res => {
+		    resolve(res)
+	//	})
+		}).
+		catch(err => {			
+			res.redirect('create_account')
+		    console.log(err);
+		    reject(err)
+		})
+	})
+    },
+	
     
     check_email: function (email, res, req) {
 	var sql = "SELECT id, password, created FROM user WHERE email= ?"
@@ -477,7 +499,7 @@ passport.deserializeUser(function (user_id, done) {
 
 passport.use(new LocalStrategy(
     function(username, password, done) {
-	var sql="SELECT id, password FROM USER WHERE email= ?"
+	var sql="SELECT id, password FROM user WHERE email= ?"
 	values=[username]
 	queryDB(sql, values, mysql).then((message) => {
 	    console.log(message);
