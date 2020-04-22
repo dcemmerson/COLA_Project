@@ -49,25 +49,30 @@ module.exports = {
 		    res.redirect('subscriptions');
 		})
 
-	    });
+	    }).catch(err => {			
+			res.redirect('create_account')
+		    console.log(err);
+		    reject(err)
+		});
 	})
     },
 	
 	
 	insert_user: function (email, pwd, now, res, req) {
 	return new Promise((resolve, reject) => {
-		//bcrypt.hash(pwd, saltRounds, function (err, hash) {
+		bcrypt.hash(pwd, saltRounds, function (err, hash) {
 	    const sql = "INSERT INTO user (`email`, `password`, `created`, `modified`) VALUES (?, ?, ?, ?)"
-	    let values = [email, pwd, now, now];
+	    let values = [email, hash, now, now];
+		
 	    queryDB(sql, values, mysql)
 		.then(res => {
 		    resolve(res)
-	//	})
 		}).
 		catch(err => {			
 			res.redirect('create_account')
 		    console.log(err);
 		    reject(err)
+		})
 		})
 	})
     },
@@ -467,6 +472,18 @@ module.exports = {
 		.catch(err => console.log(err))	    
 	});
     },
+	
+	get_user_from_email: function(email){
+	return new Promise((resolve, reject) => {
+	    const sql = `SELECT id`
+		  + ` FROM user WHERE email=?`;
+	    const values = [email];
+	    queryDB(sql, values, mysql)
+		.then(res => resolve(res[0]))
+		.catch(err => console.log(err))	    
+	});
+    },
+	
     update_user_password: function(userId, hashedPwd){
 	return new Promise((resolve, reject) => {
 	    const sql = `UPDATE user SET password=? WHERE id=?`;
@@ -502,15 +519,18 @@ passport.use(new LocalStrategy(
 	var sql="SELECT id, password FROM user WHERE email= ?"
 	values=[username]
 	queryDB(sql, values, mysql).then((message) => {
-	    console.log(message);
 	    if (message.length==0){console.log("wrong keyword entry"); return done(null, false)};
 	    const hash=message[0].password.toString();
 	    bcrypt.compare(password, hash, function(err, response)
 			   {
 			       if (response==true)
-				   return done(null, {user_id: message[0].id});
+				   {
+					return done(null, {user_id: message[0].id});
+				   }
 			       else
-				   return done(null, false);	
+				   {
+						return done(null, false);
+				   }
 			   });
 	})
 	

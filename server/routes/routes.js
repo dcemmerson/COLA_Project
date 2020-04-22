@@ -103,7 +103,7 @@ module.exports = function (app) {
     // upon submitting create account, validates the form information and adds user to DB
     app.post(
 	"/create_account", [
-	    // Check validity
+	    // Check validity+
 	    check("email", "Email is invalid")
 		.isEmail()
 		.isLength({
@@ -151,7 +151,9 @@ module.exports = function (app) {
 		var email = req.body.email;
 		var pwd = req.body.pwd;
 		var now = new Date().toISOString().replace(/\..+/, '');
-		db.add_user(email, pwd, now, res, req);
+		db.add_user(email, pwd, now, res, req)
+		.then(console.log(res[0].email))
+		.catch(err => console.log(err))
 		
 		}
 
@@ -209,12 +211,12 @@ module.exports = function (app) {
 		var email = req.body.email;
 		console.log(email);
 		db.check_email(email, res, req);	
-		var message=db.check_email(email,res, req);
+		//var message=db.check_email(email,res, req);
 
 		/////////////////////////////////////////////////
 		// i think this if statement needs to be .then chained,
 		// otherwise it's never going to return true
-		if (message.length==0) 
+	/*	if (message.length==0) 
 		{
 
 		    res.render('reset', {
@@ -224,7 +226,7 @@ module.exports = function (app) {
 		else res.redirect('/login');
 		
 
-		
+		*/
 	    }
 
 	});
