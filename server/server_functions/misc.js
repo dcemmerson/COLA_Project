@@ -129,15 +129,8 @@ module.exports = {
 		context.invalidMessage = 'Password mismatch';
 	    }
 	    else{
-		console.log('get user pword from db');
 		//then the new pwd is valid. now check if user entered prev password correctly
-		console.log('call get_user_from_id');
-		console.log('userId = ' + userId);
-		for(let i = 0; i < db.length; i++){
-		    console.log(i + ' ' + db[i]);
-		}
-		console.log('db[0] = ' + db[0]);
-		
+
 		db.get_user_from_id(userId)
 		    .then(res => compare_password(oldPwd, res.password))
 		    .then(compRes => {
@@ -197,6 +190,36 @@ module.exports = {
 		else resolve(hash);
 	    })
 	})
+    },
+    /* name: set_layout
+       preconditions: req is incoming user request
+       context is object
+       posconditions: set context.layout, context.loggedIn, context.email
+       accordingly if user is logged in.
+    */
+    set_layout: function(req, context){
+	return new Promise((resolve, reject) => {
+	    if(req.isAuthenticated()){
+		context.layout = 'main.hbs';
+		context.loggedIn = true;
+
+		db.get_user_email(req.session.passport.user.user_id)
+		    .then(res => {
+			context.email = res[0].email;
+			resolve();
+		    })
+		    .catch(err => {
+			console.log(err)
+			reject();
+		    })
+	    }
+	    else{
+		context.layout = 'landingLayout.hbs';
+		context.loggedIn = false;
+		resolve();
+	    }
+	});
+
     }
 }
 

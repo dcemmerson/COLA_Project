@@ -281,12 +281,9 @@ module.exports = function(app,  mysql){
     app.get('/unsubscribetok', function (req, res) {
 	const temp_user_id = 1;
 	var context = {
-	    style: ['unsubscribetok.css', 'font_size.css', 'styles.css']
+	    style: ['unsubscribetok.css', 'font_size.css', 'styles.css'],
+	    title: 'Unsubscribe - COLA'
 	}
-
-	//if not logged in
-	context.layout = 'loginLayout.hbs';
-	//else deliver logged in navbar
 	
 	var decrypted;
 	
@@ -294,7 +291,9 @@ module.exports = function(app,  mysql){
 	    console.log(`Invalid token: ${req.query.tok}`);
 	    context.error = true;
 	    context.deleted = false;
-	    res.render('unsubscribetok', context);
+	    misc.set_layout(req, context)
+		.catch(() => console.log('error in set_layout'))
+		.finally(() => res.render('unsubscribetok', context))
 	    return;
 	}
 	
@@ -338,7 +337,10 @@ module.exports = function(app,  mysql){
 		if(dbres.numberSubscriptions > 0){
 		    context.additionalSubs = true;
 		    context.numberAdditionalSubs = dbres.numberSubscriptions;
-		}		
+		}
+		return misc.set_layout(req, context);
+	    })
+	    .then(() => {
 		res.render('unsubscribetok',context);
 	    })
 	    .catch(err => {
@@ -346,7 +348,7 @@ module.exports = function(app,  mysql){
 		context.error = true;
 		res.render('unsubscribetok', context);
 	    })
-    });
+    })
     /**************** End AJAX routes coming from email links ****************/
 }
 

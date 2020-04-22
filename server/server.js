@@ -102,11 +102,14 @@ app.use(function (req, res) {
     
     context.script = ['utility.js'];
     context.style = ['styles.css', '404.css', 'font_size.css'];
+    context.title = "Page not found...";
+    
     res.status(404);
     res.render('404', context);
 });
 
 app.use(function (err, req, res, next) {
+    var context = {};
     console.error(err.stack);
     console.log('500 route');
 
@@ -114,8 +117,11 @@ app.use(function (err, req, res, next) {
     
     context.script = ['utility.js'];
     context.style = ['styles.css', '404.css', 'font_size.css'];
+    context.title = "Server error";
+    
     res.status(500);
-    res.render('500');
+
+    res.render('500', context);
 });
 
 app.listen(app.get('port'), function () {

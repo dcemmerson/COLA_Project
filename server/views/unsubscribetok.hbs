@@ -1,11 +1,10 @@
-<div class="container mt-4">
-  <br>
+<div class="container mt-4 mb-4">
 {{#if unsubscribed}}
 
   {{#if updated}}
   <h1 class="text-center mt-2 sr-only">Unsubscribed!</h1>
   <div>
-    <div class="usa-alert usa-alert--success max-width-900">
+    <div class="usa-alert usa-alert--success max-width-900 mt-2 mt-md-4 mt-lg-5">
       <div class="usa-alert__body">
 	<span>
 	  <h2 class="h3 usa-alert__heading">Unsubscribed! <a class="sm" href="/unsubscribeTok?tok={{doTok}}">undo</a></h2>
@@ -16,7 +15,7 @@
   </div>
   {{else if alreadyUpdated}}
   <h1 class="text-center mt-2 sr-only">Unsubscribed Already!</h1>
-  <div class="usa-alert usa-alert--info max-width-900">
+  <div class="usa-alert usa-alert--info max-width-900 mt-2 mt-md-4 mt-lg-5">
     <div class="usa-alert__body">
       <span>
 	<h2 class="h3 usa-alert__heading">Already unsubscribed! <a class="sm" href="/unsubscribeTok?tok={{doTok}}">undo</a></h2>
@@ -31,27 +30,18 @@
        to unsubscribe from, we should let them know to avoid confusion when they
        still receive emails about that post's rate changes
     -->
-  <div class="usa-alert usa-alert--warning max-width-900" >
+  <div class="usa-alert usa-alert--warning max-width-900  mt-2 mt-md-4 mt-lg-5" >
     <div class="usa-alert__body">
       <h2 class="h3 usa-alert__heading">Additional subscriptions</h2>
       <p class="usa-alert__text">{{username}} has {{numberAdditionalSubs}} additonal active subscriptions to {{country}} ({{post}}).</p>
     </div>
   </div>
   {{/if}}
-  
-  <br>
-  <div>
-    <p>
-      <a href="/login">Login</a> to manage other subscriptions.
-    </p>
-  </div>
-
-  
 {{else if resubscribed}}
   {{#if updated}}
   <h1 class="text-center mt-2 sr-only">Resubscribed!</h1>
   <div>
-    <div class="usa-alert usa-alert--success max-width-900">
+    <div class="usa-alert usa-alert--success max-width-900  mt-2 mt-md-4 mt-lg-5">
       <div class="usa-alert__body">
 	<span>
 	  <h2 class="h3 usa-alert__heading">Resubscribed! <a class="sm" href="/unsubscribeTok?tok={{doTok}}">undo</a></h2>
@@ -62,7 +52,7 @@
   </div>
   {{else if alreadyUpdated}}
   <h1 class="text-center mt-2 sr-only">Unsubscribed Already!</h1>
-  <div class="usa-alert usa-alert--info max-width-900">
+  <div class="usa-alert usa-alert--info max-width-900  mt-2 mt-md-4 mt-lg-5">
     <div class="usa-alert__body">
       <span>
 	<h2 class="h3 usa-alert__heading">Already resubscribed! <a class="sm" href="/unsubscribeTok?tok={{doTok}}">undo</a></h2>
@@ -73,13 +63,25 @@
   
   {{/if}}<!-- end of updated -->
 {{else if error}}
-  <br><br>
-  <h1 class="text-center mt-2 sr-only">An error has occurred</h1>
-  <div class="usa-alert usa-alert--error max-width-900" >
+
+  <h1 class="text-center sr-only">An error has occurred</h1>
+  <div class="usa-alert usa-alert--error max-width-900 mt-2 mt-md-4 mt-lg-5" >
     <div class="usa-alert__body">
       <h2 class="h3 usa-alert__heading">Something went wrong...</h2>
-      <p class="usa-alert__text">A technical error has occured. Please try again.</p>
+      <p class="usa-alert__text">It appears the URL is invalid. Please try again.
+      </p>
     </div>
   </div>
   {{/if}} <!-- end of unsubscribed -->
+  <br>
+  {{#if loggedIn}}
+
+  {{else}}
+  <div>
+    <p>
+      <a href="/login">Login</a> to manage other subscriptions.
+    </p>
+  </div>
+  {{/if}}
 </div>
+<br><br>

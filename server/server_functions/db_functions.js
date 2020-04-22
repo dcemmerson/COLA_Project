@@ -2,8 +2,7 @@ var passport = require('passport');
 var bcrypt = require('bcrypt');
 var LocalStrategy = require('passport-local').Strategy;
 
-const em=require('../server_functions/emails.js'); 
-//commented out because this is a circular
+//const em=require('../server_functions/emails.js'); //commented out because this is a circular
 //reference and causes multiple parts of system to break.
 
 require('../server.js'); //seems like this is a bit of a circular reference?
@@ -516,6 +515,7 @@ passport.deserializeUser(function (user_id, done) {
 
 passport.use(new LocalStrategy(
     function(username, password, done) {
+	console.log('Inside LocalStrategy');
 	var sql="SELECT id, password FROM user WHERE email= ?"
 	values=[username]
 	queryDB(sql, values, mysql).then((message) => {
