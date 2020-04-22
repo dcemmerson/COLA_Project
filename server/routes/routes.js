@@ -2,7 +2,7 @@
 const db = require('../server_functions/db_functions.js');
 //const em=require('../server_functions/emails.js');
 var jwt = require('jwt-simple');
-
+var misc = require('../server_functions/misc.js');
 
 var passport = require('passport');
 const {
@@ -21,33 +21,37 @@ module.exports = function (app) {
 	context.style = ['styles.css', 'font_size.css', 'home.css'];
 	context.script = ['utility.js'];
 
-	context.layout = 'landingLayout.hbs';
 	context.title = 'COLA Notifications';
 	context.homepage = true;
-	res.render('home', context);
+	
+	misc.set_layout(req, context)
+	    .catch(() => console.log('error in set_layout'))
+	    .finally(() => res.render('home', context))
     });
     app.get('/FAQ', function (req, res) {
 	let context = {};
 	context.style = ['styles.css', 'font_size.css', 'FAQ.css'];
 	context.script = ['FAQ.js', 'utility.js'];
 	context.deferScript = ['../pdfjs/pdf.js'];
-	
 	context.title = 'FAQ - COLA';
 	context.FAQ = true;
-	res.render('FAQ', context);
+
+	misc.set_layout(req, context)
+	    .catch(() => console.log('error in set_layout'))
+	    .finally(() => res.render('FAQ', context))
     });
     
-    app.get('/account', /* db.authenticationMiddleware(), */ function (req, res) {
+    app.get('/account', db.authenticationMiddleware(),  function (req, res) {
 	let context = {};
 	let awaitPromises = [];
-	const temp_user_id = 1;
+	const user_id = req.session.passport.user.user_id;
 	context.style = ['styles.css', 'font_size.css', 'account.css'];
 	context.script = ['account.js', 'account_ajax.js', 'utility.js'];
 	context.title = 'My Account';
 	context.account = true; //used for navivation.hbs
 	
 	awaitPromises.push(
-	    db.get_user_email(temp_user_id)
+	    db.get_user_email(user_id)
 		.then(res => context.email = res[0].email)
 		.catch(err => console.log(err))
 	);
@@ -55,11 +59,11 @@ module.exports = function (app) {
 	    .then(() => res.render('account', context))
     });
     
-    app.get('/subscriptions', /*db.authenticationMiddleware(),*/ function (req, res) {
-	const temp_user_id = 1;
+    app.get('/subscriptions', db.authenticationMiddleware(), function (req, res) {
+	const user_id = req.session.passport.user.user_id;
 	let awaitPromises = [];
 	let context = {post_info: [], templates: []};
-	
+	console.log(req.session);
 	awaitPromises.push(
 	    db.get_list_of_posts()
 		.then(posts => posts.forEach(post => {
@@ -67,13 +71,13 @@ module.exports = function (app) {
 		}))
 		.catch(err => console.log(err))
 	    ,
-	    db.get_user_template_names(temp_user_id)
+	    db.get_user_template_names(user_id)
 		.then(templates => templates.forEach(template => {
 		    context.templates.push(template);
 		}))
 		.catch(err => console.log(err))
 	    ,
-	    db.get_user_email(temp_user_id)
+	    db.get_user_email(user_id)
 		.then(res => context.email = res[0].email)
 		.catch(err => console.log(err))
 	)
