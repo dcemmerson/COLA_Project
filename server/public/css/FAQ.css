@@ -1,0 +1,19 @@
+/*.iframe-docx {
+    width: 95%;
+    height: 100%;
+}
+*/
+.modal-dialog {
+    max-width: 1000px;
+    width: 95%;
+    height: 95%;
+}
+.modal-content {
+    height: 95%
+}
+.modal-body {
+    overflow: auto;
+}
+.light-border {
+    border: 1px solid #E0E0E0;
+}
