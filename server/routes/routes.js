@@ -105,7 +105,7 @@ module.exports = function (app) {
     // upon submitting create account, validates the form information and adds user to DB
     app.post(
 	"/create_account", [
-	    // Check validity
+	    // Check validity+
 	    check("email", "Email is invalid")
 		.isEmail()
 		.isLength({
@@ -153,7 +153,9 @@ module.exports = function (app) {
 		var email = req.body.email;
 		var pwd = req.body.pwd;
 		var now = new Date().toISOString().replace(/\..+/, '');
-		db.add_user(email, pwd, now, res, req);
+		db.add_user(email, pwd, now, res, req)
+		.then(console.log(res[0].email))
+		.catch(err => console.log(err))
 		
 		}
 
@@ -181,11 +183,13 @@ module.exports = function (app) {
 
     /*
     app.get('/resetpassword', function (req, res) {
+    
+    app.get('/resetpassword//:userId//:token', function (req, res) {
 	const id=req.params.userId;
 	const token=req.params.token;
 	db.get_user(req, res, id, token);
 	
-    }),
+	}),
     */
     app.get('/reset_password', function(req, res){
 	var context = {};
@@ -217,51 +221,52 @@ module.exports = function (app) {
 		res.render('recover', context);
 	    })
     });
-    app.post(
-	'/resetpassword', [
-	    // Check validity
-	    check("pwd", "Password is invalid: must be at least 8 characters and must contain 1 lowercase, 1 uppercase, 1 number and 1 special character")
-		.isLength({
-		    min: 8
-		})
-		.matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.* )(?=.*[^a-zA-Z0-9]).{8,}$/, 'i')
-		.custom((value, {
-		    req,
-		    loc,
-		    path
-		}) => {
-		    if (value !== req.body.pwdmatch) {
-			throw new Error("Passwords don't match");
-		    } else {
-			return value;
-		    }
-		})
-	],
-	(req, res, next) => {
-	    // return formatted validation results
-	    const errorFormatter = ({
-		msg,
-	    }) => {
-		return `${msg}`;
-	    };
-	    const errors = validationResult(req).formatWith(errorFormatter);
-	    if (!errors.isEmpty()) {
-		var errorResponse = errors.array({
-		    onlyFirstError: true
-		});
-		res.render('recover', {
-		    error: errorResponse
-		});
+    /*
+      app.post(
+      '/resetpassword', [
+      // Check validity
+      check("pwd", "Password is invalid: must be at least 8 characters and must contain 1 lowercase, 1 uppercase, 1 number and 1 special character")
+      .isLength({
+      min: 8
+      })
+      .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.* )(?=.*[^a-zA-Z0-9]).{8,}$/, 'i')
+      .custom((value, {
+      req,
+      loc,
+      path
+      }) => {
+      if (value !== req.body.pwdmatch) {
+      throw new Error("Passwords don't match");
+      } else {
+      return value;
+      }
+      })
+      ],
+      (req, res, next) => {
+      // return formatted validation results
+      const errorFormatter = ({
+      msg,
+      }) => {
+      return `${msg}`;
+      };
+      const errors = validationResult(req).formatWith(errorFormatter);
+      if (!errors.isEmpty()) {
+      var errorResponse = errors.array({
+      onlyFirstError: true
+      });
+      res.render('recover', {
+      error: errorResponse
+      });
 
-		return;
-	    }
+      return;
+      }
 
-	    else {
-		const pwd = req.body.pwd;
-		const id=req.body.Id;
-		db.update_user(id, pwd);
+      else {
+      const pwd = req.body.pwd;
+      const id=req.body.Id;
+      db.update_user(id, pwd);
 		res.redirect('/login');	
-	    }
-
-	})    
+		}
+	    
+	    })    */
 };
