@@ -25,9 +25,9 @@ module.exports = {
 	    
 	});
     },
-    jwt_verify: function(tok){
+    jwt_verify: function(tok, jwtSecret=JWT_SECRET){
 	return new Promise((resolve, reject) => {
-	    jwt.verify(tok, JWT_SECRET, (err, decoded) => {
+	    jwt.verify(tok, jwtSecret, (err, decoded) => {
 		if(err){
 		    reject(err);
 		}
@@ -35,16 +35,30 @@ module.exports = {
 	    })
 	});
     },
-    jwt_sign: function(payload){
-	return new Promise((resolve, reject) => {
-	    jwt.sign(payload, JWT_SECRET, (err, token) => {
-		if(err){
-		    console.log(err);
-		    reject(err);
-		}
-		resolve(token);
-	    })	
-	});
+    jwt_sign: function(payload, jwtSecret=JWT_SECRET, expiresIn){
+	if(expiresIn){
+	    return new Promise((resolve, reject) => {
+		jwt.sign(payload, jwtSecret,
+			 {expiresIn: expiresIn}, (err, token) => {
+		    if(err){
+			console.log(err);
+			reject(err);
+		    }
+		    resolve(token);
+		})	
+	    });
+	}
+	else{
+	    return new Promise((resolve, reject) => {
+		jwt.sign(payload, jwtSecret, (err, token) => {
+		    if(err){
+			console.log(err);
+			reject(err);
+		    }
+		    resolve(token);
+		})	
+	    });
+	}
     },
     /* name: validate_file
        preconditions: file object from multer module that contains information about

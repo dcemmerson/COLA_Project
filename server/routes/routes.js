@@ -1,7 +1,5 @@
 
 const db = require('../server_functions/db_functions.js');
-//const em=require('../server_functions/emails.js');
-var jwt = require('jwt-simple');
 var misc = require('../server_functions/misc.js');
 
 var passport = require('passport');
@@ -180,66 +178,45 @@ module.exports = function (app) {
     });
     
 
-    app.post(
-	`/reset`, [
-	    // Check validity
-	    check("email", "Email is invalid")
-		.isEmail()
-		.isLength({
-		    min: 4
-		})
-	],
-	(req, res, next) => {
-	    // return formatted validation results
-	    const errorFormatter = ({
-		msg,
-	    }) => {
-		return `${msg}`;
-	    };
-	    const errors = validationResult(req).formatWith(errorFormatter);
 
-	    if (!errors.isEmpty()) {
-		var errorResponse = errors.array({
-		    onlyFirstError: true
-		});
-		res.render('reset', {
-		    error: errorResponse
-		});
-
-		return;
-	    }
-
-	    else {
-		var email = req.body.email;
-		console.log(email);
-		db.check_email(email, res, req);	
-		var message=db.check_email(email,res, req);
-
-		/////////////////////////////////////////////////
-		// i think this if statement needs to be .then chained,
-		// otherwise it's never going to return true
-		if (message.length==0) 
-		{
-
-		    res.render('reset', {
-			error: "Email does not exist"
-		    });
-		}
-		else res.redirect('/login');
-		
-
-		
-	    }
-
-	});
-    
-    app.get('/resetpassword//:userId//:token', function (req, res) {
+    /*
+    app.get('/resetpassword', function (req, res) {
 	const id=req.params.userId;
 	const token=req.params.token;
 	db.get_user(req, res, id, token);
 	
     }),
-    
+    */
+    app.get('/reset_password', function(req, res){
+	var context = {};
+	db.get_user_by_id(req.query.id, context)
+	    .then(encPassword => {
+		return misc.jwt_verify(
+		    req.query.token,
+		    (encPassword + context.modified));
+
+	    })
+	    .then(dec => {
+		context.token = req.query.token;
+		context.validToken = true;
+		for(var v in dec)
+		    console.log(v + ": " + dec[v]);
+	    })
+	    .catch(err => {
+		console.log('err route');
+		context.invalidToken = true;
+		console.log(err);
+	    })
+	    .finally(() => misc.set_layout(req, context))
+	    .catch(() => {
+		console.log('error in set_layout - get.reset_password')
+		context.layout = 'loginLayout';
+		context.error = true;
+	    })
+	    .finally(() =>{
+		res.render('recover', context);
+	    })
+    });
     app.post(
 	'/resetpassword', [
 	    // Check validity

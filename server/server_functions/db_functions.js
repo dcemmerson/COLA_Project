@@ -71,31 +71,72 @@ module.exports = {
 	})
     },
 	
-    
-    check_email: function (email, res, req) {
-	var sql = "SELECT id, password, created FROM user WHERE email= ?"
+    /* name: check_email
+       preconditions: email is user supplied email
+                      context is object we will fill with response information
+       postconditions: context has been filled with user informtation found by
+                       seraching db, if user exists
+       description: Search db for user supplied email. If email exists, fill context
+                    object with user information and resolve. Else, if no email found
+		    set context.error to true, and reject. 
+     */
+    check_email: function (email, context) {
+	var sql = "SELECT id, password, modified FROM user WHERE email=?"
 	var values = [email];
-	queryDB(sql, values, mysql).then((message) => {
-	    console.log(message);
-	    if (message.length==0) 
-	    {
-		res.render('reset', {
-		    error: "Email does not exist"
-		});
-	    }
-	    else 
-	    {
-		const user_id=(message[0].id);
-		const user_pwd=(message[0].password);
-		const user_created=(message[0].created);
-		em.password_reset_email(email, user_id, user_pwd, user_created);
-		let context = {};
-		context.layout = 'login_layout.hbs';
-		res.render('resetSent');
-	    }
-	    
+	return new Promise((resolve, reject) => {
+	    queryDB(sql, values, mysql)
+		.then(result => {
+		    if (result.length == 0) {
+			//email does not exist
+			context.notFound = true;
+			context.msg = "Email does not exist";
 
-	}).catch(err => console.log(err));
+			reject();
+		    }
+		    else {
+			context.userId = result[0].id;
+			context.modified = result[0].modified;
+			resolve(result[0].password);
+		    }    
+		})
+		.catch(err => {
+		    reject(err);
+		});
+	})
+    },
+    /* name: get_user_by_id
+       preconditions: userId to search for in db
+                      context is object we will fill with response information
+       postconditions: context has been filled with user informtation found by
+                       seraching db, if user exists
+       description: Search db for id. If user exists, fill context
+                    object with user information and resolve. Else, if no user found
+		    set context.error to true, and reject. 
+     */
+    get_user_by_id: function (userId, context) {
+	var sql = "SELECT email, password, modified FROM user WHERE id=?"
+	var values = [userId];
+	return new Promise((resolve, reject) => {
+	    queryDB(sql, values, mysql)
+		.then(result => {
+		    if (result.length == 0) {
+			//email does not exist
+			context.notFound = true;
+			context.msg = "User does not exist";
+
+			reject();
+		    }
+		    else {
+			context.userId = userId;
+			context.email = result[0].email;
+			context.modified = result[0].modified;
+			resolve(result[0].password);
+		    }    
+		})
+		.catch(err => {
+		    reject(err);
+		});
+	})
     },
     
     

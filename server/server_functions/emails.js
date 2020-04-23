@@ -2,39 +2,27 @@ require('dotenv').config();
 const db = require('./db_functions.js');
 const tm = require('./template_manip.js');
 const misc = require('./misc.js');
-const fs = require('fs');
+//const fs = require('fs');
 const path = require('path');
-const rimraf = require('rimraf');
+//const rimraf = require('rimraf');
 const randomAccessFile = require('random-access-file');
 const nodemailer = require('nodemailer');
 var Email = require('email-templates');
+const EMAIL = process.env.EMAIL || 'gunrock2018@gmail.com';
 const transporter = nodemailer.createTransport('smtps://gunrock2018%40gmail.com:iamaweimaraner@smtp.gmail.com')
 const HOST = process.env.HOST || 'http://localhost:10000';
 
 module.exports = {
 	
-	password_reset_email: function (email, id, pwd, created) {
-	console.log(id);
-	var jwt = require('jwt-simple');
+    password_reset_email: function (userId, email, token) {
 
-	var payload = { userId: id,
-					email:email};
-	var secret = pwd+created;
-	var token = jwt.encode(payload, secret);
-	
-	console.log(payload.userId, token);
-
-		const forgot_email = new Email({
-			message: {
-				from: 'gunrock2018@gmail.com'
-			},
-			// uncomment below to send emails in development/test env:
-			send: true,
-			transport: transporter,
-			//	transport: {
-			//	jsonTransport: true
-			//	}
-			 views: {
+	const em = new Email({
+	    message: {
+		from: process.env.EMAIL,	
+	    },
+	    send: true,
+	    transport: transporter,	    
+	    views: {
 		options: {
 		    extension: 'handlebars'
 		}
@@ -48,21 +36,24 @@ module.exports = {
 		}
 	    }
 	});
-
-		forgot_email.send({
-				template: `forgot_pwd`,
-				message: {
-					to: email
-				},
-				locals: {
-					locale: 'en',
-				id: payload.userId ,
-				token: token,
-				}
-			})
-			.then(console.log)
-			.catch(console.error);
-},
+	
+	return em.send({
+	    template: `forgot_pwd`,
+	    message: {
+		to: email
+	    },
+	    locals: {
+		locale: 'en',
+		title: "Reset password",
+		email: email,
+		host: HOST,
+		userId: userId,
+		jwt: token,
+		style: ['rate_change_email.css']
+	    }
+	})
+	
+    },
     /* name: send_emails
        preconditions: changed_rates contains array of objects that contains each
        post that has changed cola rate, including information db id,
@@ -131,7 +122,7 @@ function send_email(user, changed, file){
 	    .then(token => {
 		const email = new Email({
 		    message: {
-			from: 'gunrock2018@gmail.com',
+			from: process.env.EMAIL,
 			attachments: [
 			    {
 				filename: user.filename,
@@ -167,6 +158,7 @@ function send_email(user, changed, file){
 		    },
 		    locals: {
 			locale: 'en',
+			title: `COLA Rate Change ${changed.country} (${changed.post})`,
 			username: user.username,
 			changed: changed,
 			date: changed.last_modified.getUTCDate(),

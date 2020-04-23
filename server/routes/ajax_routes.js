@@ -3,6 +3,7 @@ const db = require('../server_functions/db_functions.js');
 const misc = require('../server_functions/misc.js');
 const crs = require('../server_functions/cola_rates_script.js');
 const fs = require('fs'); //can be removed after 4/3 - testing purposesv
+const emails = require('../server_functions/emails.js');
 
 const multer = require('multer');
 const upload = multer();
@@ -350,5 +351,39 @@ module.exports = function(app,  mysql){
 	    })
     })
     /**************** End AJAX routes coming from email links ****************/
+    /***************** AJAX routes coming from password reset page *************/
+    
+    app.post(`/reset`, (req, res, next) => {
+	var context = {};
+	context.title = "Reset password - COLA";
+	context.style = ['styles.css', 'font_size.css'];
+	context.email = req.body.email;
+	db.check_email(req.body.email, context)
+	    .then(encPassword => {
+		return misc.jwt_sign({
+		    userId: context.userId,
+		    email: context.email
+		}, (encPassword + context.modified), "1h")
+	    })
+	    .then(token => emails.password_reset_email(context.userId, context.email, token))
+	    .then(() => {
+		context.success = true;
+	    })
+	    .catch(err => {
+		if(err){
+		    console.log(err);
+		    context.msg = "An error occured";
+		    context.error = true;
+		}
+	    })
+	    .finally(() => {
+		return misc.set_layout(req, context);
+	    })
+	    .finally(() => {
+		res.render('resetSent', context);
+	    })
+	
+    });
+    /**************** End AJAX routes coming from reset password page ****************/
 }
 
