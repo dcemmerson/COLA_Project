@@ -199,9 +199,13 @@ module.exports = {
 	    }
 	    else{
 		//then the new pwd is valid. now check if user entered prev password correctly
-
-		context.invalidNewPassword = false;
-		 context.invalidNewPasswordRe=false;
+	
+	
+		 db.get_user_from_id(userId).then(resolve())
+		    .catch(err => {
+			context.error = err
+			reject(err);
+		    })
 	    }
 	    //If we get to this point, user entered invalid newPwd/newPwdRe
 	    //We can just reject without an error

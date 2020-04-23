@@ -122,11 +122,13 @@ module.exports = {
 		try{
 		    const decoded = jwt.decode(token, secret);
 		    let context = {};
-		    context.layout = 'login_layout.hbs';
-		    res.render('recover', {
+			context.style = ['styles.css', 'font_size.css', 'account.css'];
+			context.script = ['recover.js', 'recover_ajax.js', 'utility.js'];
+		//    context.id = id;
+		    res.render('recover',/* {
 			id: id,
 			//	token: token
-		    });
+		    */ context)
 		}catch(err) {if(err) res.redirect('/login');
 			     
 			    };
@@ -487,6 +489,7 @@ module.exports = {
 	return new Promise((resolve, reject) => {
 	    const sql = `UPDATE user SET password=? WHERE id=?`;
 	    const values = [hashedPwd, userId];
+		console.log(values);
 	    queryDB(sql, values, mysql)
 		.then(res => {
 		    if(res.affectedRows == 1) resolve();

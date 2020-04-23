@@ -232,8 +232,7 @@ module.exports = function(app,  mysql){
 	    });
     /****************** End subscription page ajax routes *******************/
     /*********************** Account page ajax routes ***********************/
-    app.post('/update_password', function (req, res) {
-	console.log("updating pwd");
+   app.post('/update_password', function (req, res) {
 	const tempUserId = 1;
 	var context = {};
 
@@ -255,8 +254,8 @@ module.exports = function(app,  mysql){
     });
 	
 	app.post('/reset_password', function (req, res) {
-	console.log("resetting pwd");
-	const tempUserId = 1;
+		console.log(req.body.newPassword);
+	const tempUserId = 55
 	var context = {};
 	misc.validate_password_reset(tempUserId,
 			       req.body.newPassword, req.body.newPasswordRe, context)
