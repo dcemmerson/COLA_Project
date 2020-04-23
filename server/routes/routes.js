@@ -240,8 +240,8 @@ module.exports = function (app) {
 	const token=req.params.token;
 	db.get_user(req, res, id, token);
 	
-    }),
-    
+    });
+    /*
     app.post(
 	'/resetpassword', [
 	    // Check validity
@@ -288,5 +288,5 @@ module.exports = function (app) {
 		res.redirect('/login');	
 	    }
 
-	})    
+	})    */
 };
