@@ -254,8 +254,8 @@ module.exports = function(app,  mysql){
     });
 	
 	app.post('/reset_password', function (req, res) {
-		console.log(req.body.newPassword);
-	const tempUserId = 55
+		console.log(req.body.Id);
+	const tempUserId = 55;
 	var context = {};
 	misc.validate_password_reset(tempUserId,
 			       req.body.newPassword, req.body.newPasswordRe, context)
