@@ -21,9 +21,12 @@ module.exports = function (app) {
 	    .finally(() => res.render('home', context))
     });
     app.get(`/login`, function (req, res) {
-	let context = {};
-	context.layout = 'loginLayout.hbs';
-	context.title = 'Login - COLA';
+	let context = {
+	    layout: 'loginLayout.hbs',
+	    title: 'Login - COLA',
+	    style: ['login.css', 'styles.css', 'font_size.css'],
+	    script: []
+	}
 	res.render('login', context);
     });
     app.get('/FAQ', function (req, res) {
