@@ -1,21 +1,51 @@
-
-<html>
-<body>
- <div id="content-main" class="content-main" role="main">
-          <div class="container block-content text-center">
-    <div class="row">
-      <div class="col-sm-8 col-sm-offset-2">
-        <h1>
-                    Password Reset
-        </h1>
-        <p>
-          A message has been sent to you by email with instructions on how to reset your password.
-        </p>
-              </div>
+<div class="container mt-4 mb-4">
+  {{#if success}}
+  <h1 class="text-center mt-2 sr-only">Password Reset Sent</h1>
+  <div class="usa-alert usa-alert--info max-width-900  mt-2 mt-md-4 mt-lg-5" >
+    <div class="usa-alert__body">
+      <h2 class="h3 usa-alert__heading">Password Reset Request</h2>
+      <p class="usa-alert__text">
+	A link to reset password has been sent to {{email}} (expires in 1 hour).
+      </p>
     </div>
   </div>
-      </div>
-    
-      </div>
-  </body>
-</html>
+  {{else}}
+  {{#if notFound}}
+  <h1 class="text-center mt-2 sr-only">Email Not Found</h1>
+  <div class="usa-alert usa-alert--warning max-width-900  mt-2 mt-md-4 mt-lg-5" >
+    <div class="usa-alert__body">
+      <h2 class="h3 usa-alert__heading">Email Not Found</h2>
+      <p class="usa-alert__text">
+	Account not found for {{email}}.
+      </p>
+      <p class="usa-alert__text mt-2">
+	<a class="" href="/create_account">Sign up</a>
+      </p>
+    </div>
+  </div>
+  {{else if error}}
+  <h1 class="text-center mt-2 sr-only">Error</h1>
+  <div class="usa-alert usa-alert--error max-width-900  mt-2 mt-md-4 mt-lg-5" >
+    <div class="usa-alert__body">
+      <h2 class="h3 usa-alert__heading">Error</h2>
+      <p class="usa-alert__text">
+	An error seems to have occured. Unable to process password reset request for {{email}} at this time.
+	<a href="/reset">Try again?</a>
+      </p>
+    </div>
+  </div>
+  {{else}}
+  <h1 class="text-center mt-2 sr-only">Error</h1>
+  <div class="usa-alert usa-alert--error max-width-900  mt-2 mt-md-4 mt-lg-5" >
+    <div class="usa-alert__body">
+      <h2 class="h3 usa-alert__heading">Error</h2>
+      <p class="usa-alert__text">
+	Something unexpected occurred. Unable to process password reset request at this time.
+	<a href="/reset">Try again?</a>
+      </p>
+    </div>
+  </div>
+  {{/if}}
+  {{/if}}
+</div>
+<br><br><br>

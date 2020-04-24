@@ -11,7 +11,8 @@ input {
     max-width: 26rem;
 }
 .changePasswordAlert {
-    max-width: 28rem;
+/*   max-width: 28rem;
+*/
 }
 #passwordFormContainer {
     padding: 1rem;

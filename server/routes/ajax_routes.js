@@ -2,85 +2,28 @@ const db = require('../server_functions/db_functions.js');
 
 const misc = require('../server_functions/misc.js');
 const crs = require('../server_functions/cola_rates_script.js');
-const fs = require('fs'); //can be removed after 4/3 - testing purposesv
+const emails = require('../server_functions/emails.js');
 
 const multer = require('multer');
 const upload = multer();
 
 let after_load = require('after-load');
 
-module.exports = function(app,  mysql){
-    /* place ajax routes here */
-    app.get(`/test`, function(req,res) {
-	db.test_method(res, mysql)
-	    .then(() => {
-		res.render('login');
-	    })
-	    .catch(err => {
-		console.log(err);
-		res.end();
-	    })
-    });
-
-    /********************* MARKED FOR REMOVAL *******************/
-    /* name: GET_cola_rates
-       preconditions: None
-       postconditions: parsed cola rates webpage data sent to calling location
-       description: This routes was created simply to develop and test a script
-       to GET cola rates webpage, followed by processing the data obtained. This
-       route will be removed in near future.
-    */
-    /*
-    app.get(`/GET_cola_rates`, (req, res) => {
-	var context = {};
-	
-	after_load('https://aoprals.state.gov/Web920/cola.asp', html => {
-	    const scraped = crs.parse_cola_page(html);
-	    db.add_cola_rates(scraped)
-		.then(() => res.end())
-		.catch(err => {
-		    console.log(err);
-		    res.end();
-		})
-	});
-    });
-*/
-    /********************* MARKED FOR REMOVAL *******************/
-    /* name: UPDATE_cola_rates
-       preconditions: None
-       postconditions: parsed cola rates webpage, https://aoprals.state.gov/Web920/cola.asp,
-                       and db has been updated with new rates.
-       description: This routes was created simply to develop and test a script
-       to UPDATE cola rates webpage, followed by processing the data obtained. This
-       route will be removed in near future.
-    */
-/*    app.get(`/UPDATE_cola_rates`, (req, res) => {
-	let changed_rates = [];
-	after_load('https://aoprals.state.gov/Web920/cola.asp', html => {
-	    const scraped = crs.parse_cola_page(html);
-	    crs.check_rate_changes(scraped, changed_rates)
-		.then(() => {
-		    crs.update_changed_rates(changed_rates)
-			.then(() => {
-			    console.log('COLA rates updated: ' + new Date());
-			    res.end();
-			})
-		})
-		.catch(err => {
-		    console.log(err)
-		    res.end()
-		})
-	});
-    });
-*/
+module.exports = function(app, passport){
+    app.post(['/login'], passport.authenticate(
+	'local', {
+	    successRedirect: '/subscriptions',
+	    failureRedirect: '/login'
+	}));
+    
     /******************* Subscription page ajax routes *********************/
-    app.get('/get_user_subscription_list', /*db.authenticationMiddleware(),*/
+    app.get('/get_user_subscription_list', db.authenticationMiddleware(),
 	    function (req, res) {
-		const temp_user_id = 1;
+		const userId = req.session.passport.user.user_id;
 		let await_promises = [];
 		let context = {subscription_list: []};
     		await_promises.push(
-		    db.get_user_subscription_list(temp_user_id)
+		    db.get_user_subscription_list(userId)
 			.then(subs => {
 			    //this is ugly but necessary to send to client at right time
 			    return new Promise((resolve, reject) => {
@@ -106,13 +49,13 @@ module.exports = function(app,  mysql){
 		    })
 	    });
     
-    app.post('/add_new_subscription_with_template_file', /*db.authenticationMiddleware(),*/ upload.single('upload'),
+    app.post('/add_new_subscription_with_template_file', db.authenticationMiddleware(), upload.single('upload'),
 	     function (req, res) {
-		 const temp_user_id = 1;
+		 const userId = req.session.passport.user.user_id;
 		 var context = {};
 		 
 		 misc.validate_file(req.file, context)
-		     .then(() => db.insert_new_subscription_with_template_file(temp_user_id,
+		     .then(() => db.insert_new_subscription_with_template_file(userId,
 									       req.body.post_id,
 									       req.file.originalname,
 									       req.file.buffer))
@@ -127,12 +70,12 @@ module.exports = function(app,  mysql){
 			 res.send(context);
 		     })
 	     });
-    app.post('/add_new_subscription_with_prev_template', /*db.authenticationMiddleware(),*/
+    app.post('/add_new_subscription_with_prev_template', db.authenticationMiddleware(),
 	     function (req, res) {
 		 var context = {};
-		 const temp_user_id = 1;
+		 const userId = req.session.passport.user.user_id;
 
-		 db.insert_new_subscription_with_prev_template(temp_user_id,
+		 db.insert_new_subscription_with_prev_template(userId,
 							       req.body.post_id,
 							       req.body.template_id)
 		     .then(() => {
@@ -146,12 +89,12 @@ module.exports = function(app,  mysql){
 			 res.send(context);
 		     })
 	     });
-    app.get('/preview_template', /*db.authenticationMiddleware(),*/
+    app.get('/preview_template', db.authenticationMiddleware(),
 	    function (req, res) {
-		const tempUserId = 1;
+		const userId = req.session.passport.user.user_id;
 		var context = {};
 
-		misc.preview_template(tempUserId, req.query.templateId, context)
+		misc.preview_template(userId, req.query.templateId, context)
 		    .then(() => {
 			context.success = true;
 		    })
@@ -164,35 +107,10 @@ module.exports = function(app,  mysql){
 		    .finally(() => {
 			res.send(context);
 		    })
-/*		db.get_user_template(temp_user_id, req.query.templateId)
-		    .then(response => {
-			if(!response[0]){
-			    throw(new Error(`Error: template does not exist`
-					    + ` (userId=${temp_user_id},`
-					    + ` templateId=${req.query.templateId})`));
-			}
-			context.filename = response[0].name;
-			context.uploaded = response[0].uploaded;
-			return tm.docx_to_pdf(response[0].file);
-		    })
-		    .then(pdfBuf => {
-			context.success = true;
-			context.file = pdfBuf;
-			
-		    })
-		    .catch(err => {
-			if(err) console.log(err);
-			context.success = false;
-			context.msg = "Error retrieving file";
-		    })
-		    .finally(() => {
-			res.send(context);
-		    })
-*/
 	    });
-    app.get('/delete_subscription', /*db.authenticationMiddleware(),*/
+    app.get('/delete_subscription', db.authenticationMiddleware(),
 	    function (req, res) {
-		const temp_user_id = 1;
+		const userId = req.session.passport.user.user_id;
 		var context = {};
 		var decrypted;
 		
@@ -202,7 +120,7 @@ module.exports = function(app,  mysql){
 			context.post = dec.post;
 			decrypted = dec;
 			return db.update_user_subscription(dec.subscriptionId,
-						   temp_user_id,
+						   userId,
 							   !!dec.makeActive);
 		    })
 		    .then(res => {
@@ -215,7 +133,7 @@ module.exports = function(app,  mysql){
 			    throw new Error(`Unable to update subscriptionId`
 					  + `=${decrypted.subscriptionId} to`
 					  + ` active=${!!decrypted.makeActive}`
-					  + ` for userId=${temp_user_id}`);
+					  + ` for userId=${userId}`);
 			}
 			
 			return misc.jwt_sign(decrypted);
@@ -232,75 +150,81 @@ module.exports = function(app,  mysql){
 	    });
     /****************** End subscription page ajax routes *******************/
     /*********************** Account page ajax routes ***********************/
-   app.post('/update_password', function (req, res) {
-	const tempUserId = 1;
+    app.post('/update_password', db.authenticationMiddleware(), function (req, res) {
+	const userId = req.session.passport.user.user_id;
 	var context = {};
 
-	misc.validate_password(tempUserId, req.body.oldPassword,
+	misc.validate_password(userId, req.body.oldPassword,
 			       req.body.newPassword, req.body.newPasswordRe, context)
 	    .then(() => misc.hash_password(req.body.newPassword))
-	    .then(hashedPwd => db.update_user_password(tempUserId, hashedPwd))
+	    .then(hashedPwd => db.update_user_password(userId, hashedPwd))
 	    .then(() => {
 		context.passwordUpdated = true;
 		context.successMessage = 'Password changed';
-		res.send(context);
 	    })
 	    .catch(err => {
 		if(err) console.log(err);
-
 		context.passwordUpdated = false;
-		res.send(context);
 	    })
+	    .finally(() => res.send(context))
     });
 	
-	app.post('/reset_password', function (req, res) {
-		console.log(req.body.Id);
-	const tempUserId = 55;
+
+    app.post('/reset_password', function (req, res) {
+
 	var context = {};
-	misc.validate_password_reset(tempUserId,
-			       req.body.newPassword, req.body.newPasswordRe, context)
+	var encryptedPassword;
+	db.get_user_by_id(req.body.userId, context)
+	    .then(encPassword => {
+		encryptedPassword = encPassword;
+		return misc.jwt_verify(
+		    req.body.token,
+		    (encPassword + context.modified));
+	    })
+	    .then(dec => {
+		return misc.validate_password_reset(context.userId, encryptedPassword,
+						    req.body.newPassword, req.body.newPasswordRe,
+						    context);
+	    })
 	    .then(() => misc.hash_password(req.body.newPassword))
-	    .then(hashedPwd => db.update_user_password(tempUserId, hashedPwd))
+	    .then(hashedPwd => db.update_user_password(context.userId, hashedPwd))
 	    .then(() => {
 		context.passwordUpdated = true;
 		context.successMessage = 'Password changed';
-		res.send(context);
 	    })
 	    .catch(err => {
 		if(err) console.log(err);
-
 		context.passwordUpdated = false;
-		res.send(context);
 	    })
+	    .finally(() => res.send(context))
+
     });
     /********************* End Account page ajax routes *********************/
     /********************* Start FAQ page ajax routes *********************/
-    app.get('/preview_default_template', /*db.authenticationMiddleware(),*/
-	    function (req, res) {
-		const defaultUserId = process.env.DEFAULT_USER_ID || 1;
-		const defaultTemplateId = process.env.DEFAULT_TEMPLATE_ID || 6;
-		var context = {};
-		misc.preview_template(defaultUserId, defaultTemplateId, context)
-		    .then(() => {
-			context.success = true;
-		    })
-		    .catch(err => {
-			if(err) console.log(err);
-			
-			context.msg = "Error retrieving file";
-			context.success = false;
-		    })
-		    .finally(() => {
-			res.send(context);
-		    })
-	    });
+    app.get('/preview_default_template', function (req, res) {
+	const defaultUserId = process.env.DEFAULT_USER_ID || 1;
+	const defaultTemplateId = process.env.DEFAULT_TEMPLATE_ID || 6;
+	var context = {};
+	misc.preview_template(defaultUserId, defaultTemplateId, context)
+	    .then(() => {
+		context.success = true;
+	    })
+	    .catch(err => {
+		if(err) console.log(err);
+		
+		context.msg = "Error retrieving file";
+		context.success = false;
+	    })
+	    .finally(() => {
+		res.send(context);
+	    })
+    });
     /************************* End FAQ page ajax ****************************/
     /************************************************************************
     AJAX routes coming from email links and/or
        coming from one-click unsubscribe/undo unsubscribe
     *************************************************************************/
     app.get('/unsubscribetok', function (req, res) {
-	const temp_user_id = 1;
 	var context = {
 	    style: ['unsubscribetok.css', 'font_size.css', 'styles.css'],
 	    title: 'Unsubscribe - COLA'
@@ -371,5 +295,39 @@ module.exports = function(app,  mysql){
 	    })
     })
     /**************** End AJAX routes coming from email links ****************/
+    /***************** AJAX routes coming from password reset page *************/
+    
+    app.post(`/reset`, (req, res, next) => {
+	var context = {};
+	context.title = "Reset password - COLA";
+	context.style = ['styles.css', 'font_size.css'];
+	context.email = req.body.email;
+	db.check_email(req.body.email, context)
+	    .then(encPassword => {
+		return misc.jwt_sign({
+		    userId: context.userId,
+		    email: context.email
+		}, (encPassword + context.modified), "1h")
+	    })
+	    .then(token => emails.password_reset_email(context.userId, context.email, token))
+	    .then(() => {
+		context.success = true;
+	    })
+	    .catch(err => {
+		if(err){
+		    console.log(err);
+		    context.msg = "An error occured";
+		    context.error = true;
+		}
+	    })
+	    .finally(() => {
+		return misc.set_layout(req, context);
+	    })
+	    .finally(() => {
+		res.render('resetSent', context);
+	    })
+	
+    });
+    /**************** End AJAX routes coming from reset password page ****************/
 }
 

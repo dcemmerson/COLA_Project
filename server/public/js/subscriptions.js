@@ -256,7 +256,7 @@ function display_unsubscribe_alert(element, post, country, tok){
 
 function restore_subscription(e){
     e.preventDefault();
-    console.log($('#undoLink')[0].getAttribute('data-tok'));
+//    console.log($('#undoLink')[0].getAttribute('data-tok'));
     let undoLink = $('#undoLink')[0];
     
     delete_subscription(undoLink.getAttribute('data-tok'),

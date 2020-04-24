@@ -4,7 +4,6 @@ async function submit_password(){
     context.newPassword = document.getElementById('newPassword').value;
     context.newPasswordRe = document.getElementById('newPasswordRe').value;
 
-    console.log(context);
     resp = await fetch('/update_password', {
 	method: 'POST',
 	headers: {
