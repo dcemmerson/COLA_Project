@@ -3,8 +3,9 @@ async function submit_password_reset()
     var context = {};
     context.newPassword = document.getElementById('newPassword').value;
     context.newPasswordRe = document.getElementById('newPasswordRe').value;
+    context.token = document.getElementById('token').value;
+    context.userId = document.getElementById('userId').value;
 
-    console.log(context);
     resp = await fetch('/reset_password', {
 	method: 'POST',
 	headers: {

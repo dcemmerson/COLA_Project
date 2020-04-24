@@ -119,7 +119,7 @@ module.exports = {
 		    set context.error to true, and reject. 
      */
     get_user_by_id: function (userId, context) {
-	var sql = "SELECT email, password, modified FROM user WHERE id=?"
+	var sql = "SELECT id, email, password, modified FROM user WHERE id=?"
 	var values = [userId];
 	return new Promise((resolve, reject) => {
 	    queryDB(sql, values, mysql)
@@ -132,7 +132,7 @@ module.exports = {
 			reject();
 		    }
 		    else {
-			context.userId = userId;
+			context.userId = result[0].id;
 			context.email = result[0].email;
 			context.modified = result[0].modified;
 			resolve(result[0].password);

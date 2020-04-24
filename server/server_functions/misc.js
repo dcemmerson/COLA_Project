@@ -144,7 +144,6 @@ module.exports = {
 	    }
 	    else{
 		//then the new pwd is valid. now check if user entered prev password correctly
-
 		db.get_user_from_id(userId)
 		    .then(res => compare_password(oldPwd, res.password))
 		    .then(compRes => {
@@ -173,8 +172,68 @@ module.exports = {
 	    if(context.invalidNewPassword || context.invalidNewPasswordRe) reject();
 	})
     },
-	
-	  validate_password_reset: function(userId, newPwd, newPwdRe, context){
+    validate_password_reset: function(userId, oldPwdEnc, newPwd, newPwdRe, context){
+	return new Promise((resolve, reject) => {
+	    let lowerCase = /[a-z]/g;
+	    let upperCase = /[A-Z]/g;
+	    let numbers = /[0-9]/g;
+	    let minLength = 8;
+	    let validPassword = false;
+	    let special = /\W|_/g
+	    
+	    //check for lower case letters in password
+	    if(!newPwd.match(lowerCase)){
+		context.invalidNewPassword = true;
+		context.invalidMessage = 'Must contain one or more lower case characters';
+	    }
+	    //check for upper case letters in password
+	    else if(!newPwd.match(upperCase)){
+		context.invalidNewPassword = true;
+		context.invalidMessage = 'Must contain one or more upper case characters';
+	    }
+	    //check for upper case letters in password
+	    else if(!newPwd.match(numbers)){
+		context.invalidNewPassword = true;
+		context.invalidMessage = 'Must contain at least one number';
+	    }
+	    else if(!newPwd.match(special)){
+		context.invalidNewPassword = true;
+		context.invalidMessage = 'Must contain at least one special'
+		    + ' character (eg ^!@#$%^&*+=._-+)';
+	    }
+	    else if(newPwd.length < minLength){
+		context.invalidNewPassword = true;
+		context.invalidMessage = 'Must contain at least 8 characters';
+	    }
+	    else if(newPwd !== newPwdRe){
+		context.invalidNewPasswordRe = true;
+		context.invalidMessage = 'Password mismatch';
+	    }
+	    else{
+		//then the new pwd is valid. now check if user entered prev password correctly
+		compare_password(newPwd, oldPwdEnc)
+		    .then(compRes => {
+			if(!compRes){ //new pwd entered is valid and different than old pwd
+			    resolve();
+			}
+			else{
+			    context.invalidNewPassword = true;
+			    context.invalidMessage = 'New password must be different from previous';
+			    reject();
+			}
+		    })
+		    .catch(err => {
+			context.error = "An error seems to have occurred";
+			reject(err);
+		    })
+	    }
+	    //If we get to this point, user entered invalid newPwd/newPwdRe
+	    //We can just reject without an error
+	    if(context.invalidNewPassword || context.invalidNewPasswordRe) reject();
+	})
+    },
+/*
+    validate_password_reset: function(userId, newPwd, newPwdRe, context){
 	return new Promise((resolve, reject) => {
 	    let lowerCase = /[a-z]/g;
 	    let upperCase = /[A-Z]/g;
@@ -226,7 +285,7 @@ module.exports = {
 	    if(context.invalidNewPassword || context.invalidNewPasswordRe) reject();
 	})
     },
-	
+*/	
     preview_template: function(userId, templateId, context){
 	return new Promise((resolve, reject) => {
 	    db.get_user_template(userId, templateId)

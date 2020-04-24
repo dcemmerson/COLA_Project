@@ -1,4 +1,3 @@
-
 const db = require('../server_functions/db_functions.js');
 var misc = require('../server_functions/misc.js');
 
@@ -203,6 +202,7 @@ module.exports = function (app) {
 	    .then(dec => {
 		context.token = req.query.token;
 		context.validToken = true;
+		context.userId = req.query.id;
 		for(var v in dec)
 		    console.log(v + ": " + dec[v]);
 	    })
@@ -217,7 +217,9 @@ module.exports = function (app) {
 		context.layout = 'loginLayout';
 		context.error = true;
 	    })
-	    .finally(() =>{
+	    .finally(() => {
+		context.style = ['styles.css', 'font_size.css', 'account.css'];
+		context.script = ['recover.js', 'recover_ajax.js', 'utility.js'];
 		res.render('recover', context);
 	    })
     });

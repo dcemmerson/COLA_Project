@@ -6,6 +6,10 @@ body {
     display: grid;
     grid-template-rows: auto 1fr auto;
 }
+.underline {
+    
+    text-decoration: 1px underline #dee2e6;
+}
 .corner-border {
     border: 1px solid;
     border-color: #DDDDDD;
@@ -26,10 +30,6 @@ body {
 }
 .errorBorder {
     border: 1px solid red;
-}
-.border-bottom{
-    /*    border-color: red; !important
-     */
 }
 #formCheckmark{
     position: relative;
@@ -79,4 +79,9 @@ body {
 .max-width-900 {
     max-width: 900px;
 }
- 
+.max-width-90 {
+    max-width: 90%;
+}
+.width-100 {
+    width: 100%;
+}

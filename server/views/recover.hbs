@@ -1,16 +1,24 @@
-<div class="container d-flex inlineBlock">
-  <h1 class="h2 border-bottom px-2 pt-4 pb-2"> Reset Password </h1>
-</div>
-<div class="container-fluid">
+<div class="container mb-2">
+  <div class="d-flex">
+    <h1 class=" border-bottom h2 px-2 pt-4 pb-2">Reset Password</h1>
+  </div>
   <!-- main center screen -->
   <div class="row">
     <div class="col">
+      <!-- main center screen -->
+      {{#if validToken}}
       <div class="row justify-content-around">
-	<div id="passwordFormContainer" class="mb-4">
-	  <h2 class="h5 ml-4"><b>Change Password</b></h2>
+	<div id="alertSuccess" class=" mt-2 usa-alert usa-alert--success max-width-900 width-100"
+	     style="display:none">
+	  <div class="usa-alert__body">
+	    <h2 class="h3 usa-alert__heading">Password updated!</h2>
+	    <p class="usa-alert__text">Your password has been successfully updated</p>
+	  </div>
+	</div>
+	<div id="passwordFormContainer" class="mb-5">
 	  <div id="alertInfo" class="usa-alert usa-alert--info changePasswordAlert">
 	    <div class="usa-alert__body">
-	      <h3 class="usa-alert__heading">Password requirements</h3>
+	      <h2 class="h3 usa-alert__heading">Password requirements</h2>
 	      <p class="usa-alert__text">Must contain the following:</p>
 	      <p class="usa-alert__text lowercaseReq val">A lowercase letter</p>
 	      <p class="usa-alert__text uppercaseReq val">An uppercase letter</p>
@@ -19,17 +27,11 @@
 	      <p class="usa-alert__text minCharReq val">8+ characters</p>
 	    </div>
 	  </div>
-	  <div id="alertSuccess" class="usa-alert usa-alert--success changePasswordAlert"
-	       style="display:none">
-	    <div class="usa-alert__body">
-	      <h3 class="usa-alert__heading">Password updated!</h3>
-	      <p class="usa-alert__text">Your password has been successfully updated</p>
-	    </div>
-	  </div>
+
 	  <div id="alertWarning" class="usa-alert usa-alert--warning changePasswordAlert"
 	       style="display:none">
 	    <div class="usa-alert__body">
-	      <h3 class="usa-alert__heading">Unable to update password</h3>
+	      <h2 class="h3 usa-alert__heading">Unable to update password</h2>
 	      <p class="usa-alert__text">Password must contain the following:</p>
 	      <p class="usa-alert__text lowercaseReq val">A lowercase letter</p>
 	      <p class="usa-alert__text uppercaseReq val">An uppercase letter</p>
@@ -42,17 +44,18 @@
 	  <div id="alertError" class="usa-alert usa-alert--error changePasswordAlert"
 	       style="display:none">
 	    <div class="usa-alert__body">
-	      <h3 class="usa-alert__heading">Error updating password</h3>
+	      <h2 class="h3 usa-alert__heading">Error updating password</h2>
 	      <p class="usa-alert__text">We are unable to change your password at this time.</p>
 	      <p class="usa-alert__text">Please <a href="/account">refresh</a> page and try again.</p>
 	    </div>
 	  </div>
 	  
 	  <form id="changePasswordForm" class="usa-form">
-	      <!-- 1. hidden id -->
-	   <div class="form-group">	  
-	  <input type="hidden" id="Id" name="Id" value='5' />
-	  </div>
+	    <!-- 1. hidden id -->
+	    <div class="form-group">
+	      <input type="hidden" id="token" name="token" value="{{token}}">
+	      <input type="hidden" id="userId" name="userId" value="{{userId}}">
+	    </div>
 	    
 	    <!-- 2. new password -->
 	    <div class="form-group">
@@ -76,6 +79,21 @@
 	  </form>
 	</div>
       </div>
+
+      {{else if invalidToken}}
+      <div class="row justify-content-around mb-4">
+	<div id="" class="mb-4 ml-2 mt-2 max-width-90">
+	  <div id="" class="usa-alert usa-alert--warning changePasswordAlert">
+	    <div class="usa-alert__body">
+	      <h2 class="h3 usa-alert__heading">Invalid Password Reset Request</h2>
+	      <p class="usa-alert__text">It appears you may have reached this page inadvertently. The password reset request is either invalid or expired.</p>
+	      <p class="usa-alert__text">If you are attempting to recover your password, create <a href="/reset">new request</a>.</p>
+	    </div>
+	  </div>
+	</div>
+      </div>
+      <br><br>
+      {{/if}}
     </div>
   </div>
 </div>

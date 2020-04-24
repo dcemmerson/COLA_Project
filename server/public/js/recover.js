@@ -30,7 +30,6 @@ function hide_password_form(){
 
 async function reset_password(){
     try{
-		
 	$('#submitNewPassword')[0].disabled = true;
 	show_spinner($('#submitBtnDiv')[0]);
 	let context = await submit_password_reset();
@@ -147,35 +146,36 @@ function valid_password(submit=false){
 }
 
 /* name: invalid_password_server
-   preconditions: ajax req was made to server. Server determined something
-                  the user sent was invalid.
-   postconditions: user is notified of reason server rejected
-   description: this method should rarely ever be called. Only two cases when this
-                method should actually run. 1. user enters wrong password as "Old
-		password" field. 2. if user tampers with client side
+   preconditions: ajax req was made to server. Server either changes user
+                  password or notifies user if there was an issue
+   postconditions: user is notified of reason server rejected, or password change
+   description: this method should rarely ever be called and show user error. 
+                Two possibilites when this method is called:
+                1. user successfully changes password.
+		2. if user tampers with client side
 		validation checking and bypasses validate password in
-		account.js (this file). Server runs additional validation
+		recover.js (this file). Server runs additional validation
 		to catch this, in which case this method will run.
 */
 function invalid_password_server(context){    
     if(context.passwordUpdated){ //pword updated in db
-	$('#alertSuccess')[0].style.display = 'block';
-	$('#changePasswordForm')[0].style.display = 'none';
+	document.getElementById('alertSuccess').style.display = 'block';
+	document.getElementById('passwordFormContainer').style.display = 'none';
 	
     }
     else{ //figure out which method to give user and where on screen to place
 	//new password doesn't meet criteria
 	//(8+ char, 1+ uppercase, 1+ lowercase, 1+ number, 1+ special char)
 	if(context.invalidNewPassword){
-	    $('#alertInfo')[0].style.display = 'block';
-	    $('#newPasswordError')[0].innerText = context.invalidMessage;
-	    $('#newPasswordError')[0].style.display = 'block';
+	    document.getElementById('alertInfo').style.display = 'block';
+	    document.getElementById('newPasswordError').innerText = context.invalidMessage;
+	    document.getElementById('newPasswordError').style.display = 'block';
 	}
 	//new password re-entry mismatch
 	else if(context.invalidNewPasswordRe){
-	    $('#alertWarning')[0].style.display = 'block';
-	    $('#newPasswordReError')[0].innerText = context.invalidMessage;
-	    $('#newPasswordReError')[0].style.display = 'block';
+	    document.getElementById('alertWarning').style.display = 'block';
+	    document.getElementById('newPasswordReError').innerText = context.invalidMessage;
+	    document.getElementById('newPasswordReError').style.display = 'block';
 	}
 	
 	else{

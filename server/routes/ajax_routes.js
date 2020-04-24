@@ -233,68 +233,73 @@ module.exports = function(app,  mysql){
 	    });
     /****************** End subscription page ajax routes *******************/
     /*********************** Account page ajax routes ***********************/
-   app.post('/update_password', function (req, res) {
-	const tempUserId = 1;
+    app.post('/update_password', db.authenticationMiddleware(), function (req, res) {
+	const userId = req.body.passport.userId;
 	var context = {};
 
-	misc.validate_password(tempUserId, req.body.oldPassword,
+	misc.validate_password(userId, req.body.oldPassword,
 			       req.body.newPassword, req.body.newPasswordRe, context)
 	    .then(() => misc.hash_password(req.body.newPassword))
-	    .then(hashedPwd => db.update_user_password(tempUserId, hashedPwd))
+	    .then(hashedPwd => db.update_user_password(userId, hashedPwd))
 	    .then(() => {
 		context.passwordUpdated = true;
 		context.successMessage = 'Password changed';
-		res.send(context);
 	    })
 	    .catch(err => {
 		if(err) console.log(err);
-
 		context.passwordUpdated = false;
-		res.send(context);
 	    })
+	    .finally(() => res.send(context))
     });
 	
-	app.post('/reset_password', function (req, res) {
-		console.log(req.body.newPassword);
-	const tempUserId = 55
+    app.post('/reset_password', function (req, res) {
 	var context = {};
-	misc.validate_password_reset(tempUserId,
-			       req.body.newPassword, req.body.newPasswordRe, context)
+	var encryptedPassword;
+	db.get_user_by_id(req.body.userId, context)
+	    .then(encPassword => {
+		encryptedPassword = encPassword;
+		return misc.jwt_verify(
+		    req.body.token,
+		    (encPassword + context.modified));
+	    })
+	    .then(dec => {
+		return misc.validate_password_reset(context.userId, encryptedPassword,
+						    req.body.newPassword, req.body.newPasswordRe,
+						    context);
+	    })
 	    .then(() => misc.hash_password(req.body.newPassword))
-	    .then(hashedPwd => db.update_user_password(tempUserId, hashedPwd))
+	    .then(hashedPwd => db.update_user_password(context.userId, hashedPwd))
 	    .then(() => {
 		context.passwordUpdated = true;
 		context.successMessage = 'Password changed';
-		res.send(context);
 	    })
 	    .catch(err => {
 		if(err) console.log(err);
-
 		context.passwordUpdated = false;
-		res.send(context);
 	    })
+	    .finally(() => res.send(context))
+
     });
     /********************* End Account page ajax routes *********************/
     /********************* Start FAQ page ajax routes *********************/
-    app.get('/preview_default_template', /*db.authenticationMiddleware(),*/
-	    function (req, res) {
-		const defaultUserId = process.env.DEFAULT_USER_ID || 1;
-		const defaultTemplateId = process.env.DEFAULT_TEMPLATE_ID || 6;
-		var context = {};
-		misc.preview_template(defaultUserId, defaultTemplateId, context)
-		    .then(() => {
-			context.success = true;
-		    })
-		    .catch(err => {
-			if(err) console.log(err);
-			
-			context.msg = "Error retrieving file";
-			context.success = false;
-		    })
-		    .finally(() => {
-			res.send(context);
-		    })
-	    });
+    app.get('/preview_default_template', function (req, res) {
+	const defaultUserId = process.env.DEFAULT_USER_ID || 1;
+	const defaultTemplateId = process.env.DEFAULT_TEMPLATE_ID || 6;
+	var context = {};
+	misc.preview_template(defaultUserId, defaultTemplateId, context)
+	    .then(() => {
+		context.success = true;
+	    })
+	    .catch(err => {
+		if(err) console.log(err);
+		
+		context.msg = "Error retrieving file";
+		context.success = false;
+	    })
+	    .finally(() => {
+		res.send(context);
+	    })
+    });
     /************************* End FAQ page ajax ****************************/
     /************************************************************************
     AJAX routes coming from email links and/or
