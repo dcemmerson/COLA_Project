@@ -1,31 +1,43 @@
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-<html>
-   <head>
-      <title>Create Account</title>
-   </head>
-   <body>
-      <div>
-         {{{error}}}
+<div class="container gridRows">
+  <div></div>
+  <div class="row justify-content-around my-5">
+    <div id="formOuterContainer" class="">
+      <div id="formInnerContainer" class="shadow-1 px-2 pt-1 pb-2">
+	<div class="text-center">
+	  <h1 class="h3">Create account</h1>
+	</div>
+	<div class="mx-2">
+	  <form method="POST" action="/create_account">
+	    <div class="form-group">
+	      <label for="email" class="usa-label"><strong>Email</strong></label>
+	      <input type="email" class="usa-input" id="email" name="username">
+	    </div>
+	    <div class="form-group">
+	      <label for="pwd" class="usa-label"><strong>Password</strong></label>
+	      <input type="password" class="usa-input " id="pwd" name="password">
+	    </div>
+	    <div class="form-group">
+	      <label for="pwdMatch" class="usa-label"><strong>Re-enter password</strong></label>
+	      <input type="password" class="usa-input " id="pwdMatch" name="pwdMatch">
+	      <span class="">
+		<button class="btn btn-link sm mr-4" id="showPassword">Show password</button>
+		
+	      </span>
+	    </div>
+	    
+	    <div class="form-group">
+	      <div class="row align-items-end">
+		<button type="submit" class="usa-button ml-md-4 ml-2">Create account</button>
+		<span class="mt-2 ml-3 ml-md-1 sm">Have an account?
+		  <a type="link" class="" href="/login">Login</a>
+		</span>
+	      </div>
+	    </div>
+	  </form>
+	</div>
       </div>
-      <div class="container">
-      <form method="POST" action="/create_account">
-         <div class="form-group">
-            <label for="email">Email address:</label>
-            <input type="email" class="form-control" id="email" name="email">
-         </div>
-         <div class="form-group">
-            <label for="pwd">Password:</label>
-            <input type="password" class="form-control" id="pwd" name="pwd">
-         </div>
-         <div class="form-group">
-            <label for="pwdmatch">Re-Enter Password:</label>
-            <input type="password" class="form-control" id="pwdmatch" name="pwdmatch">
-         </div>
-         <div class="form-group">
-        
-         <div class="form-group">
-            <button type="submit" class="btn btn-default">Create Account</button>
-      </form>
-      </div>
-   </body>
-</html>
+      <br>
+    </div>
+  </div>
+  <div></div>
+</div>

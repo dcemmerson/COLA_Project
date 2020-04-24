@@ -29,6 +29,16 @@ module.exports = function (app) {
 	}
 	res.render('login', context);
     });
+    app.get(`/create_account`, function (req, res) {
+	let context = {
+	    layout: 'loginLayout.hbs',
+	    title: 'Create Account - COLA',
+	    style: ['createAccount.css', 'styles.css', 'font_size.css'],
+	    script: ['createAccount.js']
+	}
+	context.layout = 'loginLayout.hbs';
+	res.render('create', context);
+    });
     app.get('/FAQ', function (req, res) {
 	let context = {};
 	context.style = ['styles.css', 'font_size.css', 'FAQ.css'];
@@ -90,12 +100,6 @@ module.exports = function (app) {
 	context.deferScript = ['../pdfjs/pdf.js'];
 	Promise.all(awaitPromises)
 	    .then(() => res.render('subscriptions', context))
-    });
-
-    app.get(`/create_account`, function (req, res) {
-	let context = {};
-	context.layout = 'loginLayout.hbs';
-	res.render('create', context);
     });
     
     // upon submitting create account, validates the form information and adds user to DB
