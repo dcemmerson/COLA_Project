@@ -27,8 +27,8 @@ function hide_password_form(){
 }
 async function update_password(){
     try{
-	$('#submitNewPassword')[0].disabled = true;
-	show_spinner($('#submitBtnDiv')[0]);
+	document.getElementById('submitNewPassword').disabled = true;
+	show_spinner(document.getElementById('submitBtnDiv'));
 	let context = await submit_password();
 	
 	hide_elements($('.changePasswordAlert'));
@@ -38,10 +38,10 @@ async function update_password(){
     catch(err){
 	console.log(err);
 	hide_elements($('.changePasswordAlert'));
-	$('#alertError')[0].display = 'block';
+	document.getElementById('alertError').display = 'block';
     }
-    remove_spinner($('#submitBtnDiv')[0]);
-    $('#submitNewPassword')[0].disabled = false;
+    remove_spinner(document.getElementById('submitBtnDiv'));
+    document.getElementById('submitNewPassword').disabled = false;
 }
 
 function update_regex_validation_marks(field, arr, submit){
@@ -154,32 +154,32 @@ function valid_password(submit=false){
 */
 function invalid_password_server(context){    
     if(context.passwordUpdated){ //pword updated in db
-	$('#alertSuccess')[0].style.display = 'block';
-	$('#changePasswordForm')[0].style.display = 'none';
-	
+	document.getElementById('alertSuccess').style.display = 'block';
+	document.getElementById('passwordFormContainer').style.display = 'none';
     }
     else{ //figure out which method to give user and where on screen to place
 	//new password doesn't meet criteria
 	//(8+ char, 1+ uppercase, 1+ lowercase, 1+ number, 1+ special char)
 	if(context.invalidNewPassword){
-	    $('#alertInfo')[0].style.display = 'block';
-	    $('#newPasswordError')[0].innerText = context.invalidMessage;
-	    $('#newPasswordError')[0].style.display = 'block';
+	    document.getElementById('alertInfo').style.display = 'block';
+	    document.getElementById('newPasswordError').innerText = context.invalidMessage;
+	    document.getElementById('newPasswordError').style.display = 'block';
 	}
 	//new password re-entry mismatch
 	else if(context.invalidNewPasswordRe){
-	    $('#alertWarning')[0].style.display = 'block';
-	    $('#newPasswordReError')[0].innerText = context.invalidMessage;
-	    $('#newPasswordReError')[0].style.display = 'block';
+	    document.getElementById('alertWarning').style.display = 'block';
+	    document.getElementById('newPasswordReError').innerText = context.invalidMessage;
+	    document.getElementById('newPasswordReError').style.display = 'block';
 	}
 	//incorect old password was provided by user
 	else if(context.invalidOldPassword){
-	    $('#alertInfo')[0].style.display = 'block';
-	    $('#oldPasswordError')[0].innerText = context.invalidMessage;
-	    $('#oldPasswordError')[0].style.display = 'block';
+	    document.getElementById('alertInfo').style.display = 'block';
+	    document.getElementById('oldPasswordError').innerText = context.invalidMessage;
+	    document.getElementById('oldPasswordError').style.display = 'block';
 	}
-	else{
-	    $('#alertSuccess')[0].style.display = 'block';
+	else{ //server error occurred
+	    document.getElementById('alertError').style.display = 'block';
+	    document.getElementById('passwordFormContainer').style.display = 'none';
 	}
     }   
 }

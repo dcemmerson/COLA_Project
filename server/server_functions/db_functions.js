@@ -2,10 +2,7 @@ var passport = require('passport');
 var bcrypt = require('bcrypt');
 var LocalStrategy = require('passport-local').Strategy;
 
-//const em=require('../server_functions/emails.js'); //commented out because this is a circular
-//reference and causes multiple parts of system to break.
-
-require('../server.js'); //seems like this is a bit of a circular reference?
+//require('../server.js'); //seems like this is a bit of a circular reference?
 const saltRounds = 10;
 var jwt = require('jwt-simple');
 var mysql = require('../dbcon.js');
@@ -198,6 +195,7 @@ module.exports = {
 
     authenticationMiddleware: function () {
 	return (req, res, next) => {
+	    console.log('auth middle');
 	    console.log(`req.session.passport.user: ${JSON.stringify(req.session.passport)}`);
 	    if (req.isAuthenticated()) return next();
 	    res.redirect('/login');
@@ -353,19 +351,19 @@ module.exports = {
 	});
     },
     /* name: get_user_template_names
-       preconditions: user_id is current logged in user, which should be
+       preconditions: userId is current logged in user, which should be
        obtained from open sesssion.
        postconditions:  return Promise that returns names and ids of all user's
        uploaded templates, plus the default system template.
     */
-    get_user_template_names: function (user_id) {
+    get_user_template_names: function (userId) {
 	return new Promise((resolve, reject) => {
 	    const sql = `SELECT t.id, t.name, t.comment`
 		  + ` FROM user u`
 		  + ` INNER JOIN template t ON u.id=t.userId` 
 		  + ` WHERE u.id=?`
 		  + ` ORDER BY t.name ASC`;
-	    const values = [user_id];
+	    const values = [userId];
 	    queryDB(sql, values, mysql)
 		.then(res => resolve(res))
 		.catch(err => console.log(err))
@@ -465,7 +463,6 @@ module.exports = {
        postconditions:  return Promise that returns user template when fulfilled
     */
     get_user_template: function (userId, templateId) {
-	
 	return new Promise((resolve, reject) => {
 	    const sql = `SELECT name, file, uploaded FROM template `
 	    + ` WHERE (id=? AND userId=?)`;
@@ -548,35 +545,40 @@ module.exports = {
 }
 
 passport.serializeUser(function (user_id, done) {
+    console.log('serializer');
     done(null, user_id);
 });
 
 
 passport.deserializeUser(function (user_id, done) {
+    console.log('deserializer');
     done(null, user_id);
 });
 
 
-passport.use(new LocalStrategy(
-    function(username, password, done) {
-	console.log('Inside LocalStrategy');
-	var sql="SELECT id, password FROM user WHERE email= ?"
-	values=[username]
-	queryDB(sql, values, mysql).then((message) => {
-	    if (message.length==0){console.log("wrong keyword entry"); return done(null, false)};
-	    const hash=message[0].password.toString();
-	    bcrypt.compare(password, hash, function(err, response)
-			   {
-			       if (response==true)
-				   {
-					return done(null, {user_id: message[0].id});
-				   }
-			       else
-				   {
-						return done(null, false);
-				   }
-			   });
+passport.use(new LocalStrategy(function(username, password, done) {
+    console.log('passport.use new localstrategy');
+    var sql="SELECT id, password FROM user WHERE email=?"
+    values = [username]
+    queryDB(sql, values, mysql)
+	.then(message => {
+	    if (message.length == 0){
+		console.log("wrong keyword entry");
+		return done(null, false)
+	    }
+	    const hash = message[0].password.toString();
+	    bcrypt.compare(password, hash, function(err, response){
+		if (response == true){
+		    return done(null, {user_id: message[0].id});
+		}
+		else{
+		    return done(null, false);
+		}
+	    });
 	})
-	
-	
-    }));
+	.catch(err => {
+	    
+	})
+    
+    
+}));

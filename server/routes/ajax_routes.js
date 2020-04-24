@@ -2,7 +2,6 @@ const db = require('../server_functions/db_functions.js');
 
 const misc = require('../server_functions/misc.js');
 const crs = require('../server_functions/cola_rates_script.js');
-const fs = require('fs'); //can be removed after 4/3 - testing purposesv
 const emails = require('../server_functions/emails.js');
 
 const multer = require('multer');
@@ -10,78 +9,21 @@ const upload = multer();
 
 let after_load = require('after-load');
 
-module.exports = function(app,  mysql){
-    /* place ajax routes here */
-    app.get(`/test`, function(req,res) {
-	db.test_method(res, mysql)
-	    .then(() => {
-		res.render('login');
-	    })
-	    .catch(err => {
-		console.log(err);
-		res.end();
-	    })
-    });
-
-    /********************* MARKED FOR REMOVAL *******************/
-    /* name: GET_cola_rates
-       preconditions: None
-       postconditions: parsed cola rates webpage data sent to calling location
-       description: This routes was created simply to develop and test a script
-       to GET cola rates webpage, followed by processing the data obtained. This
-       route will be removed in near future.
-    */
-    /*
-    app.get(`/GET_cola_rates`, (req, res) => {
-	var context = {};
-	
-	after_load('https://aoprals.state.gov/Web920/cola.asp', html => {
-	    const scraped = crs.parse_cola_page(html);
-	    db.add_cola_rates(scraped)
-		.then(() => res.end())
-		.catch(err => {
-		    console.log(err);
-		    res.end();
-		})
-	});
-    });
-*/
-    /********************* MARKED FOR REMOVAL *******************/
-    /* name: UPDATE_cola_rates
-       preconditions: None
-       postconditions: parsed cola rates webpage, https://aoprals.state.gov/Web920/cola.asp,
-                       and db has been updated with new rates.
-       description: This routes was created simply to develop and test a script
-       to UPDATE cola rates webpage, followed by processing the data obtained. This
-       route will be removed in near future.
-    */
-/*    app.get(`/UPDATE_cola_rates`, (req, res) => {
-	let changed_rates = [];
-	after_load('https://aoprals.state.gov/Web920/cola.asp', html => {
-	    const scraped = crs.parse_cola_page(html);
-	    crs.check_rate_changes(scraped, changed_rates)
-		.then(() => {
-		    crs.update_changed_rates(changed_rates)
-			.then(() => {
-			    console.log('COLA rates updated: ' + new Date());
-			    res.end();
-			})
-		})
-		.catch(err => {
-		    console.log(err)
-		    res.end()
-		})
-	});
-    });
-*/
+module.exports = function(app, passport){
+    app.post(['/login'], passport.authenticate(
+	'local', {
+	    successRedirect: '/subscriptions',
+	    failureRedirect: '/login'
+	}));
+    
     /******************* Subscription page ajax routes *********************/
-    app.get('/get_user_subscription_list', /*db.authenticationMiddleware(),*/
+    app.get('/get_user_subscription_list', db.authenticationMiddleware(),
 	    function (req, res) {
-		const temp_user_id = 1;
+		const userId = req.session.passport.user.user_id;
 		let await_promises = [];
 		let context = {subscription_list: []};
     		await_promises.push(
-		    db.get_user_subscription_list(temp_user_id)
+		    db.get_user_subscription_list(userId)
 			.then(subs => {
 			    //this is ugly but necessary to send to client at right time
 			    return new Promise((resolve, reject) => {
@@ -107,13 +49,13 @@ module.exports = function(app,  mysql){
 		    })
 	    });
     
-    app.post('/add_new_subscription_with_template_file', /*db.authenticationMiddleware(),*/ upload.single('upload'),
+    app.post('/add_new_subscription_with_template_file', db.authenticationMiddleware(), upload.single('upload'),
 	     function (req, res) {
-		 const temp_user_id = 1;
+		 const userId = req.session.passport.user.user_id;
 		 var context = {};
 		 
 		 misc.validate_file(req.file, context)
-		     .then(() => db.insert_new_subscription_with_template_file(temp_user_id,
+		     .then(() => db.insert_new_subscription_with_template_file(userId,
 									       req.body.post_id,
 									       req.file.originalname,
 									       req.file.buffer))
@@ -128,12 +70,12 @@ module.exports = function(app,  mysql){
 			 res.send(context);
 		     })
 	     });
-    app.post('/add_new_subscription_with_prev_template', /*db.authenticationMiddleware(),*/
+    app.post('/add_new_subscription_with_prev_template', db.authenticationMiddleware(),
 	     function (req, res) {
 		 var context = {};
-		 const temp_user_id = 1;
+		 const userId = req.session.passport.user.user_id;
 
-		 db.insert_new_subscription_with_prev_template(temp_user_id,
+		 db.insert_new_subscription_with_prev_template(userId,
 							       req.body.post_id,
 							       req.body.template_id)
 		     .then(() => {
@@ -147,12 +89,12 @@ module.exports = function(app,  mysql){
 			 res.send(context);
 		     })
 	     });
-    app.get('/preview_template', /*db.authenticationMiddleware(),*/
+    app.get('/preview_template', db.authenticationMiddleware(),
 	    function (req, res) {
-		const tempUserId = 1;
+		const userId = req.session.passport.user.user_id;
 		var context = {};
 
-		misc.preview_template(tempUserId, req.query.templateId, context)
+		misc.preview_template(userId, req.query.templateId, context)
 		    .then(() => {
 			context.success = true;
 		    })
@@ -165,35 +107,10 @@ module.exports = function(app,  mysql){
 		    .finally(() => {
 			res.send(context);
 		    })
-/*		db.get_user_template(temp_user_id, req.query.templateId)
-		    .then(response => {
-			if(!response[0]){
-			    throw(new Error(`Error: template does not exist`
-					    + ` (userId=${temp_user_id},`
-					    + ` templateId=${req.query.templateId})`));
-			}
-			context.filename = response[0].name;
-			context.uploaded = response[0].uploaded;
-			return tm.docx_to_pdf(response[0].file);
-		    })
-		    .then(pdfBuf => {
-			context.success = true;
-			context.file = pdfBuf;
-			
-		    })
-		    .catch(err => {
-			if(err) console.log(err);
-			context.success = false;
-			context.msg = "Error retrieving file";
-		    })
-		    .finally(() => {
-			res.send(context);
-		    })
-*/
 	    });
-    app.get('/delete_subscription', /*db.authenticationMiddleware(),*/
+    app.get('/delete_subscription', db.authenticationMiddleware(),
 	    function (req, res) {
-		const temp_user_id = 1;
+		const userId = req.session.passport.user.user_id;
 		var context = {};
 		var decrypted;
 		
@@ -203,7 +120,7 @@ module.exports = function(app,  mysql){
 			context.post = dec.post;
 			decrypted = dec;
 			return db.update_user_subscription(dec.subscriptionId,
-						   temp_user_id,
+						   userId,
 							   !!dec.makeActive);
 		    })
 		    .then(res => {
@@ -216,7 +133,7 @@ module.exports = function(app,  mysql){
 			    throw new Error(`Unable to update subscriptionId`
 					  + `=${decrypted.subscriptionId} to`
 					  + ` active=${!!decrypted.makeActive}`
-					  + ` for userId=${temp_user_id}`);
+					  + ` for userId=${userId}`);
 			}
 			
 			return misc.jwt_sign(decrypted);
@@ -234,7 +151,7 @@ module.exports = function(app,  mysql){
     /****************** End subscription page ajax routes *******************/
     /*********************** Account page ajax routes ***********************/
     app.post('/update_password', db.authenticationMiddleware(), function (req, res) {
-	const userId = req.body.passport.userId;
+	const userId = req.session.passport.user.user_id;
 	var context = {};
 
 	misc.validate_password(userId, req.body.oldPassword,
@@ -306,7 +223,6 @@ module.exports = function(app,  mysql){
        coming from one-click unsubscribe/undo unsubscribe
     *************************************************************************/
     app.get('/unsubscribetok', function (req, res) {
-	const temp_user_id = 1;
 	var context = {
 	    style: ['unsubscribetok.css', 'font_size.css', 'styles.css'],
 	    title: 'Unsubscribe - COLA'

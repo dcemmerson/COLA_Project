@@ -12,13 +12,9 @@ const url = require('url');
 var session = require('express-session');
 var mysql = require('./dbcon.js');
 
-var passport=require('passport')
 var MySQLStore = require('express-mysql-session')(session);
 
 
-
-
-//var auth = require('./auth/auth');
 let hbs = require('express-handlebars').create({
 	defaultLayout: 'main',
 	extname: 'hbs',
@@ -33,15 +29,18 @@ app.use(bodyParser.urlencoded({
 
 
 var options = {
-  host            : process.env.DB_HOST,
-  user            : process.env.DB_USER,
-  password        : process.env.DB_PASSWORD,
-  database        : process.env.DB_NAME,
-};
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    checkExpirationInterval: 900000,
+    expiration: 24*60*60*1000
+}
 
-var sessionStore = new MySQLStore(options);
-var bcrypt = require('bcrypt');
-var passport=require('passport');
+
+var sessionStore = new MySQLStore(options/*, mysql*/);
+var passport = require('passport');
+
 const saltRounds = 10;
 
 app.use(session({
@@ -56,9 +55,8 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
 require('./routes/routes.js')(app);
-require('./routes/ajax_routes.js')(app, mysql);
+require('./routes/ajax_routes.js')(app, passport);
 app.use(express.static('public'));
 
 

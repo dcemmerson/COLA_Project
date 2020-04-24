@@ -1,18 +1,13 @@
 const db = require('../server_functions/db_functions.js');
 var misc = require('../server_functions/misc.js');
 
-var passport = require('passport');
+//var passport = require('passport');
 const {
     check,
     validationResult
 } = require('express-validator');
 
 module.exports = function (app) {
-    app.get(`/login`, function (req, res) {
-	let context = {};
-	context.layout = 'loginLayout.hbs';
-	res.render('login', context);
-    });
     app.get('/', function (req, res) {
 	let context = {};
 	context.style = ['styles.css', 'font_size.css', 'home.css'];
@@ -24,6 +19,12 @@ module.exports = function (app) {
 	misc.set_layout(req, context)
 	    .catch(() => console.log('error in set_layout'))
 	    .finally(() => res.render('home', context))
+    });
+    app.get(`/login`, function (req, res) {
+	let context = {};
+	context.layout = 'loginLayout.hbs';
+	context.title = 'Login - COLA';
+	res.render('login', context);
     });
     app.get('/FAQ', function (req, res) {
 	let context = {};
@@ -55,12 +56,11 @@ module.exports = function (app) {
 	Promise.all(awaitPromises)
 	    .then(() => res.render('account', context))
     });
-    
+  
     app.get('/subscriptions', db.authenticationMiddleware(), function (req, res) {
-	const user_id = req.session.passport.user.user_id;
+	const userId = req.session.passport.user.user_id;
 	let awaitPromises = [];
 	let context = {post_info: [], templates: []};
-	console.log(req.session);
 	awaitPromises.push(
 	    db.get_list_of_posts()
 		.then(posts => posts.forEach(post => {
@@ -68,13 +68,13 @@ module.exports = function (app) {
 		}))
 		.catch(err => console.log(err))
 	    ,
-	    db.get_user_template_names(user_id)
+	    db.get_user_template_names(userId)
 		.then(templates => templates.forEach(template => {
 		    context.templates.push(template);
 		}))
 		.catch(err => console.log(err))
 	    ,
-	    db.get_user_email(user_id)
+	    db.get_user_email(userId)
 		.then(res => context.email = res[0].email)
 		.catch(err => console.log(err))
 	)
@@ -95,12 +95,6 @@ module.exports = function (app) {
 	res.render('create', context);
     });
     
-    app.post(['/login'], passport.authenticate(
-	'local', {
-	    successRedirect: '/subscriptions',
-	    failureRedirect: '/login'
-	}));
-
     // upon submitting create account, validates the form information and adds user to DB
     app.post(
 	"/create_account", [
@@ -203,8 +197,6 @@ module.exports = function (app) {
 		context.token = req.query.token;
 		context.validToken = true;
 		context.userId = req.query.id;
-		for(var v in dec)
-		    console.log(v + ": " + dec[v]);
 	    })
 	    .catch(err => {
 		console.log('err route');
