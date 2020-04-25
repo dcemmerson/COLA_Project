@@ -1,0 +1,8 @@
+#formOuterContainer {
+    width: 100%;
+    max-width: 450px;
+    border-radius: 6px;
+}
+#formInnerContainer {
+    border: 1px solid #f6f6f6;
+}

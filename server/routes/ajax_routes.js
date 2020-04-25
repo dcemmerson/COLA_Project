@@ -322,7 +322,7 @@ module.exports = function(app, passport){
 		return misc.set_layout(req, context);
 	    })
 	    .finally(() => {
-		res.render('resetSent', context);
+		res.send(context);
 	    })
 	
     });

@@ -91,6 +91,10 @@ body {
 .width-100 {
     width: 100% !important;
 }
+
+.width-90 {
+    width: 90% !important;
+}
 .shadow-1 {
     box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.1) 
 }

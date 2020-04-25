@@ -34,11 +34,24 @@ module.exports = function (app) {
 	    layout: 'loginLayout.hbs',
 	    title: 'Create Account - COLA',
 	    style: ['createAccount.css', 'styles.css', 'font_size.css'],
-	    script: ['createAccount.js']
+	    script: ['createAccount.js'],
+	    layout: 'loginLayout.hbs'
 	}
-	context.layout = 'loginLayout.hbs';
 	res.render('create', context);
     });
+    app.get(`/reset`, function (req, res) {
+	if(req.isAuthenticated()) res.redirect('account');
+	
+	let context = {
+	    layout: 'loginLayout.hbs',
+	    title: 'Reset Password - COLA',
+	    style: ['reset.css', 'styles.css', 'font_size.css'],
+	    script: ['reset.js', 'reset_ajax.js', 'utility.js'],
+	    layout: 'loginLayout.hbs'
+	}
+	res.render('reset', context);
+    });
+
     app.get('/FAQ', function (req, res) {
 	let context = {};
 	context.style = ['styles.css', 'font_size.css', 'FAQ.css'];
@@ -166,13 +179,6 @@ module.exports = function (app) {
 	req.session.destroy();
 	res.redirect('/login');
     });
-    
-    app.get(`/reset`, function (req, res) {
-	let context = {};
-	context.layout = 'loginLayout.hbs';
-	res.render('reset', context);
-    });
-
     
     
     app.post(`/forgot`, function (req, res) {
