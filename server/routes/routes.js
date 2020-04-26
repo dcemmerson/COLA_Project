@@ -40,7 +40,10 @@ module.exports = function (app) {
 	res.render('create', context);
     });
     app.get(`/reset`, function (req, res) {
-	if(req.isAuthenticated()) res.redirect('account');
+	if(req.isAuthenticated()){
+	    res.redirect('account');
+	    return;
+	}
 	
 	let context = {
 	    layout: 'loginLayout.hbs',
