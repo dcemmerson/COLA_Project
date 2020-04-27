@@ -36,7 +36,7 @@ module.exports = function (app) {
 	let context = {
 	    title: 'Create Account - COLA',
 	    style: ['createAccount.css', 'styles.css', 'font_size.css'],
-	    script: ['createAccount.js'],
+	    script: ['createAccount.js', 'createAccount_ajax.js', 'utility.js'],
 	    layout: 'loginLayout.hbs'
 	}
 	misc.set_layout(req, context)
@@ -122,7 +122,7 @@ module.exports = function (app) {
 	    .then(() => res.render('subscriptions', context))
     });
     
-    // upon submitting create account, validates the form information and adds user to DB
+ /*   // upon submitting create account, validates the form information and adds user to DB
     app.post(
 	"/create_account", [
 	    // Check validity+
@@ -179,8 +179,8 @@ module.exports = function (app) {
 		
 		}
 
-	})
-    
+	})*/
+   
     app.get(`/logout`, function (req, res) {
 	req.logout();
 	req.session.destroy();

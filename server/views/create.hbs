@@ -63,7 +63,8 @@
 		<label for="email" class="usa-label mt-2 mr-2">Email</label>
 	     <span class="usa-error-message emailError" id="newEmailError" role="alert"
 		 style="display:none"></span>
-		  <input id="email" type="email" class="usa-input" oninput="valid_email()" required>
+		  <input id="email" type="email" class="usa-input"  required>
+		  <!--oninput="valid_email()" -->
 	    </div>
 	    <!-- 2. new password -->
 	    <div class="form-group">
@@ -86,9 +87,11 @@
 	    <!-- 4. submit... -->
 	  <div class="form-group">
 	      <div class="row align-items-end">
+		   <!-- 4. submit... -->
+	    <div class="" id="submitBtnDiv">
 	      <button type="submit" id="submitNewPassword"
 		      class="usa-button btn btn-sm">Create Account</button>
-			  <span class="mt-2 ml-3 ml-md-1 sm">Have an account?
+	    			  <span class="mt-2 ml-3 ml-md-1 sm">Have an account?
 		  <a type="link" class="" href="/login">Login</a>
 		</span>
 	    </div>

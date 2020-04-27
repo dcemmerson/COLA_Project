@@ -9,6 +9,12 @@ const upload = multer();
 
 let after_load = require('after-load');
 
+const {
+    check,
+    validationResult
+} = require('express-validator');
+
+
 module.exports = function(app, passport){
     app.post(['/login'], function(req, res, next){
 	passport.authenticate('local', function(err, user, info){
@@ -218,6 +224,50 @@ module.exports = function(app, passport){
 	    .finally(() => res.send(context))
 
     });
+	
+	 app.post(`/create_password`, function (req, res){
+        // return formatted validation results
+        const errorFormatter = ({
+            msg,
+        }) => {
+            return `${msg}`;
+        };
+        const errors = validationResult(req).formatWith(errorFormatter);
+
+        if (!errors.isEmpty()) {
+			console.log(errors);
+            return res.status(422).json({errors: errors.array})
+		
+        }
+
+        //if no errors, add user to DB
+        else {
+            var context = {};
+            console.log(req.body.newPassword);
+            var email = (req.body.email)
+            var pwd = (req.body.newPassword);
+            var now = new Date().toISOString().replace(/\..+/, '');
+            misc.validate_password_reg(
+                pwd, req.body.newPasswordRe,
+                context).then(
+                db.add_user(email, pwd, now, res, req).then(() => {
+                    context.passwordUpdated = true;
+                    context.successMessage = 'Account created';
+                })
+                .catch(err => {
+                    if (err) console.log(err);
+                    context.passwordUpdated = false;
+                })
+             .finally(() => res.send(context)))
+
+        }
+
+    })
+	
+	
+	
+ 
+	
     /********************* End Account page ajax routes *********************/
     /********************* Start FAQ page ajax routes *********************/
     app.get('/preview_default_template', function (req, res) {

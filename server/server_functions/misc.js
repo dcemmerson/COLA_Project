@@ -232,8 +232,8 @@ module.exports = {
 	    if(context.invalidNewPassword || context.invalidNewPasswordRe) reject();
 	})
     },
-/*
-    validate_password_reset: function(userId, newPwd, newPwdRe, context){
+
+    validate_password_reg: function(newPwd, newPwdRe, context){
 	return new Promise((resolve, reject) => {
 	    let lowerCase = /[a-z]/g;
 	    let upperCase = /[A-Z]/g;
@@ -274,18 +274,14 @@ module.exports = {
 		//then the new pwd is valid. now check if user entered prev password correctly
 	
 	
-		 db.get_user_from_id(userId).then(resolve())
-		    .catch(err => {
-			context.error = err
-			reject(err);
-		    })
+		resolve()
 	    }
 	    //If we get to this point, user entered invalid newPwd/newPwdRe
 	    //We can just reject without an error
 	    if(context.invalidNewPassword || context.invalidNewPasswordRe) reject();
 	})
     },
-*/	
+
     preview_template: function(userId, templateId, context){
 	return new Promise((resolve, reject) => {
 	    db.get_user_template(userId, templateId)

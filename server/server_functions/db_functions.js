@@ -34,23 +34,19 @@ module.exports = {
      *  and inserts a new user into the DB with hashed password
      */
     add_user: function (email, pwd, now, res, req) {
-	bcrypt.hash(pwd, saltRounds, function (err, hash) {
-	    var sql = "INSERT INTO user (`email`, `password`, `created`, `modified`) VALUES (?, ?, ?, ?)"
-	    var values = [email, hash, now, now];
-		
-	    queryDB(sql, values, mysql).then((message) => {
-		console.log(message.insertId);
-		const user_id=message.insertId;
-		req.login(user_id, function (err) {
-		    res.redirect('subscriptions');
+	return new Promise((resolve, reject) => {
+		bcrypt.hash(pwd, saltRounds, function (err, hash) {
+	    const sql = "INSERT INTO user (`email`, `password`, `created`, `modified`) VALUES (?, ?, ?, ?)"
+	    const values = [email, hash, now, now];
+		console.log(values);
+	    queryDB(sql, values, mysql)
+		.then(res => {
+		    if(res.affectedRows == 1) resolve();
+		    else reject();
 		})
-
-	    }).catch(err => {			
-			res.redirect('create_account')
-		    console.log(err);
-		    reject(err)
-		});
-	})
+		.catch(err => reject(err));
+	    
+	}) })
     },
 	
 	
@@ -118,6 +114,32 @@ module.exports = {
     get_user_by_id: function (userId, context) {
 	var sql = "SELECT id, email, password, modified FROM user WHERE id=?"
 	var values = [userId];
+	return new Promise((resolve, reject) => {
+	    queryDB(sql, values, mysql)
+		.then(result => {
+		    if (result.length == 0) {
+			//email does not exist
+			context.notFound = true;
+			context.msg = "User does not exist";
+
+			reject();
+		    }
+		    else {
+			context.userId = result[0].id;
+			context.email = result[0].email;
+			context.modified = result[0].modified;
+			resolve(result[0].password);
+		    }    
+		})
+		.catch(err => {
+		    reject(err);
+		});
+	})
+    },
+	
+	   get_user_by_email: function (email, context) {
+	var sql = "SELECT id, email, password, modified FROM user WHERE id=?"
+	var values = [email];
 	return new Promise((resolve, reject) => {
 	    queryDB(sql, values, mysql)
 		.then(result => {
