@@ -208,7 +208,9 @@ module.exports = function (app) {
 	}),
     */
     app.get('/reset_password', function(req, res){
-	var context = {};
+	var context = {
+	    title: 'Reset Password - COLA'
+	};
 	db.get_user_by_id(req.query.id, context)
 	    .then(encPassword => {
 		return misc.jwt_verify(
@@ -222,9 +224,8 @@ module.exports = function (app) {
 		context.userId = req.query.id;
 	    })
 	    .catch(err => {
-		console.log('err route');
+		if(err) console.log(err);
 		context.invalidToken = true;
-		console.log(err);
 	    })
 	    .finally(() => misc.set_layout(req, context))
 	    .catch(() => {

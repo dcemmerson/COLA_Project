@@ -33,6 +33,9 @@ module.exports = {
 		date: changed.last_modified.getUTCDate()
 		    + ` ${date_long} `
 		    + changed.last_modified.getUTCFullYear(),
+		effective_date: changed.last_modified.getUTCDate()
+		    + ` ${date_long} `
+		    + changed.last_modified.getUTCFullYear(),
 		post: changed.post,
 		country: changed.country,
 		mgt_number: 'idk...'
