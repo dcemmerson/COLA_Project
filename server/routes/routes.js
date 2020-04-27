@@ -21,23 +21,27 @@ module.exports = function (app) {
 	    .finally(() => res.render('home', context))
     });
     app.get(`/login`, function (req, res) {
+	if(req.isAuthenticated()){
+	    return res.redirect('/');
+	}
 	let context = {
 	    layout: 'loginLayout.hbs',
 	    title: 'Login - COLA',
 	    style: ['login.css', 'styles.css', 'font_size.css'],
-	    script: []
+	    script: ['login.js', 'login_ajax.js', 'utility.js']
 	}
 	res.render('login', context);
     });
     app.get(`/create_account`, function (req, res) {
 	let context = {
-	    layout: 'loginLayout.hbs',
 	    title: 'Create Account - COLA',
 	    style: ['createAccount.css', 'styles.css', 'font_size.css'],
 	    script: ['createAccount.js'],
 	    layout: 'loginLayout.hbs'
 	}
-	res.render('create', context);
+	misc.set_layout(req, context)
+	    .catch(() => console.log('error in set_layout'))
+	    .finally(() => res.render('create', context))
     });
     app.get(`/reset`, function (req, res) {
 	if(req.isAuthenticated()){
@@ -180,6 +184,9 @@ module.exports = function (app) {
     app.get(`/logout`, function (req, res) {
 	req.logout();
 	req.session.destroy();
+	if(req.query.redirect){
+	    return res.redirect(`/${req.query.redirect}`);
+	}
 	res.redirect('/login');
     });
     

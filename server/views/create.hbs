@@ -1,6 +1,23 @@
 <div class="container gridRows">
+  {{#if loggedIn}}
+  <div class="container">
+    <div class="d-flex">
+      <h1 class="h2 border-bottom px-2 pt-4 pb-2">Create account</h1>
+    </div>
+    <div id="alertContainer" class="row justify-content-around mx-4">
+      <div class="usa-alert usa-alert--warning max-width-900 width-90 mt-4">
+	<div class="usa-alert__body">
+	  <h2 class="h3 usa-alert__heading">Error</h2>
+	  <p class="usa-alert__text">
+	    You are currently logged in as {{email}}. You must first <a href="/logout?redirect=create_account">logout</a> to create a new account.
+	  </p>
+	</div>
+      </div>
+    </div>
+  </div>
+  {{else}}
   <div></div>
-  <div class="row justify-content-around my-5">
+  <div class="row justify-content-around my-5">    
     <div id="formOuterContainer" class="">
       <div id="formInnerContainer" class="shadow-1 px-2 pt-1 pb-2">
 	<div class="text-center">
@@ -39,5 +56,6 @@
       <br>
     </div>
   </div>
-  <div></div>
+    <div></div>
+  {{/if}}
 </div>

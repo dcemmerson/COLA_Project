@@ -543,13 +543,11 @@ module.exports = {
 }
 
 passport.serializeUser(function (user_id, done) {
-    console.log('serializer');
     done(null, user_id);
 });
 
 
 passport.deserializeUser(function (user_id, done) {
-    console.log('deserializer');
     done(null, user_id);
 });
 
