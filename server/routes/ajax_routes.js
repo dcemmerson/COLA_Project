@@ -10,11 +10,30 @@ const upload = multer();
 let after_load = require('after-load');
 
 module.exports = function(app, passport){
-    app.post(['/login'], passport.authenticate(
-	'local', {
-	    successRedirect: '/subscriptions',
-	    failureRedirect: '/login'
-	}));
+    app.post(['/login'], function(req, res, next){
+	passport.authenticate('local', function(err, user, info){
+	    var context = {};
+	    if(err){
+		context.error = true;
+		return res.send(context);
+	    }
+	    else if(!user){
+		context.invalid = true;
+		return res.send(context);
+	    }
+
+	    req.logIn(user, function(err){
+		if(err){
+		    context.error = true;
+		    return res.send(context);
+		}
+		context.success = true;
+		context.redirect = '/subscriptions';
+		return res.send(context);
+	    });
+	})(req, res, next);
+
+    });
     
     /******************* Subscription page ajax routes *********************/
     app.get('/get_user_subscription_list', db.authenticationMiddleware(),
@@ -324,7 +343,7 @@ module.exports = function(app, passport){
 		return misc.set_layout(req, context);
 	    })
 	    .finally(() => {
-		res.render('resetSent', context);
+		res.send(context);
 	    })
 	
     });

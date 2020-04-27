@@ -1,16 +1,65 @@
-
-<html>
-<body>
-<div>
-<h1>
-                    Password Reset
-        </h1>
-         {{{error}}}
+<div class="container gridRows">
+  <div class="container">
+    <div id="alertContainer" class="row justify-content-around">
+      <div id="successAlert" class="usa-alert usa-alert--info max-width-900 width-90 mt-4" style="display:none">
+	<div class="usa-alert__body">
+	  <h2 class="h3 usa-alert__heading">Password Reset sent!</h2>
+	  <p class="usa-alert__text">
+	    Check your email. A link to reset your password has been sent to <span class="alertEmail">(email)</span> (expires in 1 hour).
+	  </p>
+	</div>
       </div>
-    <form method="POST" action="/reset">
-	<label for="email">Email address:</label>
-    <input type="email" class="form-control" id="email" name="email">
-    <button type="resetpwd" class="btn btn-default">Reset Password?</button>
-	</form>
-  </body>
-</html>
+      <div id="warningAlert" class="usa-alert usa-alert--warning max-width-900 width-90 mt-4" style="display:none;">
+	<div class="usa-alert__body">
+	  <h2 class="h3 usa-alert__heading">Email Not Found</h2>
+	  <p class="usa-alert__text">
+	    Account not found for <span class="alertEmail">(email)</span>.
+	  </p>
+	  <p class="usa-alert__text mt-2">
+	    <a class="" href="/create_account">Sign up</a>
+	  </p>
+	</div>
+      </div>
+      <div id="errorAlert" class="usa-alert usa-alert--error max-width-900 width-90 mt-4" style="display:none;">
+	<div class="usa-alert__body">
+	  <h2 class="h3 usa-alert__heading">Error</h2>
+	  <p class="usa-alert__text">
+	    An error seems to have occured. Unable to process password reset request for <span class="alertEmail">(email)</span> at this time.
+	    <a href="/reset">Try again?</a>
+	  </p>
+	</div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="row justify-content-around my-5">
+      <div id="formOuterContainer" class="">
+	<div id="formInnerContainer" class="shadow-1 px-2 pt-1 pb-2">
+	  <div class="text-center">
+	    <h1 class="h3">Password reset</h1>
+	  </div>
+	  <div class="mx-2">
+	    <div>
+	      <form class="" method="POST" action="/reset" novalidate>
+		<div class="form-group">
+		  <label for="email" class="usa-label"><strong>Email</strong></label>
+		  <span class="usa-error-message" id="emailError" role="alert"
+			style="display:none"></span>
+		  <input type="email" class="usa-input" id="email" name="email">
+		</div>	    
+		<div class="form-group">
+		  <div class="row align-items-end" id="submitButtonContainer">
+		    <label for="submitEmail" class="sr-only">Submit email</label>
+		    <button id="submitEmail" type="submit" class="usa-button ml-md-4 ml-2">Submit</button>
+		  </div>
+		</div>
+	      </form>
+	    </div>
+	  </div>
+	</div>
+	<br>
+      </div>
+    </div>
+  </div>
+  <div></div>
+</div>

@@ -1,15 +1,58 @@
-<form method="POST" action="/login">
-  <div class="form-group">
-    <label for="email">Email address:</label>
-    <input type="email" class="form-control" id="email" name="username">
+<div class="container gridRows">
+  <div class="container">
+    <div id="alertContainer" class="row justify-content-around">
+      <div id="errorAlert" class="usa-alert usa-alert--error max-width-900 width-90 mt-4" style="display:none;">
+	<div class="usa-alert__body">
+	  <h2 class="h3 usa-alert__heading">Error</h2>
+	  <p class="usa-alert__text">
+	    Something unexpected occured. Please <a href="/login">refresh</a> page and try again.
+	  </p>
+	</div>
+      </div>
+    </div>
   </div>
-  <div class="form-group">
-    <label for="pwd">Password:</label>
-    <input type="password" class="form-control" id="pwd" name ="password">
+  <div class="container">
+    <div class="row justify-content-around my-5">
+      <div id="loginFormOuterContainer" class="">
+	<div id="loginFormInnerContainer" class="shadow-1 px-2 pt-1 pb-2">
+	  <div class="text-center">
+	    <h1 class="h3">Sign in</h1>
+	  </div>
+	  <div class="mx-2">
+	    <form class="" method="POST" action="/login">
+	      <span class="usa-error-message" id="invalid" role="alert"
+		    style="display:none">Invalid email or password</span>
+	      <div class="form-group">
+		<label for="email" class="usa-label"><strong>Email</strong></label>
+		<span class="usa-error-message" id="emailError" role="alert"
+		    style="display:none">Invalid email or password</span>
+		<input type="email" class="usa-input" id="email" name="username">
+	      </div>	    
+	      <div class="form-group">
+		<label for="pwd" class="usa-label"><strong>Password</strong></label>
+		<input type="password" class="usa-input " id="pwd" name="password">
+		<span class="">
+		  <a type="link" class="sm mr-4" href="/reset">Forgot Password?</a>
+		</span>
+	      </div>
+	      <div class="form-group checkbox sm mt-4">
+		<input id="rememberMe" type="checkbox">
+		<label for="rememberMe">Remember me</label>
+	      </div>
+	      <div class="form-group">
+		<div id="submitButtonContainer" class="row align-items-end">
+		  <button id="submitCredentials" type="submit" class="usa-button ml-md-4 ml-2">Sign in</button>
+		  <span class="mt-2 ml-3 ml-md-1 sm">No account?
+		    <a type="link" class="" href="/create_account">Create account</a>
+		  </span>
+		</div>
+	      </div>
+	    </form>
+	  </div>
+	</div>
+	<br>
+      </div>
+    </div>
   </div>
-  <div class="checkbox">
-    <label><input type="checkbox"> Remember me</label>
-  </div>
-  <button type="submit" class="btn btn-default">Submit</button>  
-  <button type="submit" class="btn btn-default">Forgot Password?</button>
-</form>
+  <div></div>
+</div>

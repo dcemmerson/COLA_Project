@@ -21,11 +21,44 @@ module.exports = function (app) {
 	    .finally(() => res.render('home', context))
     });
     app.get(`/login`, function (req, res) {
-	let context = {};
-	context.layout = 'loginLayout.hbs';
-	context.title = 'Login - COLA';
+	if(req.isAuthenticated()){
+	    return res.redirect('/');
+	}
+	let context = {
+	    layout: 'loginLayout.hbs',
+	    title: 'Login - COLA',
+	    style: ['login.css', 'styles.css', 'font_size.css'],
+	    script: ['login.js', 'login_ajax.js', 'utility.js']
+	}
 	res.render('login', context);
     });
+    app.get(`/create_account`, function (req, res) {
+	let context = {
+	    title: 'Create Account - COLA',
+	    style: ['createAccount.css', 'styles.css', 'font_size.css'],
+	    script: ['createAccount.js'],
+	    layout: 'loginLayout.hbs'
+	}
+	misc.set_layout(req, context)
+	    .catch(() => console.log('error in set_layout'))
+	    .finally(() => res.render('create', context))
+    });
+    app.get(`/reset`, function (req, res) {
+	if(req.isAuthenticated()){
+	    res.redirect('account');
+	    return;
+	}
+	
+	let context = {
+	    layout: 'loginLayout.hbs',
+	    title: 'Reset Password - COLA',
+	    style: ['reset.css', 'styles.css', 'font_size.css'],
+	    script: ['reset.js', 'reset_ajax.js', 'utility.js'],
+	    layout: 'loginLayout.hbs'
+	}
+	res.render('reset', context);
+    });
+
     app.get('/FAQ', function (req, res) {
 	let context = {};
 	context.style = ['styles.css', 'font_size.css', 'FAQ.css'];
@@ -88,13 +121,6 @@ module.exports = function (app) {
 	Promise.all(awaitPromises)
 	    .then(() => res.render('subscriptions', context))
     });
-
-    app.get(`/create_account`, function (req, res) {
-	let context = {};
-	context.layout = 'loginLayout.hbs';
-	context.style = ['styles.css', 'font_size.css'];
-	res.render('create', context);
-    });
     
     // upon submitting create account, validates the form information and adds user to DB
     app.post(
@@ -148,7 +174,8 @@ module.exports = function (app) {
 		var pwd = req.body.pwd;
 		var now = new Date().toISOString().replace(/\..+/, '');
 		db.add_user(email, pwd, now, res, req)
-
+		.then(console.log(res[0].email))
+		.catch(err => console.log(err))
 		
 		}
 
@@ -157,15 +184,11 @@ module.exports = function (app) {
     app.get(`/logout`, function (req, res) {
 	req.logout();
 	req.session.destroy();
+	if(req.query.redirect){
+	    return res.redirect(`/${req.query.redirect}`);
+	}
 	res.redirect('/login');
     });
-    
-    app.get(`/reset`, function (req, res) {
-	let context = {};
-	context.layout = 'loginLayout.hbs';
-	res.render('reset', context);
-    });
-
     
     
     app.post(`/forgot`, function (req, res) {
@@ -174,16 +197,6 @@ module.exports = function (app) {
     
 
 
-    /*
-    app.get('/resetpassword', function (req, res) {
-    
-    app.get('/resetpassword//:userId//:token', function (req, res) {
-	const id=req.params.userId;
-	const token=req.params.token;
-	db.get_user(req, res, id, token);
-	
-	}),
-    */
     app.get('/reset_password', function(req, res){
 	var context = {};
 	db.get_user_by_id(req.query.id, context)

@@ -76,6 +76,12 @@ body {
     background-size: 0.85rem;
     display: inline-block;
 }
+.max-width-400 {
+    max-width: 400px;
+}
+.max-width-500 {
+    max-width: 500px;
+}
 .max-width-900 {
     max-width: 900px;
 }
@@ -83,5 +89,22 @@ body {
     max-width: 90%;
 }
 .width-100 {
-    width: 100%;
+    width: 100% !important;
+}
+
+.width-90 {
+    width: 90% !important;
+}
+.shadow-1 {
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.1) 
+}
+.shadow-2 {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1) 
+}
+.shadow-3 {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.1) 
+}
+.gridRows {
+    display:grid;
+
 }

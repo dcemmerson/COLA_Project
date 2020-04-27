@@ -1,0 +1,9 @@
+#loginFormOuterContainer {
+
+    width: 100%;
+    max-width: 450px;
+    border-radius: 6px;
+}
+#loginFormInnerContainer {
+    border: 1px solid #f6f6f6;
+}

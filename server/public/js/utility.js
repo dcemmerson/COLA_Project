@@ -114,3 +114,13 @@ function display_return_to_top(){
 	rtt.style.display = 'block';
     }
 }
+function disable_elements(elements){
+    for(let i = 0; i < elements.length; i++){
+	elements[i].disabled = true;
+    }
+}
+function enable_elements(elements){
+    for(let i = 0; i < elements.length; i++){
+	elements[i].disabled = false;
+    }
+}

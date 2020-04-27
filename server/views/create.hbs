@@ -1,7 +1,31 @@
-<div class="container">
-  <div class="d-flex">
-    <h1 class="h2 border-bottom px-2 pt-4 pb-2"> Create Account </h1>
+<div class="container gridRows">
+  {{#if loggedIn}}
+  <div class="container">
+    <div class="d-flex">
+      <h1 class="h2 border-bottom px-2 pt-4 pb-2">Create account</h1>
+    </div>
+    <div id="alertContainer" class="row justify-content-around mx-4">
+      <div class="usa-alert usa-alert--warning max-width-900 width-90 mt-4">
+	<div class="usa-alert__body">
+	  <h2 class="h3 usa-alert__heading">Error</h2>
+	  <p class="usa-alert__text">
+	    You are currently logged in as {{email}}. You must first <a href="/logout?redirect=create_account">logout</a> to create a new account.
+	  </p>
+	</div>
+      </div>
+    </div>
   </div>
+
+{{else}}
+
+ <div class="row justify-content-around my-5">    
+    <div id="formOuterContainer" class="">
+      <div id="formInnerContainer" class="shadow-1 px-2 pt-1 pb-2">
+	<div class="text-center">
+	  <h1 class="h3">Create account</h1>
+	</div>
+	<div class="mx-2">
+
   <div id="alertError" class="mt-2 usa-alert usa-alert--error changePasswordAlert max-width-900 width-100" style="display:none">
 	  <div class="usa-alert__body">
 	    <h3 class="usa-alert__heading">Error creating account</h3>
@@ -54,15 +78,21 @@
 	      <span class="usa-error-message passwordError" id="newPasswordReError" role="alert"
 		    style="display:none"></span>
 	      <input id="newPasswordRe" type="password" class="usa-input" required>
+		  <span class="">
+		<button class="btn btn-link sm mr-4" id="showPassword">Show password</button>
+		
+	      </span>
 	    </div>
 	    <!-- 4. submit... -->
-	    <div class="" id="submitBtnDiv">
+	  <div class="form-group">
+	      <div class="row align-items-end">
 	      <button type="submit" id="submitNewPassword"
-		      class="usa-button btn btn-sm">Submit</button>
+		      class="usa-button btn btn-sm">Create Account</button>
+			  <span class="mt-2 ml-3 ml-md-1 sm">Have an account?
+		  <a type="link" class="" href="/login">Login</a>
+		</span>
 	    </div>
 	  </form>
-	</div>
-      </div>
-    </div>
-  </div>
+	  <div></div>
+  {{/if}}
 </div>
