@@ -12,7 +12,7 @@
 	  <div class="usa-alert__body">
 	    <h3 class="usa-alert__heading">Subscribed!</h3>
 	    <p class="usa-alert__text">You subscribed to <span id="successSpan">{error}</span></p>
-	    <p class="usa-alert__text"><a id="subscribeAdditional" href="#subscribeContainer">Subscribe to additional posts</a></p>
+	    <p class="usa-alert__text"><a class="usa-link" id="subscribeAdditional" href="#subscribeContainer">Subscribe to additional posts</a></p>
 	  </div>
 	</div>
 	<br><br><br>
@@ -64,7 +64,7 @@
 	    <!-- 2 upload template -->
 	    <div id="templateGroup">
 	      <div class="mt-3">
-		<label for="uploadTemplate" class="ml-2 usa-label"><strong>2. Template (doc/docx) </strong><a class="sm" href="/FAQ">Help?</a></label>
+		<label for="uploadTemplate" class="ml-2 usa-label"><strong>2. Template (doc/docx) </strong><a class="usa-link sm" href="/FAQ">Help?</a></label>
 		<span class="usa-error-message" id="uploadTemplateErrorMsg" role="alert"
 		      style="display:none">File does not appear to be doc/docx</span>
 		<input type="file" accept=".doc, .docx" id="uploadTemplate"
@@ -87,8 +87,6 @@
 		  {{/each}}
 		</select>
 		<div class="text-right">
-		  <!--		      <a href="http://localhost:10000/test.pdf">Preview</a>
-		    -->
 		  <button type="button" class="btn btn-link" id="previewPrevTemplate">Preview</button>
 
 		</div>
@@ -182,7 +180,7 @@
 		</tbody>
 	      </table>
 	      <div id="noActiveSubscriptions" style="display:none;">
-		You have no active subscriptions. <a href="#addSubscription">Add subscriptions</a>
+		You have no active subscriptions. <a class="usa-link" href="#addSubscription">Add subscriptions</a>
 	      </div>
 	      <div id="subscriptionsContainerSpinner">
 		<i class="fa fa-spinner fa-spin spinner"></i>
