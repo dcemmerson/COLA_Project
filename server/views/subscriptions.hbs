@@ -2,197 +2,197 @@
   <h1 class="h2 border-bottom px-2 pt-4 pb-2"><strong>Manage Subscriptions </strong></h1>
 </div>
 
-<div class="row mt-3 pt-3 pb-3 justify-content-around" id="addSubscriptionsContainer">
-  <!-- main center screen -->
-  <div class="col-12 pt-3 pb-3 mb-4 mt-4" id="subscriptionContainer">
-    <h2 class="h4 ml-4"><b>Add Subscription</b></h2>
-    <div id="successContainer" class="alert" style="display:none">
-      <div class="usa-alert usa-alert--success">
-	<div class="usa-alert__body">
-	  <h3 class="usa-alert__heading">Subscribed!</h3>
-	  <p class="usa-alert__text">You subscribed to <span id="successSpan">{error}</span></p>
-	  <p class="usa-alert__text"><a id="subscribeAdditional" href="#subscribeContainer">Subscribe to additional posts</a></p>
-	</div>
-      </div>
-      <br><br><br>
-    </div>
-    <div id="infoContainer" class="alert">
-      <div class="usa-alert usa-alert--info" id="addSubscription">
-	<div class="usa-alert__body">
-	  <h3 class="usa-alert__heading">New subscription</h3>
-	  <p class="usa-alert__text val postVal">Select a post</p>
-	  <p class="usa-alert__text templateVal val">Choose template</p>
-	</div>
-      </div>
-      <br>
-    </div>
-    <div id="warningContainer" class="alert" style="display:none">
-      <div class="usa-alert usa-alert--warning" id="">
-	<div class="usa-alert__body">
-	  <h3 class="usa-alert__heading">New subscription</h3>
-	  <p class="usa-alert__text"><strong>Invalid file</strong></p>
-	  <p class="usa-alert__text val postVal">Select a post</p>
-	  <p class="usa-alert__text templateVal val">Choose template</p>
-	</div>
-      </div>
-    </div>
-    <div id="errorContainer" class="alert" style="display:none">
-      <div class="usa-alert usa-alert--error" id="">
-	<div class="usa-alert__body">
-	  <h3 class="usa-alert__heading">New subscription - error</h3>
-	  <p class="usa-alert__text"><strong>Something has gone wrong!</strong></p>
-	  <p class="usa-alert__text val postVal">Select a post</p>
-	  <p class="usa-alert__text templateVal val">Choose template</p>
-	</div>
-      </div>
-    </div>
-    <div id="subscriptionFormContainer">
-      <form id="addPostForm" class="">
-	
-	<!-- 1. choose a post -->
-	<div class="">
-	  <div class="">
-	    <label for="postSelect" class="usa-label mt-2 ml-2 mr-2"><strong>1. Post</strong></label>
-	    <select id="postSelect" class="usa-select input-max-width" placeholder="Search for post" onchange="validate_subscription()">
-	      <option></option>
-	      {{#each post_info}}
-	      <option data-COLARatesId="{{this.id}}">{{this.country}} ({{this.post}})</option>
-	      {{/each}}
-	    </select>
-	  </div>
-	  <!-- 2 upload template -->
-	  <div id="templateGroup">
-	    <div class="mt-3">
-	      <label for="uploadTemplate" class="ml-2 usa-label"><strong>2. Template (doc/docx) </strong><a class="sm" href="/FAQ">Help?</a></label>
-	      <span class="usa-error-message" id="uploadTemplateErrorMsg" role="alert"
-		    style="display:none">File does not appear to be doc/docx</span>
-	      <input type="file" accept=".doc, .docx" id="uploadTemplate"
-		     class="usa-input btn btn-sm input-max-width"
-		     placeholder="Upload a template" onchange="validate_subscription()">
-	    </div>
-	    <!-- Or use one of my other templates... -->
-	    <div class="mt-2">
-	      <label for="templateSelect" class="usa-label ml-2">
-		<strong>...or use a previous templates...</strong></label>
-	      <span class="usa-error-message" id="previousTemplateErrorMsg" role="alert"
-		    style="display:none">File does not appear to be doc/docx</span>
-	      <span class="usa-error-message" id="previousTemplateErrorMsgPreview"
-		    role="alert" style="display:none">
-		Must select previous template to preview</span>
-	      <select id="templateSelect" class="usa-select input-max-width" onchange="validate_subscription()">
-		<option></option>
-		{{#each templates}}
-		<option data-templateId="{{this.id}}">{{this.name}}</option>
-		{{/each}}
-	      </select>
-	      <div class="text-right">
-		<!--		      <a href="http://localhost:10000/test.pdf">Preview</a>
-		  -->
-		<button type="button" class="btn btn-link" id="previewPrevTemplate">Preview</button>
-
-	      </div>
-	    </div>
-	  </div>
-	  <!-- Preview or upload... -->
-	  <div class="" id="addNewSubscriptionButtons">
-	    <span id="newSubscriptionContainer">
-	      <button id="submitNewSubscription" class="ml-0 ml-md-4 btn usa-button"
-		      data-container="body" data-toggle="popover"
-		      data-placement="right">Subscribe</button>
-	    </span>
-	  </div>
-      </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="row" id="viewSubscriptionsContainer">
-  <br>
-  <!-- second row in main screen -->
-  <div class="col-12">
-    <br>
-    <div class="row justify-content-around">
-      <div id="subscriptionsOuterContainer">
-	<div id="unsubscribeAlertBlank" class="unsubscribeAlert">
-	  <br><br><br><br>
-	</div>
-	
-	<div id="unsubscribeAlertSuccess" class="unsubscribeAlert" style="display:none">
-	  <div class="usa-alert usa-alert--warning">
-	    <div class="dismiss-alert"
-		 onclick="dismiss_alert(this.parentNode.parentNode)">
-	      <span role="button" class="dismiss-alert-button"></span>
-	    </div>
-	    <div class="usa-alert__body">
-	      <span>
-		<h3 class="usa-alert__heading">Unsubscribed!
-		  <button id="undoLink" class="btn btn-link sm">undo</button>
-		</h3>
-	      </span>
-	      <p class="usa-alert__text">You have unsubscribed from <span class="unsubscribeMsgSpan">{error}</span></p>
-	    </div>
+<div class="container-fluid">
+  <div class="row mt-3 pt-3 pb-3 justify-content-around" id="addSubscriptionsContainer">
+    <!-- main center screen -->
+    <div class="col-12 pt-3 pb-3 mb-4 mt-4" id="subscriptionContainer">
+      <h2 class="h4 ml-4"><b>Add Subscription</b></h2>
+      <div id="successContainer" class="alert" style="display:none">
+	<div class="usa-alert usa-alert--success">
+	  <div class="usa-alert__body">
+	    <h3 class="usa-alert__heading">Subscribed!</h3>
+	    <p class="usa-alert__text">You subscribed to <span id="successSpan">{error}</span></p>
+	    <p class="usa-alert__text"><a class="usa-link" id="subscribeAdditional" href="#subscribeContainer">Subscribe to additional posts</a></p>
 	  </div>
 	</div>
-	<div id="resubscribeAlertSuccess" class="unsubscribeAlert" style="display:none">
-	  <div class="usa-alert usa-alert--success">
-	    <div class="dismiss-alert"
-		 onclick="dismiss_alert(this.parentNode.parentNode)">
-	      <span role="button" class="dismiss-alert-button"></span>
-	    </div>
-	    <div class="usa-alert__body">
-	      <h3 class="usa-alert__heading">Undone!</h3>
-	      <p class="usa-alert__text">You have resubscribed to <span class="unsubscribeMsgSpan">{error}</span></p>
-	    </div>
-	  </div>
-	</div>
-
-	<div id="unsubscribeAlertError" class="unsubscribeAlert" style="display:none">
-	  <div class="usa-alert usa-alert--error">
-	    <div class="dismiss-alert"
-		 onclick="dismiss_alert(this.parentNode.parentNode)">
-	      <span role="button" class="dismiss-alert-button"></span>
-	    </div>
-	    <div class="usa-alert__body">
-	      <h3 class="usa-alert__heading">Error unsubscribing!</h3>
-	      <p class="usa-alert__text">Unable to unsubscribe from <span class="unsubscribeMsgSpan">{error}</span> at this time</p>
-	    </div>
+	<br><br><br>
+      </div>
+      <div id="infoContainer" class="alert">
+	<div class="usa-alert usa-alert--info" id="addSubscription">
+	  <div class="usa-alert__body">
+	    <h3 class="usa-alert__heading">New subscription</h3>
+	    <p class="usa-alert__text val postVal">Select a post</p>
+	    <p class="usa-alert__text templateVal val">Choose template</p>
 	  </div>
 	</div>
 	<br>
-	<div class="px-4" id="tableContainer">
-	  <h2 class="h4" id="currentSubscriptions"><b>Current Subscriptions</b></h2>
-
-	  <div id="subscriptionsContainer" class=" ml-1 mt-1">
-	    <table class="table" id="subscriptionsTable">
-	      <thead>
-		<tr>
-		  <th scope="col"></th>
-		  <th scope="col">Post</th>
-		  <th scope="col">Country</th>
-		  <th scope="col">Allowance</th>
-		  <th scope="col">Last Adjusted</th>
-		</tr>
-	      </thead>
-	      
-	      <tbody class="subscriptions" id="subscriptionTbody">
-
-	      </tbody>
-	    </table>
-	    <div id="noActiveSubscriptions" style="display:none;">
-	      You have no active subscriptions. <a href="#addSubscription">Add subscriptions</a>
+      </div>
+      <div id="warningContainer" class="alert" style="display:none">
+	<div class="usa-alert usa-alert--warning" id="">
+	  <div class="usa-alert__body">
+	    <h3 class="usa-alert__heading">New subscription</h3>
+	    <p class="usa-alert__text"><strong>Invalid file</strong></p>
+	    <p class="usa-alert__text val postVal">Select a post</p>
+	    <p class="usa-alert__text templateVal val">Choose template</p>
+	  </div>
+	</div>
+      </div>
+      <div id="errorContainer" class="alert" style="display:none">
+	<div class="usa-alert usa-alert--error" id="">
+	  <div class="usa-alert__body">
+	    <h3 class="usa-alert__heading">New subscription - error</h3>
+	    <p class="usa-alert__text"><strong>Something has gone wrong!</strong></p>
+	    <p class="usa-alert__text val postVal">Select a post</p>
+	    <p class="usa-alert__text templateVal val">Choose template</p>
+	  </div>
+	</div>
+      </div>
+      <div id="subscriptionFormContainer">
+	<form id="addPostForm" class="">
+	  
+	  <!-- 1. choose a post -->
+	  <div class="">
+	    <div class="">
+	      <label for="postSelect" class="usa-label mt-2 ml-2 mr-2"><strong>1. Post</strong></label>
+	      <select id="postSelect" class="usa-select input-max-width" placeholder="Search for post" onchange="validate_subscription()">
+		<option></option>
+		{{#each post_info}}
+		<option data-COLARatesId="{{this.id}}">{{this.country}} ({{this.post}})</option>
+		{{/each}}
+	      </select>
 	    </div>
-	    <div id="subscriptionsContainerSpinner">
-	      <i class="fa fa-spinner fa-spin spinner"></i>
+	    <!-- 2 upload template -->
+	    <div id="templateGroup">
+	      <div class="mt-3">
+		<label for="uploadTemplate" class="ml-2 usa-label"><strong>2. Template (doc/docx) </strong><a class="usa-link sm" href="/FAQ">Help?</a></label>
+		<span class="usa-error-message" id="uploadTemplateErrorMsg" role="alert"
+		      style="display:none">File does not appear to be doc/docx</span>
+		<input type="file" accept=".doc, .docx" id="uploadTemplate"
+		       class="usa-input btn btn-sm input-max-width"
+		       placeholder="Upload a template" onchange="validate_subscription()">
+	      </div>
+	      <!-- Or use one of my other templates... -->
+	      <div class="mt-2">
+		<label for="templateSelect" class="usa-label ml-2">
+		  <strong>...or use a previous templates...</strong></label>
+		<span class="usa-error-message" id="previousTemplateErrorMsg" role="alert"
+		      style="display:none">File does not appear to be doc/docx</span>
+		<span class="usa-error-message" id="previousTemplateErrorMsgPreview"
+		      role="alert" style="display:none">
+		  Must select previous template to preview</span>
+		<select id="templateSelect" class="usa-select input-max-width" onchange="validate_subscription()">
+		  <option></option>
+		  {{#each templates}}
+		  <option data-templateId="{{this.id}}">{{this.name}}</option>
+		  {{/each}}
+		</select>
+		<div class="text-right">
+		  <button type="button" class="btn btn-link" id="previewPrevTemplate">Preview</button>
+
+		</div>
+	      </div>
+	    </div>
+	    <!-- Preview or upload... -->
+	    <div class="" id="addNewSubscriptionButtons">
+	      <span id="newSubscriptionContainer">
+		<button id="submitNewSubscription" class="ml-0 ml-md-4 btn usa-button"
+			data-container="body" data-toggle="popover"
+			data-placement="right">Subscribe</button>
+	      </span>
+	    </div>
+	</form>
+	</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row" id="viewSubscriptionsContainer">
+    <br>
+    <!-- second row in main screen -->
+    <div class="col-12">
+      <br>
+      <div class="row justify-content-around">
+	<div id="subscriptionsOuterContainer">
+	  <div id="unsubscribeAlertBlank" class="unsubscribeAlert">
+	    <br><br><br><br>
+	  </div>
+	  
+	  <div id="unsubscribeAlertSuccess" class="unsubscribeAlert" style="display:none">
+	    <div class="usa-alert usa-alert--warning">
+	      <div class="dismiss-alert"
+		   onclick="dismiss_alert(this.parentNode.parentNode)">
+		<span role="button" class="dismiss-alert-button"></span>
+	      </div>
+	      <div class="usa-alert__body">
+		<span>
+		  <h3 class="usa-alert__heading">Unsubscribed!
+		    <button id="undoLink" class="btn btn-link sm">undo</button>
+		  </h3>
+		</span>
+		<p class="usa-alert__text">You have unsubscribed from <span class="unsubscribeMsgSpan">{error}</span></p>
+	      </div>
+	    </div>
+	  </div>
+	  <div id="resubscribeAlertSuccess" class="unsubscribeAlert" style="display:none">
+	    <div class="usa-alert usa-alert--success">
+	      <div class="dismiss-alert"
+		   onclick="dismiss_alert(this.parentNode.parentNode)">
+		<span role="button" class="dismiss-alert-button"></span>
+	      </div>
+	      <div class="usa-alert__body">
+		<h3 class="usa-alert__heading">Undone!</h3>
+		<p class="usa-alert__text">You have resubscribed to <span class="unsubscribeMsgSpan">{error}</span></p>
+	      </div>
+	    </div>
+	  </div>
+
+	  <div id="unsubscribeAlertError" class="unsubscribeAlert" style="display:none">
+	    <div class="usa-alert usa-alert--error">
+	      <div class="dismiss-alert"
+		   onclick="dismiss_alert(this.parentNode.parentNode)">
+		<span role="button" class="dismiss-alert-button"></span>
+	      </div>
+	      <div class="usa-alert__body">
+		<h3 class="usa-alert__heading">Error unsubscribing!</h3>
+		<p class="usa-alert__text">Unable to unsubscribe from <span class="unsubscribeMsgSpan">{error}</span> at this time</p>
+	      </div>
+	    </div>
+	  </div>
+	  <br>
+	  <div class="px-4" id="tableContainer">
+	    <h2 class="h4" id="currentSubscriptions"><b>Current Subscriptions</b></h2>
+
+	    <div id="subscriptionsContainer" class=" ml-1 mt-1">
+	      <table class="table" id="subscriptionsTable">
+		<thead>
+		  <tr>
+		    <th scope="col"></th>
+		    <th scope="col">Post</th>
+		    <th scope="col">Country</th>
+		    <th scope="col">Allowance</th>
+		    <th scope="col">Last Adjusted</th>
+		  </tr>
+		</thead>
+		
+		<tbody class="subscriptions" id="subscriptionTbody">
+
+		</tbody>
+	      </table>
+	      <div id="noActiveSubscriptions" style="display:none;">
+		You have no active subscriptions. <a class="usa-link" href="#addSubscription">Add subscriptions</a>
+	      </div>
+	      <div id="subscriptionsContainerSpinner">
+		<i class="fa fa-spinner fa-spin spinner"></i>
+	      </div>
 	    </div>
 	  </div>
 	</div>
       </div>
+      <br><br><br><br>
     </div>
-    <br><br><br><br>
   </div>
 </div>
-
 
 <!-- Modal -->
 <div class="modal fade" id="previewTemplateModal" tabindex="-1" role="dialog" aria-labelledby="previewTemplates" aria-hidden="true">

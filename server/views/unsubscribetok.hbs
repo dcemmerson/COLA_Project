@@ -6,7 +6,7 @@
     <div class="usa-alert usa-alert--success max-width-900 mt-2 mt-md-4 mt-lg-5">
       <div class="usa-alert__body">
 	<span>
-	  <h2 class="h3 usa-alert__heading">Unsubscribed! <a class="sm" href="/unsubscribeTok?tok={{doTok}}">undo</a></h2>
+	  <h2 class="h3 usa-alert__heading">Unsubscribed! <a class="usa-link sm" href="/unsubscribeTok?tok={{doTok}}">undo</a></h2>
 	</span>
 	<p class="usa-alert__text">{{username}} has been successfully unsubscribed from this subscription to {{country}} ({{post}}).</p>
       </div>
@@ -17,7 +17,7 @@
   <div class="usa-alert usa-alert--info max-width-900 mt-2 mt-md-4 mt-lg-5">
     <div class="usa-alert__body">
       <span>
-	<h2 class="h3 usa-alert__heading">Already unsubscribed! <a class="sm" href="/unsubscribeTok?tok={{doTok}}">undo</a></h2>
+	<h2 class="h3 usa-alert__heading">Already unsubscribed! <a class="usa-link sm" href="/unsubscribeTok?tok={{doTok}}">undo</a></h2>
       </span>
       <p class="usa-alert__text">{{username}} has already been successfully unsubscribed from this subscription to {{country}} ({{post}}).</p>
     </div>
@@ -43,7 +43,7 @@
     <div class="usa-alert usa-alert--success max-width-900  mt-2 mt-md-4 mt-lg-5">
       <div class="usa-alert__body">
 	<span>
-	  <h2 class="h3 usa-alert__heading">Resubscribed! <a class="sm" href="/unsubscribeTok?tok={{doTok}}">undo</a></h2>
+	  <h2 class="h3 usa-alert__heading">Resubscribed! <a class="usa-link sm" href="/unsubscribeTok?tok={{doTok}}">undo</a></h2>
 	</span>
 	<p class="usa-alert__text">{{username}} has been successfully resubscribed to this subscription to {{country}} ({{post}}).</p>
       </div>
@@ -54,7 +54,7 @@
   <div class="usa-alert usa-alert--info max-width-900  mt-2 mt-md-4 mt-lg-5">
     <div class="usa-alert__body">
       <span>
-	<h2 class="h3 usa-alert__heading">Already resubscribed! <a class="sm" href="/unsubscribeTok?tok={{doTok}}">undo</a></h2>
+	<h2 class="h3 usa-alert__heading">Already resubscribed! <a class="usa-link sm" href="/unsubscribeTok?tok={{doTok}}">undo</a></h2>
       </span>
       <p class="usa-alert__text">{{username}} has already been successfully resubscribed to this subscription to {{country}} ({{post}}).</p>
     </div>
@@ -77,7 +77,7 @@
   {{else}}
   <div>
     <p>
-      <a href="/login">Login</a> to manage other subscriptions.
+      <a class="usa-link" href="/login">Login</a> to manage other subscriptions.
     </p>
   </div>
   {{/if}}
