@@ -1,31 +1,68 @@
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-<html>
-   <head>
-      <title>Create Account</title>
-   </head>
-   <body>
-      <div>
-         {{{error}}}
+<div class="container">
+  <div class="d-flex">
+    <h1 class="h2 border-bottom px-2 pt-4 pb-2"> Create Account </h1>
+  </div>
+  <div id="alertError" class="mt-2 usa-alert usa-alert--error changePasswordAlert max-width-900 width-100" style="display:none">
+	  <div class="usa-alert__body">
+	    <h3 class="usa-alert__heading">Error creating account</h3>
+	    <p class="usa-alert__text">Please <a href="/create">refresh</a> page and try again.</p>
+	  </div>
+	</div>
+	<div id="passwordFormContainer" class="mb-4">
+	  <h2 class="h5 ml-4"><b></b></h2>
+	  <div id="alertInfo" class="usa-alert usa-alert--info changePasswordAlert">
+	    <div class="usa-alert__body">
+	      <h3 class="usa-alert__heading">Password requirements</h3>
+	      <p class="usa-alert__text">Must contain the following:</p>
+	      <p class="usa-alert__text lowercaseReq val">A lowercase letter</p>
+	      <p class="usa-alert__text uppercaseReq val">An uppercase letter</p>
+	      <p class="usa-alert__text numberReq val">A number</p>
+	      <p class="usa-alert__text specialReq val">A nonletter character (!@#$%^&*.?)</p>
+	      <p class="usa-alert__text minCharReq val">8+ characters</p>
+	    </div>
+	  </div>
+	   <div id="alertWarning" class="usa-alert usa-alert--warning changePasswordAlert"
+	       style="display:none">
+	    <div class="usa-alert__body">
+	      <h3 class="usa-alert__heading">Unable to create account</h3>
+	      <p class="usa-alert__text">Password must contain the following:</p>
+	      <p class="usa-alert__text lowercaseReq val">A lowercase letter</p>
+	      <p class="usa-alert__text uppercaseReq val">An uppercase letter</p>
+	      <p class="usa-alert__text numberReq val">A number</p>
+	      <p class="usa-alert__text specialReq val">A nonletter character (!@#$%^&*.?)</p>
+	      <p class="usa-alert__text minCharReq val">8+ characters</p>
+	    </div>
+	  </div>
+	  <form id="changePasswordForm" class="usa-form">
+	    <!-- 1. email address -->
+	  <div class="form-group">
+		<label for="email" class="usa-label mt-2 mr-2">Email</label>
+	     <span class="usa-error-message emailError" id="newEmailError" role="alert"
+		 style="display:none"></span>
+		  <input id="email" type="email" class="usa-input" oninput="valid_email()" required>
+	    </div>
+	    <!-- 2. new password -->
+	    <div class="form-group">
+	      <label for="newPassword" class="usa-label mt-2 mr-2">New password</label>
+ 	      <span class="usa-error-message passwordError" id="newPasswordError" role="alert"
+		    style="display:none"></span>
+	      <input id="newPassword" type="password" class="usa-input" oninput="valid_password()" required>
+	    </div>
+	    <!-- 3. new password re-enter -->
+	    <div class="form-group">
+	      <label for="newPasswordRe" class="usa-label mt-2 mr-2">Re-enter new password</label>
+	      <span class="usa-error-message passwordError" id="newPasswordReError" role="alert"
+		    style="display:none"></span>
+	      <input id="newPasswordRe" type="password" class="usa-input" required>
+	    </div>
+	    <!-- 4. submit... -->
+	    <div class="" id="submitBtnDiv">
+	      <button type="submit" id="submitNewPassword"
+		      class="usa-button btn btn-sm">Submit</button>
+	    </div>
+	  </form>
+	</div>
       </div>
-      <div class="container">
-      <form method="POST" action="/create_account">
-         <div class="form-group">
-            <label for="email">Email address:</label>
-            <input type="email" class="form-control" id="email" name="email">
-         </div>
-         <div class="form-group">
-            <label for="pwd">Password:</label>
-            <input type="password" class="form-control" id="pwd" name="pwd">
-         </div>
-         <div class="form-group">
-            <label for="pwdmatch">Re-Enter Password:</label>
-            <input type="password" class="form-control" id="pwdmatch" name="pwdmatch">
-         </div>
-         <div class="form-group">
-        
-         <div class="form-group">
-            <button type="submit" class="btn btn-default">Create Account</button>
-      </form>
-      </div>
-   </body>
-</html>
+    </div>
+  </div>
+</div>

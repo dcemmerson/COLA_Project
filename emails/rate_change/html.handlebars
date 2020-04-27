@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{title}}</title>
+    <link rel="canonical" href="https://..."/>
+    <meta charset="utf-8"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+    {{#each style}}
+    <link rel="stylesheet" type="text/css" href="/css/{{this}}"></link>
+    {{/each}}
+  </head>
+  <body>
+    <img src="cid:badge@nodemailer.com"></img>
+    <div class="">
+      <p>
+	Effective {{date}} {{month}} {{year}}, the COLA rate for {{changed.country}}
+	({{changed.post}}) has changed from 
+	<strong>{{changed.previous_allowance}}% </strong>
+	to <strong>{{changed.allowance}}%</strong>.
+	Change to post allowances are based on currency exchange rate information
+	reported to the Office of Allowances as of the first Thursday of the
+	Pay Period.
+	<br><br>
+	Current and historic COLA rates can be found on the Office of Allowance's
+	publicly available website:
+	<a href="https://aoprals.state.gov/Web920/cola.asp">
+	  https://aoprals.state.gov/Web920/cola.asp
+	</a>
+      </p>
+    </div>
+    <br><br><br><br>
+    {{#if fileError}}
+    <br><br>
+    <div>
+      <p class="fileError">
+	The template file {{errorFilename}} uploaded by {{username}},
+	for {{changed.country}} ({{changed.post}}),
+	is either of an unsupported format (not .doc or .docx),
+	or is corrupted. Please login to <a href="{{host}}/login">{{host}}/login</a> to remedy problem.
+	It is recommended that you unsubscribe from this post
+	and create a new subscription to this post with a new template file.
+      </p>
+    </div>
+    {{/if}}
+    <footer>
+      <p>
+	{{username}} is subscribed to receive COLA rate changes related
+	to {{changed.country}} ({{changed.post}}).
+      </p>
+      <div>
+	<a href="{{host}}/subscriptions">Manage Subscription</a> | 
+	<a href="{{host}}/unsubscribetok?tok={{jwt}}">Unsubscribe</a>
+      </div>
+    </footer>
+  </body>
+</html>
+

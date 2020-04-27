@@ -92,6 +92,7 @@ module.exports = function (app) {
     app.get(`/create_account`, function (req, res) {
 	let context = {};
 	context.layout = 'loginLayout.hbs';
+	context.style = ['styles.css', 'font_size.css'];
 	res.render('create', context);
     });
     
@@ -147,8 +148,7 @@ module.exports = function (app) {
 		var pwd = req.body.pwd;
 		var now = new Date().toISOString().replace(/\..+/, '');
 		db.add_user(email, pwd, now, res, req)
-		.then(console.log(res[0].email))
-		.catch(err => console.log(err))
+
 		
 		}
 
@@ -215,52 +215,5 @@ module.exports = function (app) {
 		res.render('recover', context);
 	    })
     });
-    /*
-      app.post(
-      '/resetpassword', [
-      // Check validity
-      check("pwd", "Password is invalid: must be at least 8 characters and must contain 1 lowercase, 1 uppercase, 1 number and 1 special character")
-      .isLength({
-      min: 8
-      })
-      .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.* )(?=.*[^a-zA-Z0-9]).{8,}$/, 'i')
-      .custom((value, {
-      req,
-      loc,
-      path
-      }) => {
-      if (value !== req.body.pwdmatch) {
-      throw new Error("Passwords don't match");
-      } else {
-      return value;
-      }
-      })
-      ],
-      (req, res, next) => {
-      // return formatted validation results
-      const errorFormatter = ({
-      msg,
-      }) => {
-      return `${msg}`;
-      };
-      const errors = validationResult(req).formatWith(errorFormatter);
-      if (!errors.isEmpty()) {
-      var errorResponse = errors.array({
-      onlyFirstError: true
-      });
-      res.render('recover', {
-      error: errorResponse
-      });
-
-      return;
-      }
-
-      else {
-      const pwd = req.body.pwd;
-      const id=req.body.Id;
-      db.update_user(id, pwd);
-		res.redirect('/login');	
-		}
-	    
-	    })    */
+    
 };
