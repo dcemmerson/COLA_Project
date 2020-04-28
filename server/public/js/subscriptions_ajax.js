@@ -118,7 +118,8 @@ async function submit_new_subscription(){
 	}
     }
     
-    
+
+    //MOVE INTO final part of previous try/catch
     //keep this in a separate try/catch statement. Will ensure if there is
     //an error at some point in the above try catch, the subscription list
     //will remain accurate, even if we deleted the subscription on server
@@ -136,9 +137,10 @@ async function submit_new_subscription(){
 
 async function add_new_subscription_prev_template(post_id, prev_temp){     
     try {
-	let context ={};
-	context.post_id = post_id;
-	context.template_id = prev_temp[prev_temp.selectedIndex].getAttribute('data-templateId');
+	let context = {
+	    post_id: post_id,
+	    template_id: prev_temp[prev_temp.selectedIndex].getAttribute('data-templateId')
+	};
 	
 	var response = await fetch('/add_new_subscription_with_prev_template', {
 	    method: 'POST',

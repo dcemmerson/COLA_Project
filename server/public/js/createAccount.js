@@ -22,29 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
     });
 });
-/*
-function show_password_form(){
-    let passwordBtn = document.getElementById('changePasswordBtnDiv');
-    let passwordForm = document.getElementById('passwordFormContainer');
-    
-    passwordBtn.classList.add('hidden');
-    passwordBtn.classList.remove('shown');
 
-    passwordForm.classList.remove('hidden');
-    passwordForm.classList.add('shown');
-}
-
-function hide_password_form(){
-    let passwordBtn = document.getElementById('changePasswordBtnDiv');
-    let passwordForm = document.getElementById('passwordFormContainer');
-
-    passwordForm.classList.remove('shown');
-    passwordForm.classList.add('hidden');
-    passwordBtn.classList.add('show');
-    passwordBtn.classList.remove('hidden');
-
-}
-*/
 async function create_account(){
     try{
  	//disable everything on form so user doesn't keep submitting or try
@@ -56,7 +34,7 @@ async function create_account(){
 	let context = await submit_credentials();
 
 	//check if server found any issues with email/password
-	invalid_credentials_server(context);
+	process_server_response(context);
     }
     catch(err){
 	console.log(err);
@@ -65,8 +43,10 @@ async function create_account(){
 	document.getElementById('formInnerContainer').styl.display = 'none';
     }
     finally{
-	remove_spinner(document.getElementById('submitBtnDiv'));
-	enable_form(document.getElementById('changePasswordForm'));
+	if(!res || !res.success){
+	    remove_spinner(document.getElementById('submitBtnDiv'));
+	    enable_form(document.getElementById('changePasswordForm'));
+	}
     }
 }
 
@@ -236,8 +216,9 @@ function valid_password(submit=false){
 		recover.js (this file). Server runs additional validation
 		to catch this, in which case this method will run and show issue.
 */
-function invalid_credentials_server(context){    
+function process_server_response(context){    
     if(context.accountCreated){
+	document.getElementById('submitNewAccount').innerText = 'Redirecting...';
 	window.location = context.redirect;
     }
     else{ //figure out which method to give user and where on screen to place

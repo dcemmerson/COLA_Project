@@ -4,8 +4,9 @@ var LocalStrategy = require('passport-local').Strategy;
 
 //require('../server.js'); //seems like this is a bit of a circular reference?
 const saltRounds = 10;
-var jwt = require('jwt-simple');
+//var jwt = require('jwt-simple');
 var mysql = require('../dbcon.js');
+const DEFAULT_TEMPLATE_ID = process.env.DEFAULT_TEMPLATE_ID || 1;
 
 /* name: queryDB
    preconditions: sql contains string sql query
@@ -413,9 +414,9 @@ module.exports = {
 	    const sql = `SELECT t.id, t.name, t.comment`
 		  + ` FROM user u`
 		  + ` INNER JOIN template t ON u.id=t.userId` 
-		  + ` WHERE u.id=?`
+		  + ` WHERE u.id=? || t.id=?`
 		  + ` ORDER BY t.name ASC`;
-	    const values = [userId];
+	    const values = [userId, DEFAULT_TEMPLATE_ID];
 	    queryDB(sql, values, mysql)
 		.then(res => resolve(res))
 		.catch(err => console.log(err))
