@@ -252,7 +252,7 @@ module.exports = function(app, passport){
     /********************* End Account page ajax routes *********************/
     /********************* Start FAQ page ajax routes *********************/
     app.get('/preview_default_template', function (req, res) {
-	const defaultUserId = process.env.DEFAULT_USER_ID;
+	const defaultUserId = process.env.DEFAULT_TEMPLATE_USER_ID;
 	const defaultTemplateId = process.env.DEFAULT_TEMPLATE_ID;
 	var context = {};
 	misc.preview_template(defaultUserId, defaultTemplateId, context)
