@@ -124,3 +124,15 @@ function enable_elements(elements){
 	elements[i].disabled = false;
     }
 }
+function disable_form(form){
+    var elements = form.elements;
+    for(var i = 0; i < elements.length; i++){
+	elements[i].disabled = true;
+    }
+}
+function enable_form(form){
+    var elements = form.elements;
+    for(var i = 0; i < elements.length; i++){
+	elements[i].disabled = false;
+    }
+}

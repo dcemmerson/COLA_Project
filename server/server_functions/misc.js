@@ -9,7 +9,7 @@ const tm = require('../server_functions/template_manip.js');
 //16MB blob size, but that seems a bit excessive and unnecessary.
 const MAX_FILE_SIZE = 4000000; 
 const BYTES_PER_MEGABYTE = 1000000;
-const saltRounds = 10;
+const SALT_ROUNDS = 10;
 
 module.exports = {
     add_user: function(email, pwd, now, res){
@@ -91,8 +91,8 @@ module.exports = {
 	    });
 	});
     },
-    /* name: validate_file
-       preconditions: userId is user pk whose credentials we are checking 
+    /* name: validate_password
+       preconditions: userId is user id whose credentials we are checking 
                       oldPwd will be checked against db
                       newPwd is pwd that user desires to change to
 		      newPwdRe is re-entered pwd by user
@@ -172,6 +172,21 @@ module.exports = {
 	    if(context.invalidNewPassword || context.invalidNewPasswordRe) reject();
 	})
     },
+    /* name validate_password_reset
+       preconditions: userId is user id whose credentials we are checking 
+                      oldPwdEnc is old password will be checked to make sure
+		           its not same as new password
+                      newPwd is pwd that user desires to change to
+		      newPwdRe is re-entered pwd by user
+		      context is object in which we will set flags to pass back to
+		        client in case that pwd is invalidated
+       postconditions: oldPwd has been compared to new password
+                       newPwd has been checked to be at least 8 char, contain 1+
+		         lower case, 1+ upper case, 1+ num, 1+ non-alphanumeric
+		       context has been set with flags indicating success/failure
+       description: upon successful password validation, resolve method is called.
+                      else reject method is called
+     */
     validate_password_reset: function(userId, oldPwdEnc, newPwd, newPwdRe, context){
 	return new Promise((resolve, reject) => {
 	    let lowerCase = /[a-z]/g;
@@ -233,7 +248,17 @@ module.exports = {
 	})
     },
 
-    validate_password_reg: function(newPwd, newPwdRe, context){
+    /* name: validate_password_new_account
+       preconditions: newPwd and newPwdRe were provided by client
+                      context is empty object
+       postconditions: newPwd has been checked to be at least 8 char, contain 1+
+		       lower case, 1+ upper case, 1+ num, 1+ non-alphanumeric
+		       newPwd checked to match newPwdRe
+		       context has been set with flags indicating success/failure
+       description: upon successful password validation, resolve method is called.
+                      else reject method is called
+     */
+    validate_password_new_account: function(newPwd, newPwdRe, context){
 	return new Promise((resolve, reject) => {
 	    let lowerCase = /[a-z]/g;
 	    let upperCase = /[A-Z]/g;
@@ -271,14 +296,37 @@ module.exports = {
 		context.invalidMessage = 'Password mismatch';
 	    }
 	    else{
-		//then the new pwd is valid. now check if user entered prev password correctly
-	
-	
-		resolve()
+		//then the new pwd is valid
+		return resolve()
 	    }
 	    //If we get to this point, user entered invalid newPwd/newPwdRe
 	    //We can just reject without an error
-	    if(context.invalidNewPassword || context.invalidNewPasswordRe) reject();
+	    return reject();
+	})
+    },
+    
+    /* name: validate_email
+       precondtions: email is provided by client
+                     context is object reference where we will set any error flags
+       postconditions: regular expression used to determine if client provided
+                       email conforms to email format.
+		       context has been set with any error flags.
+       description: Returns a promise (to make this method then-able) which resolves
+                    if valid email provided, else rejects and sets flags in context
+		       
+    */
+    validate_email: function(email, context){
+	return new Promise((resolve, reject) => {
+	    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+	    if(!re.test(String(email).toLowerCase())){
+		context.invalidEmail = true;
+		context.invalidMessage = "Invalid email";
+		reject();
+	    }
+	    else{
+		resolve();
+	    }
 	})
     },
 
@@ -307,7 +355,7 @@ module.exports = {
     },
     hash_password: function(pwd){
 	return new Promise((resolve, reject) => {
-	    bcrypt.hash(pwd, saltRounds, (err, hash) => {
+	    bcrypt.hash(pwd, SALT_ROUNDS, (err, hash) => {
 		console.log(hash);
 		if(err) reject(err);
 		else resolve(hash);
@@ -342,10 +390,35 @@ module.exports = {
 		resolve();
 	    }
 	});
+    },
 
+    login_helper: function(passport, req, res, next, context){
+	return new Promise((resolve, reject) => {
+	    passport.authenticate('local', function(err, user, info){
+		console.log(user);
+		if(err){
+		    context.error = true;
+		    return reject(err);
+		}
+		else if(!user){
+		    context.invalid = true;
+		    return reject();
+		}
+
+		req.logIn(user, function(err){
+		    if(err){
+			context.error = true;
+			return reject(err);
+		    }
+		    context.success = true;
+		    context.redirect = '/subscriptions';
+		    return resolve();
+		});
+	    })(req, res, next)
+	})
+	
     }
 }
-
 function compare_password(pwd, hashed){
     return new Promise((resolve, reject) => {
 	bcrypt.compare(pwd, hashed, (err, result) => {

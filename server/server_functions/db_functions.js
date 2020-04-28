@@ -28,47 +28,78 @@ function queryDB(sql, values, mysql) {
 
 module.exports = {
 
-    /* place db functions here - see example below */
-    /* addUser
-     * takes email password, date as parameters
-     *  and inserts a new user into the DB with hashed password
-     */
-    add_user: function (email, pwd, now, res, req) {
+    /* name: addUser
+       preconditions: email is valid email format string
+                      email should have already been checked if it exists in db
+                      hashedPwd has been validated to conform to system password standards 
+		          and has already been hashed
+       postconditions: new user added to db with hashed password 
+                       promise resolves, else reject if error along the way
+    */
+    add_user: function (email, hashedPwd, context) {
 	return new Promise((resolve, reject) => {
-		bcrypt.hash(pwd, saltRounds, function (err, hash) {
-	    const sql = "INSERT INTO user (`email`, `password`, `created`, `modified`) VALUES (?, ?, ?, ?)"
-	    const values = [email, hash, now, now];
-		console.log(values);
+	    const sql = "INSERT INTO user (email, password) VALUES (?, ?)"
+	    const values = [email, hashedPwd];
+
 	    queryDB(sql, values, mysql)
 		.then(res => {
-		    if(res.affectedRows == 1) resolve();
-		    else reject();
+		    if(res.affectedRows == 1){
+			resolve();
+		    }
+		    else{
+			reject();
+		    }
 		})
-		.catch(err => reject(err));
+		.catch(reject);
 	    
-	}) })
+	});
     },
-	
-	
-	insert_user: function (email, pwd, now, res, req) {
+
+    /* name: check_if_user_exists
+       preconditions: email is provided by client
+                      context is reference to object
+       postconditions: promise resolves if email does not exist in db, else rejects
+                       flags set in context if promise rejects
+     */
+    check_if_user_exists: function(email, context){
 	return new Promise((resolve, reject) => {
-		bcrypt.hash(pwd, saltRounds, function (err, hash) {
-	    const sql = "INSERT INTO user (`email`, `password`, `created`, `modified`) VALUES (?, ?, ?, ?)"
-	    let values = [email, hash, now, now];
-		
+	    const sql = "SELECT * FROM user WHERE email=?";
+	    const values = [email];
+
 	    queryDB(sql, values, mysql)
 		.then(res => {
-		    resolve(res)
-		}).
-		catch(err => {			
-			res.redirect('create_account')
-		    console.log(err);
-		    reject(err)
+		    if(res.length > 0){
+			context.userAlreadyExists = true;
+			context.invalidMessage = "Account already taken";
+			reject();
+		    }
+		    else{
+			resolve();
+		    }
 		})
-		})
-	})
+		.catch(reject)
+	});
     },
-	
+    
+    insert_user: function (email, pwd, now, res, req) {
+	return new Promise((resolve, reject) => {
+	    bcrypt.hash(pwd, saltRounds, function (err, hash) {
+		const sql = "INSERT INTO user (`email`, `password`, `created`, `modified`) VALUES (?, ?, ?, ?)"
+		let values = [email, hash, now, now];
+		
+		queryDB(sql, values, mysql)
+		    .then(res => {
+			resolve(res)
+		    }).
+		    catch(err => {			
+			res.redirect('create_account')
+			console.log(err);
+			reject(err)
+		    })
+			})
+	})
+    }, 
+    
     /* name: check_email
        preconditions: email is user supplied email
                       context is object we will fill with response information
@@ -136,8 +167,8 @@ module.exports = {
 		});
 	})
     },
-	
-	   get_user_by_email: function (email, context) {
+    
+    get_user_by_email: function (email, context) {
 	var sql = "SELECT id, email, password, modified FROM user WHERE id=?"
 	var values = [email];
 	return new Promise((resolve, reject) => {
@@ -178,7 +209,8 @@ module.exports = {
 		const user_pwd=(message[0].password);
 		const user_created=(message[0].created);
 		var secret = user_pwd +user_created;
-		
+
+		//whys there a try/catch here?
 		try{
 		    const decoded = jwt.decode(token, secret);
 		    let context = {};

@@ -1,4 +1,4 @@
-<div class="container gridRows">
+<div class="gridRows">
   {{#if loggedIn}}
   <div class="container">
     <div class="d-flex">
@@ -16,89 +16,77 @@
     </div>
   </div>
 
-{{else}}
-
- <div class="row justify-content-around my-5">    
-    <div id="formOuterContainer" class="">
-      <div id="formInnerContainer" class="shadow-1 px-2 pt-1 pb-2">
-	<div class="text-center">
-	  <h1 class="h3">Create account</h1>
-	</div>
-	<div class="mx-2">
-
-  <div id="alertError" class="mt-2 usa-alert usa-alert--error changePasswordAlert max-width-900 width-100" style="display:none">
-	  <div class="usa-alert__body">
-	    <h3 class="usa-alert__heading">Error creating account</h3>
-	    <p class="usa-alert__text">Please <a href="/create">refresh</a> page and try again.</p>
-	  </div>
-	</div>
-	<div id="passwordFormContainer" class="mb-4">
-	  <h2 class="h5 ml-4"><b></b></h2>
-	  <div id="alertInfo" class="usa-alert usa-alert--info changePasswordAlert">
-	    <div class="usa-alert__body">
-	      <h3 class="usa-alert__heading">Password requirements</h3>
-	      <p class="usa-alert__text">Must contain the following:</p>
-	      <p class="usa-alert__text lowercaseReq val">A lowercase letter</p>
-	      <p class="usa-alert__text uppercaseReq val">An uppercase letter</p>
-	      <p class="usa-alert__text numberReq val">A number</p>
-	      <p class="usa-alert__text specialReq val">A nonletter character (!@#$%^&*.?)</p>
-	      <p class="usa-alert__text minCharReq val">8+ characters</p>
-	    </div>
-	  </div>
-	   <div id="alertWarning" class="usa-alert usa-alert--warning changePasswordAlert"
-	       style="display:none">
-	    <div class="usa-alert__body">
-	      <h3 class="usa-alert__heading">Unable to create account</h3>
-	      <p class="usa-alert__text">Password must contain the following:</p>
-	      <p class="usa-alert__text lowercaseReq val">A lowercase letter</p>
-	      <p class="usa-alert__text uppercaseReq val">An uppercase letter</p>
-	      <p class="usa-alert__text numberReq val">A number</p>
-	      <p class="usa-alert__text specialReq val">A nonletter character (!@#$%^&*.?)</p>
-	      <p class="usa-alert__text minCharReq val">8+ characters</p>
-	    </div>
-	  </div>
-	  <form id="changePasswordForm" class="usa-form">
-	    <!-- 1. email address -->
-	  <div class="form-group">
-		<label for="email" class="usa-label mt-2 mr-2">Email</label>
-	     <span class="usa-error-message emailError" id="newEmailError" role="alert"
-		 style="display:none"></span>
-		  <input id="email" type="email" class="usa-input"  required>
-		  <!--oninput="valid_email()" -->
-	    </div>
-	    <!-- 2. new password -->
-	    <div class="form-group">
-	      <label for="newPassword" class="usa-label mt-2 mr-2">New password</label>
- 	      <span class="usa-error-message passwordError" id="newPasswordError" role="alert"
-		    style="display:none"></span>
-	      <input id="newPassword" type="password" class="usa-input" oninput="valid_password()" required>
-	    </div>
-	    <!-- 3. new password re-enter -->
-	    <div class="form-group">
-	      <label for="newPasswordRe" class="usa-label mt-2 mr-2">Re-enter new password</label>
-	      <span class="usa-error-message passwordError" id="newPasswordReError" role="alert"
-		    style="display:none"></span>
-	      <input id="newPasswordRe" type="password" class="usa-input" required>
-		  <span class="">
-		<button class="btn btn-link sm mr-4" id="showPassword">Show password</button>
-		
-	      </span>
-	    </div>
-	    <!-- 4. submit... -->
-	   <div class="form-group">
-	      <div class="row align-items-end">
-		<button type="submit" class="usa-button ml-md-4 ml-2">Create account</button>
-		<span class="mt-2 ml-3 ml-md-1 sm">Have an account?
-		  <a type="link" class="usa-link" href="/login">Login</a>
-		</span>
-	      </div>
-	    </div>
-	  </form>
+  {{else}}
+  <div class="container">
+    <div class="row justify-content-around my-5">
+      <div id="alertError" class="mt-2 usa-alert usa-alert--error changePasswordAlert max-width-900 width-100" style="display:none">
+	<div class="usa-alert__body">
+	  <h3 class="usa-alert__heading">Error creating account</h3>
+	  <p class="usa-alert__text">Something unexpected occurred. Please <a href="/create_account">refresh</a> page and try again.</p>
 	</div>
       </div>
-      <br>
+      <div id="formOuterContainer" class="">
+	<div id="formInnerContainer" class="shadow-1 px-2 pt-1 pb-2">
+	  <div class="text-center">
+	    <h1 class="h3">Create account</h1>
+	  </div>
+	  <div class="mx-2">
+	    <div id="passwordFormContainer" class="mb-4">
+	      <h2 class="h5 ml-4"><b></b></h2>
+	      <div id="alertInfo" class="usa-alert usa-alert--info changePasswordAlert">
+		<div class="usa-alert__body">
+		  <h3 class="usa-alert__heading">Password requirements</h3>
+		  <p class="usa-alert__text">Must contain the following:</p>
+		  <p class="usa-alert__text lowercaseReq val">A lowercase letter</p>
+		  <p class="usa-alert__text uppercaseReq val">An uppercase letter</p>
+		  <p class="usa-alert__text numberReq val">A number</p>
+		  <p class="usa-alert__text specialReq val">A nonletter character (!@#$%^&*.?)</p>
+		  <p class="usa-alert__text minCharReq val">8+ characters</p>
+		</div>
+	      </div>
+	      <form id="changePasswordForm" class="">
+		<!-- 1. email address -->
+		<div class="form-group">
+		  <label for="email" class="usa-label mt-2 mr-2"><strong>Email</strong></label>
+		  <span class="usa-error-message emailError" id="emailError" role="alert"
+			style="display:none"></span>
+		  <input id="email" type="email" class="usa-input" oninput="valid_email()">
+		  <!--oninput="valid_email()" -->
+		</div>
+		<!-- 2. new password -->
+		<div class="form-group">
+		  <label for="password" class="usa-label mt-2 mr-2"><strong>Password</strong></label>
+ 		  <span class="usa-error-message passwordError" id="passwordError" role="alert"
+			style="display:none"></span>
+		  <input id="password" type="password" class="usa-input" oninput="valid_password()">
+		</div>
+		<!-- 3. new password re-enter -->
+		<div class="form-group">
+		  <label for="passwordRe" class="usa-label mt-2 mr-2"><strong>Re-enter password</strong></label>
+		  <span class="usa-error-message passwordError" id="passwordReError" role="alert"
+			style="display:none"></span>
+		  <input id="passwordRe" type="password" class="usa-input">
+		  <span class="">
+		    <button type="button" class="btn btn-link sm mr-4" id="showPassword">Show password</button>
+		    
+		  </span>
+		</div>
+		<!-- 4. submit... -->
+		<div class="form-group">
+		  <div id="submitBtnDiv" class="row align-items-end">
+		    <button id="submitNewAccount" type="submit" class="usa-button ml-md-4 ml-2">Create account</button>
+		    <span class="mt-2 ml-3 ml-md-1 sm">Have an account?
+		      <a type="link" class="usa-link" href="/login">Login</a>
+		    </span>
+		  </div>
+		</div>
+	      </form>
+	    </div>
+	  </div>
+	  <br>
+	</div>
+      </div>
     </div>
   </div>
-    <div></div>
   {{/if}}
 </div>

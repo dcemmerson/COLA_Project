@@ -1,10 +1,10 @@
-async function submit_password(){
+async function submit_credentials(){
     var context = {};
-    context.email = document.getElementById('email').value;
-    context.newPassword = document.getElementById('newPassword').value;
-    context.newPasswordRe = document.getElementById('newPasswordRe').value;
+    context.email = document.getElementById('email').value.trim();
+    context.password = document.getElementById('password').value;
+    context.passwordRe = document.getElementById('passwordRe').value;
 
-    resp = await fetch('/create_password', {
+    resp = await fetch('/create_account', {
 	method: 'POST',
 	headers: {
 	    'Content-Type': 'application/json'

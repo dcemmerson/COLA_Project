@@ -17,27 +17,14 @@ const {
 
 module.exports = function(app, passport){
     app.post(['/login'], function(req, res, next){
-	passport.authenticate('local', function(err, user, info){
-	    var context = {};
-	    if(err){
-		context.error = true;
-		return res.send(context);
-	    }
-	    else if(!user){
-		context.invalid = true;
-		return res.send(context);
-	    }
-
-	    req.logIn(user, function(err){
-		if(err){
-		    context.error = true;
-		    return res.send(context);
-		}
-		context.success = true;
-		context.redirect = '/subscriptions';
-		return res.send(context);
-	    });
-	})(req, res, next);
+	var context ={};
+	misc.login_helper(passport, req, res, next, context)
+	    .catch(err => {
+		if(err) console.log(err);
+	    })
+	    .finally(() => {
+		res.send(context);
+	    })
 
     });
     
@@ -225,47 +212,35 @@ module.exports = function(app, passport){
 
     });
 	
-	 app.post(`/create_password`, function (req, res){
-        // return formatted validation results
-        const errorFormatter = ({
-            msg,
-        }) => {
-            return `${msg}`;
-        };
-        const errors = validationResult(req).formatWith(errorFormatter);
+    app.post(`/create_account`, function (req, res, next){
+        var context = {};
+	var email = req.body.email;
+	var pwd = req.body.password;
+	var pwdRe = req.body.passwordRe;
 
-        if (!errors.isEmpty()) {
-			console.log(errors);
-            return res.status(422).json({errors: errors.array})
-		
-        }
+	misc.validate_email(email, context)
+	    .then(() => db.check_if_user_exists(email, context))
+	    .then(() => misc.validate_password_new_account(pwd, pwdRe, context))
+	    .then(() => misc.hash_password(pwd))
+	    .then(hashedPwd => db.add_user(email, hashedPwd, context))
+	    .then(() => {
+                context.accountCreated = true;
+		context.success = true;
+		context.redirect = '/subscriptions';
+		req.body.username = req.body.email;
 
-        //if no errors, add user to DB
-        else {
-            var context = {};
-            console.log(req.body.newPassword);
-            var email = (req.body.email)
-            var pwd = (req.body.newPassword);
-            var now = new Date().toISOString().replace(/\..+/, '');
-            misc.validate_password_reg(
-                pwd, req.body.newPasswordRe,
-                context).then(
-                db.add_user(email, pwd, now, res, req).then(() => {
-                    context.passwordUpdated = true;
-                    context.successMessage = 'Account created';
-                })
-                .catch(err => {
-                    if (err) console.log(err);
-                    context.passwordUpdated = false;
-                })
-             .finally(() => res.send(context)))
-
-        }
-
+		//now log user in
+		return misc.login_helper(passport, req, res, next, context)
+            })
+            .catch(err => {
+		console.log('error route');
+		if (err) console.log(err);
+		context.accountCreated = false;
+		context.error = true;
+            })
+	    .finally(() => res.send(context))
+	    
     })
-	
-	
-	
  
 	
     /********************* End Account page ajax routes *********************/
