@@ -109,7 +109,7 @@ module.exports = function(app, passport){
 		//if user is trying to preview default template, change user
 		//id to match the default template user id for sql query
 		if(req.query.templateId == process.env.DEFAULT_TEMPLATE_ID){
-		    userId = process.env.DEFAULT_TEMPLATE_USER_ID || 1; 
+		    userId = process.env.DEFAULT_TEMPLATE_USER_ID; 
 		}
 
 		misc.preview_template(userId, req.query.templateId, context)
@@ -252,8 +252,8 @@ module.exports = function(app, passport){
     /********************* End Account page ajax routes *********************/
     /********************* Start FAQ page ajax routes *********************/
     app.get('/preview_default_template', function (req, res) {
-	const defaultUserId = process.env.DEFAULT_USER_ID || 1;
-	const defaultTemplateId = process.env.DEFAULT_TEMPLATE_ID || 1;
+	const defaultUserId = process.env.DEFAULT_USER_ID;
+	const defaultTemplateId = process.env.DEFAULT_TEMPLATE_ID;
 	var context = {};
 	misc.preview_template(defaultUserId, defaultTemplateId, context)
 	    .then(() => {
@@ -294,7 +294,6 @@ module.exports = function(app, passport){
 	
 	misc.jwt_verify(req.query.tok)
 	    .then(dec => {
-		console.log(dec);
 		decrypted = dec;
 		
 		context.country = dec.country;
@@ -304,7 +303,6 @@ module.exports = function(app, passport){
 		return db.update_user_subscription(dec.subscriptionId, dec.userId, dec.makeActive);
 	    })
 	    .then(dbres => {
-		console.log(dbres);
 		context.unsubscribed = !decrypted.makeActive;
 		context.resubscribed = decrypted.makeActive;
 		if(dbres.changedRows == 0)

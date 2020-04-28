@@ -33,7 +33,7 @@ async function create_account(){
 	remove_server_errors();
 	
 	show_spinner(document.getElementById('submitBtnDiv'));
-	let context = await submit_credentials();
+	var context = await submit_credentials();
 
 	//check if server found any issues with email/password
 	process_server_response(context);
@@ -45,7 +45,7 @@ async function create_account(){
 	document.getElementById('formInnerContainer').styl.display = 'none';
     }
     finally{
-	if(!res || !res.success){
+	if(!context || !context.success){
 	    remove_spinner(document.getElementById('submitBtnDiv'));
 	    enable_form(document.getElementById('changePasswordForm'));
 	}

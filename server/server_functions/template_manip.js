@@ -1,7 +1,7 @@
-require('dotenv').config();
+//require('dotenv').config();
 const DocxTemplater = require('docxtemplater');
 const PizZip = require('pizzip');
-const HOST = process.env.HOST || 'http://localhost:10000';
+const HOST = process.env.HOST;
 var toPdf = require('office-to-pdf');
 
 module.exports = {

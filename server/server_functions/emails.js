@@ -1,4 +1,4 @@
-require('dotenv').config();
+//require('dotenv').config();
 const db = require('./db_functions.js');
 const tm = require('./template_manip.js');
 const misc = require('./misc.js');
@@ -8,9 +8,9 @@ const path = require('path');
 const randomAccessFile = require('random-access-file');
 const nodemailer = require('nodemailer');
 var Email = require('email-templates');
-const EMAIL = process.env.EMAIL || 'gunrock2018@gmail.com';
+const EMAIL = process.env.EMAIL;
 const transporter = nodemailer.createTransport('smtps://gunrock2018%40gmail.com:iamaweimaraner@smtp.gmail.com')
-const HOST = process.env.HOST || 'http://localhost:10000';
+const HOST = process.env.HOST;
 
 module.exports = {
 	
