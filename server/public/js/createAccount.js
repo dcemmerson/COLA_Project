@@ -1,19 +1,21 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    document.getElementById('showPassword').addEventListener('click', e => {
+    document.getElementById('showPassword').addEventListener('click', function(e){
 	e.preventDefault();
 	let pwd = document.getElementById('password');
 	let pwdMatch = document.getElementById('passwordRe');
 	if(pwd.getAttribute('type') === 'password'){
 	    pwd.setAttribute('type', 'text');
 	    pwdMatch.setAttribute('type', 'text');
+	    this.innerText = 'Hide password';
 	}
 	else{
 	    pwd.setAttribute('type', 'password');
 	    pwdMatch.setAttribute('type', 'password');
+	    this.innerText = 'Hide password';
 	}
 	
-    })
+    });
 
     document.getElementById('submitNewAccount').addEventListener('click', e => {
 	e.preventDefault();

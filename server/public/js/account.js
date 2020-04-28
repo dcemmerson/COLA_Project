@@ -1,5 +1,25 @@
 document.addEventListener('DOMContentLoaded', () => {
-
+    document.getElementById('showPassword').addEventListener('click', function(e){
+	e.preventDefault();
+	let pwd = document.getElementById('newPassword');
+	let pwdMatch = document.getElementById('newPasswordRe');
+	let oldPwd = document.getElementById('oldPassword');
+	
+	if(pwd.getAttribute('type') === 'password'){
+	    oldPwd.setAttribute('type', 'text');
+	    pwd.setAttribute('type', 'text');
+	    pwdMatch.setAttribute('type', 'text');
+	    this.innerText = 'Hide password';
+	}
+	else{
+	    oldPwd.setAttribute('type', 'password');
+	    pwd.setAttribute('type', 'password');
+	    pwdMatch.setAttribute('type', 'password');
+	    this.innerText = 'Show password';
+	}
+	
+    })
+    
     document.getElementById('submitNewPassword').addEventListener('click', e => {
 	e.preventDefault();
 	if(valid_password(true)) update_password();

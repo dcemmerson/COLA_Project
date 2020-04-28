@@ -103,8 +103,14 @@ module.exports = function(app, passport){
 	     });
     app.get('/preview_template', db.authenticationMiddleware(),
 	    function (req, res) {
-		const userId = req.session.passport.user.user_id;
+		var userId = req.session.passport.user.user_id;
 		var context = {};
+
+		//if user is trying to preview default template, change user
+		//id to match the default template user id for sql query
+		if(req.query.templateId == process.env.DEFAULT_TEMPLATE_ID){
+		    userId = process.env.DEFAULT_TEMPLATE_USER_ID || 1; 
+		}
 
 		misc.preview_template(userId, req.query.templateId, context)
 		    .then(() => {
