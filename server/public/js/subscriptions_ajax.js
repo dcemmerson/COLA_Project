@@ -93,6 +93,7 @@ async function submit_new_subscription(){
 	    prev_temp[0].selectedIndex = 0;
 	    upload_temp[0].value = "";
 	    new_subscription_success(post_id);
+	    fetch_user_templates()
 	}
 	else if(result.error)
 	    throw new Error(result.error); //custom error originating from server
@@ -184,6 +185,28 @@ async function add_new_subscription_with_template_file(post_id, upload_temp){
 }
 
 
+
+async function fetch_user_templates(){
+    try{
+	var templateSelect = document.getElementById('templateSelect');
+	clear_dropdown(templateSelect);
+	templateSelect.innerHTML = '<option>Loading...<i class="fa fa-spinner spinner"></i></option>';
+	
+	let response = await fetch('/get_user_template_list')
+	let res = await response.json();
+
+	clear_dropdown(templateSelect);
+	
+	populate_template_dropdown(templateSelect, res.templates);
+    }
+    catch(err) {
+	console.log(err);
+	templateSelect.innerHTML = '<option>Error retrieving templates</option>';
+    }
+    finally{
+	console.log('finally');
+    }
+}
 
 async function fetch_user_subscription_list(){
     try{

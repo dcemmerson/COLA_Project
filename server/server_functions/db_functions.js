@@ -419,7 +419,7 @@ module.exports = {
 	    const values = [userId, DEFAULT_TEMPLATE_ID];
 	    queryDB(sql, values, mysql)
 		.then(res => resolve(res))
-		.catch(err => console.log(err))
+		.catch(err => reject(err))
 	});
     },
     /* name: get_user_email

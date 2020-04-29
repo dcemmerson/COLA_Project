@@ -60,6 +60,22 @@ module.exports = function(app, passport){
 			res.send(context);
 		    })
 	    });
+    app.get('/get_user_template_list', db.authenticationMiddleware(),
+	    function (req, res) {
+		const userId = req.session.passport.user.user_id;
+		let context = {};
+
+		db.get_user_template_names(userId)
+		    .then(results => {
+			context.templates = results;
+		    })
+		    .catch(err => {
+			if(err) console.log(err);
+		    })
+		    .finally(() => {
+			res.send(context);
+		    })
+	    });
     
     app.post('/add_new_subscription_with_template_file', db.authenticationMiddleware(), upload.single('upload'),
 	     function (req, res) {

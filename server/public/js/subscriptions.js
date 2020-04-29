@@ -94,6 +94,11 @@ function clear_user_subscriptions(){
  
 }
 
+function clear_dropdown(dropdown){
+    while(dropdown.firstChild){
+	dropdown.removeChild(dropdown.firstChild);
+    }
+}
 
 function new_subscription_success(postId){
     hide_elements($('.alert'));
@@ -283,4 +288,16 @@ function check_empty_subscriptions(){
 function dismiss_alert(alert){
     alert.style.display = 'none';
     $('#unsubscribeAlertBlank')[0].style.display = 'block';
+}
+function populate_template_dropdown(dropdown, templates){
+    var option = document.createElement('option');
+    dropdown.appendChild(option);
+    
+    templates.forEach(template => {
+	option = document.createElement('option');
+	option.setAttribute('data-templateId', template.id);
+	option.innerText = template.name;
+	
+	dropdown.appendChild(option);
+    })
 }
