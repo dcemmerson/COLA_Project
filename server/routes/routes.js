@@ -30,7 +30,10 @@ module.exports = function (app) {
 	    style: ['login.css', 'styles.css', 'font_size.css'],
 	    script: ['login.js', 'login_ajax.js', 'utility.js']
 	}
-	res.render('login', context);
+	
+		misc.set_layout(req, context)
+	    .catch(() => console.log('error in set_layout'))
+	    .finally(() => res.render('login', context))
     });
     app.get(`/create_account`, function (req, res) {
 	let context = {
@@ -43,6 +46,7 @@ module.exports = function (app) {
 	    .catch(() => console.log('error in set_layout'))
 	    .finally(() => res.render('create', context))
     });
+	
     app.get(`/reset`, function (req, res) {
 	if(req.isAuthenticated()){
 	    res.redirect('account');
@@ -56,7 +60,9 @@ module.exports = function (app) {
 	    script: ['reset.js', 'reset_ajax.js', 'utility.js'],
 	    layout: 'loginLayout.hbs'
 	}
-	res.render('reset', context);
+	misc.set_layout(req, context)
+	    .catch(() => console.log('error in set_layout'))
+	    .finally(() => res.render('reset', context))
     });
 
     app.get('/FAQ', function (req, res) {
