@@ -324,6 +324,9 @@ module.exports = {
 		context.invalidMessage = "Invalid email";
 		reject();
 	    }
+	    else if(email.length > 254){
+		reject();
+	    }
 	    else{
 		resolve();
 	    }

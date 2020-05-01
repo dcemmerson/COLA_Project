@@ -76,6 +76,38 @@ body {
     background-size: 0.85rem;
     display: inline-block;
 }
+
+.downloadSuccess::before {
+    position: relative;
+    content: "";
+    background-image: url(/img/correct9-success.png), linear-gradient(transparent, transparent);
+    left: 0rem;
+    margin-right: -0.5rem;
+    width: 2rem;
+    height: 0.7rem;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 0.8rem;
+    display: inline-block;
+}
+
+.downloadError::before {
+    position: relative;
+    content: "";
+    background-image: url(/img/close-red-90-cust.png), linear-gradient(transparent, transparent);
+    left: 0rem;
+    margin-right: -0.5rem;
+    width: 2rem;
+    height: 0.7rem;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 0.8rem;
+    display: inline-block;
+}
+#downloadPrevTemplate, #previewPrevTemplate {
+    padding-right: 0.25rem;
+    padding-left: 0.25rem;
+}
 .max-width-400 {
     max-width: 400px;
 }

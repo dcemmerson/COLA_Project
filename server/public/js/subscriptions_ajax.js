@@ -44,7 +44,7 @@ async function template_preview(templateId){
     $('#previewTemplateModal').modal({keyboard: true, focus: true});
 
     
-    fetch(`preview_template?templateId=${templateId}`)
+    fetch(`/preview_template?templateId=${templateId}`)
 	.then(response => {
 	    if(response.status == 200)
 		return response.json();
@@ -68,6 +68,33 @@ async function template_preview(templateId){
 	.finally(() =>{
 	    remove_spinner(docContainer, '-lg');
 	    docContainer.innerText = "";
+	})   
+}
+async function template_download(templateId){
+    var dlts = document.getElementById('downloadTemplateSpan');
+    dlts.classList.remove('downloadError', 'downloadSuccess');
+
+    show_spinner(dlts, ' md', true);
+    return fetch(`/download_template?templateId=${templateId}`)
+	.then(response => {
+	    if(response.status == 200)
+		return response.json();
+	    throw new Error("Error retrieving file");
+	})
+	.then(res => {
+	    if(!res.success)
+		throw new Error("Error retrieving file");
+
+	    client_download_file(res);
+
+	    dlts.classList.add('downloadSuccess');
+	})
+	.catch(err => {
+	    console.log(err);
+	    dlts.classList.add('downloadError');
+	})
+	.finally(() =>{
+	    remove_spinner(dlts, ' md');
 	})
     
 }

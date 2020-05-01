@@ -31,7 +31,7 @@ module.exports = function (app) {
 	    script: ['login.js', 'login_ajax.js', 'utility.js']
 	}
 	
-		misc.set_layout(req, context)
+	misc.set_layout(req, context)
 	    .catch(() => console.log('error in set_layout'))
 	    .finally(() => res.render('login', context))
     });

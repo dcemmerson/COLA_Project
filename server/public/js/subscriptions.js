@@ -19,14 +19,25 @@ document.addEventListener('DOMContentLoaded', async () => {
 	    template_preview(templateId);
 	}
     });
+    
+    document.getElementById('downloadPrevTemplate').addEventListener('click', async function(e) {
+	e.preventDefault();
+	let tempSelect = document.getElementById('templateSelect');
+	let templateId = tempSelect[tempSelect.selectedIndex].getAttribute('data-templateId');
+
+	if(valid_preview(true)){
+	    this.disabled = true;
+	    await template_download(templateId);
+	    this.disabled = false;
+	    
+	}
+    });
 
     //when user exits modal, reset modal to be ready to user to preview
     //another template
     $('#previewTemplateModal').on('hidden.bs.modal', () => {
 	clear_canvas(document.getElementById('previewCanvas'));
 	document.getElementById('previewTemplateLabel').innerText = "";
-//	show_spinner(document.getElementById('canvasSpinnerContainer'), '-lg');
-//	show_spinner(document.getElementById('previewTemplateLabel'));
     });
     
     
@@ -159,12 +170,20 @@ function initialize_form(){
     }
 }
 
-function valid_preview(){
+function valid_preview(download=false){
     let prevTemp = document.getElementById('templateSelect');
+    document.getElementById('previousTemplateErrorMsgDownload').style.display = 'none';
+    document.getElementById('previousTemplateErrorMsgPreview').style.display = 'none';
+    document.getElementById('downloadTemplateSpan').classList.remove('downloadSuccess', 'downloadError');
     
     if(prevTemp.selectedIndex === 0){
 	prevTemp.classList.add('usa-input--error');
-	document.getElementById('previousTemplateErrorMsgPreview').style.display = 'block';
+	if(download){
+	    document.getElementById('previousTemplateErrorMsgDownload').style.display = 'block';
+	}
+	else{
+	    document.getElementById('previousTemplateErrorMsgPreview').style.display = 'block';
+	}
 	return false;
     }
     else{
@@ -241,6 +260,7 @@ function validate_subscription(submit=false){
 	document.getElementById('uploadTemplateErrorMsg').style.display = 'none';
 	document.getElementById('previousTemplateErrorMsg').style.display = 'none';
 	document.getElementById('previousTemplateErrorMsgPreview').style.display = 'none';
+	document.getElementById('previousTemplateErrorMsgDownload').style.display = 'none';
     }
     
     

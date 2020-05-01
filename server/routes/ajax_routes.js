@@ -142,6 +142,34 @@ module.exports = function(app, passport){
 			res.send(context);
 		    })
 	    });
+    app.get('/download_template', db.authenticationMiddleware(),
+	    function (req, res) {
+		var userId = req.session.passport.user.user_id;
+		var context = {};
+
+		//if user is trying to preview default template, change user
+		//id to match the default template user id for sql query
+		if(req.query.templateId == process.env.DEFAULT_TEMPLATE_ID){
+		    userId = process.env.DEFAULT_TEMPLATE_USER_ID; 
+		}
+
+		db.get_user_template(userId, req.query.templateId)
+		    .then(response => {
+			context.filename = response[0].name;
+			context.uploaded = response[0].uploaded;
+			context.file = response[0].file;
+			context.success = true;
+		    })
+		    .catch(err => {
+			if(err) console.log(err);
+			context.msg = "Error retrieving file";
+			context.success = false;
+		    })
+		    .finally(() => {
+			res.send(context);
+		    })
+	    });
+    
     app.get('/delete_subscription', db.authenticationMiddleware(),
 	    function (req, res) {
 		const userId = req.session.passport.user.user_id;

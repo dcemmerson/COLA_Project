@@ -6,10 +6,15 @@ function hidden_timer(element, time=5000){
 	element.hidden = true;
     }, time);
 }
-function show_spinner(element, lg=''){
+function show_spinner(element, lg='', insertFirst=false){
     let i = document.createElement('i');
     i.setAttribute('class', `fa fa-spinner fa-spin spinner${lg}`);
-    element.appendChild(i);
+    if(insertFirst && element.firstChild){
+	element.insertBefore(i, element.firstChild);
+    }
+    else{
+	element.appendChild(i);
+    }
 }
 function remove_spinner(element, lg=''){
     try{
@@ -135,4 +140,24 @@ function enable_form(form){
     for(var i = 0; i < elements.length; i++){
 	elements[i].disabled = false;
     }
+}
+
+function client_download_file(res){
+    var a = document.createElement('a');
+    
+//    var data = new File(new Uint8Array(res.file.data), res.filename);
+    var uint8arr = new Uint8Array(res.file.data);
+    var data = new Blob([uint8arr]);
+//    var data = new Blob(uint8arr);
+    
+    var url = window.URL.createObjectURL(data);
+    a.href = url;
+    a.download = res.filename;
+    document.body.appendChild(a);
+
+    a.click();
+    setTimeout(function() {
+	document.body.removeChild(a);
+	window.URL.revokeObjectURL(url);
+    }, 0)
 }

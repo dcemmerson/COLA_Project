@@ -18,6 +18,9 @@
     .sm {
 	font-size: 0.6em;
     }
+    .md {
+	font-size: 0.7em;
+    }
 
     td .button,
     th,
@@ -49,7 +52,7 @@
 	font-size: 0.8rem;
     }
     #subscriptionsOuterContainer {
-	min-width: 300px;
+//	min-width: 300px;
 	max-width: 600px;
     }
     #subscriptionContainer {
@@ -73,6 +76,9 @@
     }
     .sm {
 	font-size: 0.62em;
+    }
+    .md {
+	font-size: 0.72em;
     }
     .p {
 	font-size: 0.8em;
@@ -107,7 +113,7 @@
 	font-size: 0.9rem;
     }
     #subscriptionsOuterContainer {
-	min-width: 590px;
+//	min-width: 590px;
 	max-width: 750px;
     }
     #subscriptionContainer {
@@ -131,6 +137,9 @@
     }
     .sm {
 	font-size: 0.64em;
+    }
+    .md {
+	font-size: 0.74em;
     }
     .p {
 	font-size: 0.9em;
@@ -165,7 +174,7 @@
 	font-size: 1.0rem;
     }
     #subscriptionsOuterContainer {
-	min-width: 750px;
+//	min-width: 750px;
 	max-width: 980px;
     }
     #subscriptionContainer {
@@ -189,6 +198,9 @@
     }
     .sm {
 	font-size: 0.65em;
+    }
+    .md {
+	font-size: 0.76em;
     }
     .p {
 	font-size: 1.0em;
@@ -223,7 +235,7 @@
 	font-size: 1.1rem;
     }
     #subscriptionsOuterContainer {
-	min-width: 980px;
+//	min-width: 980px;
 	max-width: 1050px;
     }
     #subscriptionContainer {

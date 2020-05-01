@@ -608,7 +608,6 @@ passport.deserializeUser(function (user_id, done) {
 
 
 passport.use(new LocalStrategy(function(username, password, done) {
-    console.log('passport.use new localstrategy');
     var sql="SELECT id, password FROM user WHERE email=?"
     values = [username]
     queryDB(sql, values, mysql)
