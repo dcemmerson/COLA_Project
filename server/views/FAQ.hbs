@@ -28,7 +28,7 @@
 	</h2>
 	<div id="a2" class="usa-accordion__content usa-prose">
           <p>Templates are .doc or .docx files that will be updated with new COLA rates and emailed to subscriber upon COLA rates changing.</p>
-	  <p>When creating a new subscription to a post, users are presented with the option of either using a <a type="button" class="usa-link previewDefaultTemplate" href="#" data-toggle="modal" data-target="#previewTemplateModal">default template</a>, or uploading a customized template. <a class="usa-link" id="jumpToTemplateLooks" href="#templateLooks">What should my customized template look like?</a></p>
+	  <p>When creating a new subscription to a post, users are presented with the option of either using a <a class="usa-link previewDefaultTemplate" href="#" data-toggle="modal" data-target="#previewTemplateModal">default template</a>, or uploading a customized template. <a class="usa-link" id="jumpToTemplateLooks" href="#templateLooks">What should my customized template look like?</a></p>
 	</div>
       </div>
       <div id="templateLooks" class="usa-accordion faq-accordion">
@@ -41,7 +41,7 @@
           </button>
 	</h2>
 	<div id="a3" class="usa-accordion__content usa-prose">
-          <p>A sample template can be viewed <a type="button" class="usa-link previewDefaultTemplate" href="#" data-toggle="modal" data-target="#previewTemplateModal">here</a>.</p>
+          <p>A sample template can be viewed <a class="usa-link previewDefaultTemplate" href="#" data-toggle="modal" data-target="#previewTemplateModal">here</a>.</p>
 	  <p>Uploaded templates should be .doc or .docx format. Prior to sending email to subscriber, the app will complete various fields in the user's template. Fields are shown below. Each field must be wrapped in curly braces (eg {field}) in uploaded template file. </p>
 	  <p>
 	    <div class="row ml-4">
@@ -101,25 +101,6 @@
   </div> 
 </div>
 
-<!-- old method of display doc
-<div class="modal fade" id="sampleTemplateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Default template</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-	<iframe class="iframe-docx" src="https://docs.google.com/gview?url=https://demedia.app/temp/default.docx&embedded=true"></iframe>
-      </div>
-      </div>
-    </div>
-  </div>
-</div>
--->
-
 <!-- Modal -->
 <div class="modal fade" id="previewTemplateModal" tabindex="-1" role="dialog" aria-labelledby="previewTemplates" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -134,7 +115,11 @@
 	<div id="previewCanvasContainer" class="d-flex justify-content-center">
 	  <div id="canvasSpinnerContainer">
 	  </div>
-	  <canvas id="previewCanvas" class="mb-4"></canvas>
+	  <div class="container">
+	    <div class="row justify-content-start justify-content-md-around">
+	      <canvas id="previewCanvas" class="mb-4"></canvas>
+	    </div>
+	  </div>
 	</div>
       </div>
     </div>

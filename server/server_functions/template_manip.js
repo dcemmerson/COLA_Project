@@ -3,6 +3,7 @@ const DocxTemplater = require('docxtemplater');
 const PizZip = require('pizzip');
 const HOST = process.env.HOST;
 var toPdf = require('office-to-pdf');
+//var tpPdf = require('docx-pdf');
 
 module.exports = {
     /* name: manip_template
