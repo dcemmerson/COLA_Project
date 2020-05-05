@@ -127,11 +127,6 @@ function send_email(user, changed, file){
 			    {
 				filename: user.filename,
 				content: file
-			    },
-			    {
-				filename: 'badge.png',
-				path: path.join(__dirname, '..', '/emails/build/img/badge.png'),
-					  cid: 'badge@nodemailer.com'
 			    }]
 		    },
 		    send: true,
