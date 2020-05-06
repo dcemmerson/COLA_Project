@@ -2,56 +2,74 @@
 const db = require('./db_functions.js');
 const tm = require('./template_manip.js');
 const misc = require('./misc.js');
-//const fs = require('fs');
 const path = require('path');
-//const rimraf = require('rimraf');
 const randomAccessFile = require('random-access-file');
 const nodemailer = require('nodemailer');
+var sgTransport = require('nodemailer-sendgrid-transport');
 var Email = require('email-templates');
-const EMAIL = process.env.EMAIL;
-const transporter = nodemailer.createTransport('smtps://gunrock2018%40gmail.com:iamaweimaraner@smtp.gmail.com')
-const HOST = process.env.HOST;
+
+
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+const EMAIL_OPTIONS = {
+    auth: {
+	api_key: process.env.SENDGRID_API_KEY
+    }
+}
+
 
 module.exports = {
-	
+    
     password_reset_email: function (userId, email, token) {
-
+	
 	const em = new Email({
-	    message: {
-		from: process.env.EMAIL,	
-	    },
-	    send: true,
-	    transport: transporter,	    
-	    views: {
+	    view: {
 		options: {
 		    extension: 'handlebars'
-		}
-	    },
-	    juice: true,
-	    juiceResources: {
-		preserveImportant: true,
-		webResources: {
-		    relativeTo: path.join(__dirname, '..', '/emails/build'),
-		    images: true
+		},
+		juice: true,
+		juiceResources: {
+		    preserveImportant: true,
+		    webResources: {
+			relativeTo: path.join(__dirname, '..', '/emails/build'),
+			images: true
+		    }
 		}
 	    }
 	});
-	
-	return em.send({
-	    template: `forgot_pwd`,
-	    message: {
-		to: email
-	    },
-	    locals: {
+
+	let awaitPromises = [
+	    em.render('forgot_pwd/html.handlebars', {
 		locale: 'en',
 		title: "Reset password",
 		email: email,
-		host: HOST,
+		host: process.env.HOST,
 		userId: userId,
 		jwt: token,
-		style: ['rate_change_email.css']
-	    }
-	})
+	    }),
+	    em.render('forgot_pwd/text.handlebars', {
+		locale: 'en',
+		title: "Reset password",
+		email: email,
+		host: process.env.HOST,
+		userId: userId,
+		jwt: token,
+	    })
+	];
+
+	return Promise.all(awaitPromises)
+	    .then(res => {
+		const msg = {
+		    from: process.env.FROM_EMAIL,
+		    to: email,
+		    subject: 'COLA Password Reset Request',
+		    text: res[1],
+		    html: res[0]
+		};
+		console.log('now send');
+		return sgMail.send(msg);
+	    })
 	
     },
     /* name: send_emails
@@ -63,10 +81,13 @@ module.exports = {
        description:
     */
     start_sending_emails: function(changed_rates){
+	
 	changed_rates.forEach(changed => {
 	    db.get_users_subscribed_to_post(changed.postId)
 		.then(users => users.forEach(user => {
 		    const file = tm.manip_template(user, changed);
+
+		    //ugly but necessary to then chain this rather than return it
 		    send_email(user, changed, file)
 			.then((res) => {
 			    console.log(`Email sent to ${user.username} with '${user.filename}'`
@@ -106,7 +127,7 @@ module.exports = {
 	       user easy one-click unsubscribe.
 */
 function send_email(user, changed, file){
-//function send_email(username, filename, file, changed, userId, subscriptionId){
+    
     return new Promise((resolve, reject) => {
 	const month_long = new Intl.DateTimeFormat('en-US', {month: 'long'})
 	      .format(changed.last_modified);
@@ -120,17 +141,14 @@ function send_email(user, changed, file){
 		       makeActive: false
 		      })
 	    .then(token => {
-		const email = new Email({
+		const em = new Email({
 		    message: {
-			from: process.env.EMAIL,
 			attachments: [
 			    {
 				filename: user.filename,
 				content: file
 			    }]
 		    },
-		    send: true,
-		    transport: transporter,	    
 		    views: {
 			options: {
 			    extension: 'handlebars'
@@ -145,13 +163,9 @@ function send_email(user, changed, file){
 			}
 		    }
 		});
-		
-		return email.send({
-		    template: `rate_change`,
-		    message: {
-			to: user.username
-		    },
-		    locals: {
+
+		let awaitPromises = [
+		    em.render('rate_change/html.handlebars', {
 			locale: 'en',
 			title: `COLA Rate Change ${changed.country} (${changed.post})`,
 			username: user.username,
@@ -159,21 +173,40 @@ function send_email(user, changed, file){
 			date: changed.last_modified.getUTCDate(),
 			month: month_long,
 			year: changed.last_modified.getUTCFullYear(),
-			host: HOST,
+			host: process.env.HOST,
 			jwt: token,
 			errorFilename: user.errorFilename,
 			fileError: user.fileError,
 			style: ['rate_change_email.css']
-		    }
-		})
-	    })//then
-	    .then(resolve)
-	    .catch(err => {
-		console.error(err);
-		reject();
+		    }),
+		    em.render('rate_change/text.handlebars', {
+			locale: 'en',
+			title: `COLA Rate Change ${changed.country} (${changed.post})`,
+			username: user.username,
+			changed: changed,
+			date: changed.last_modified.getUTCDate(),
+			month: month_long,
+			year: changed.last_modified.getUTCFullYear(),
+			host: process.env.HOST,
+			jwt: token,
+			errorFilename: user.errorFilename,
+			fileError: user.fileError,
+			style: ['rate_change_email.css']
+		    })
+		];
+
+		return Promise.all(awaitPromises)
+		    .then(res => {
+			const msg = {
+			    from: process.env.FROM_EMAIL,
+			    to: user.username,
+			    subject: `COLA Rate Change ${changed.country} (${changed.post})`,
+			    text: res[1],
+			    html: res[0]
+			};
+			return sgMail.send(msg);			
+		    })
+		
 	    })
     })
 }
-
-
-

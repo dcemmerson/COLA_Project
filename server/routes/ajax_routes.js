@@ -403,6 +403,7 @@ module.exports = function(app, passport){
 	    })
 	    .then(token => emails.password_reset_email(context.userId, context.email, token))
 	    .then(() => {
+		console.log('success');
 		context.success = true;
 	    })
 	    .catch(err => {

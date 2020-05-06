@@ -1,0 +1,21 @@
+The COLA rate for {{changed.country}} ({{changed.post}}) has changed from
+{{changed.previous_allowance}}% to {{changed.allowance}}%.
+
+Management template attached.
+
+{{#if fileError}}
+
+The template file {{errorFilename}} uploaded by {{username}},
+for {{changed.country}} ({{changed.post}}), is either of an unsupported
+format (not .doc or .docx), or is corrupted. Please login to {{host}}/login
+to remedy problem.
+
+It is recommended that you unsubscribe from this post
+and create a new subscription to this post with a new template file.
+{{/if}}
+
+{{username}} is subscribed to receive COLA rate changes related
+to {{changed.country}} ({{changed.post}}).
+
+Manage Subscription: {{host}}/subscriptions 
+Unsubscribe: {{host}}/unsubscribetok?tok={{jwt}}
