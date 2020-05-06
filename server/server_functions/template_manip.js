@@ -38,8 +38,7 @@ module.exports = {
 		    + ` ${date_long} `
 		    + changed.last_modified.getUTCFullYear(),
 		post: changed.post,
-		country: changed.country,
-		mgt_number: 'idk...'
+		country: changed.country
 	    });
 	    doc.render();
 	    user.fileError = false;

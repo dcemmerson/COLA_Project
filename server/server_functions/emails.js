@@ -4,20 +4,13 @@ const tm = require('./template_manip.js');
 const misc = require('./misc.js');
 const path = require('path');
 const randomAccessFile = require('random-access-file');
-const nodemailer = require('nodemailer');
-var sgTransport = require('nodemailer-sendgrid-transport');
+//const nodemailer = require('nodemailer');
+//var sgTransport = require('nodemailer-sendgrid-transport');
 var Email = require('email-templates');
 
 
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
-const EMAIL_OPTIONS = {
-    auth: {
-	api_key: process.env.SENDGRID_API_KEY
-    }
-}
-
 
 module.exports = {
     
@@ -141,6 +134,7 @@ function send_email(user, changed, file){
 		       makeActive: false
 		      })
 	    .then(token => {
+
 		const em = new Email({
 		    message: {
 			attachments: [
@@ -202,9 +196,17 @@ function send_email(user, changed, file){
 			    to: user.username,
 			    subject: `COLA Rate Change ${changed.country} (${changed.post})`,
 			    text: res[1],
-			    html: res[0]
+			    html: res[0],
+			    attachments: [{
+				filename: user.filename,
+				content: Buffer.from(file).toString('base64')
+			    }]
 			};
 			return sgMail.send(msg);			
+		    })
+		    .catch(err => {
+			if(err)
+			    console.log(err);
 		    })
 		
 	    })
