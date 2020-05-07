@@ -27,6 +27,7 @@ module.exports = function (app) {
 	let context = {
 	    layout: 'loginLayout.hbs',
 	    title: 'Login - COLA',
+	    login: true,
 	    style: ['login.css', 'styles.css', 'font_size.css'],
 	    script: ['login.js', 'login_ajax.js', 'utility.js']
 	}
@@ -38,6 +39,7 @@ module.exports = function (app) {
     app.get(`/create_account`, function (req, res) {
 	let context = {
 	    title: 'Create Account - COLA',
+	    createAccount: true,
 	    style: ['createAccount.css', 'styles.css', 'font_size.css'],
 	    script: ['createAccount.js', 'createAccount_ajax.js', 'utility.js'],
 	    layout: 'loginLayout.hbs'
