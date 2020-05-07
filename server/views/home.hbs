@@ -4,8 +4,13 @@
     <div class="usa-hero__callout">
       <h1 class="usa-hero__heading"><span class="usa-hero__heading--alt">COLA rates:</span>Stay notified
       </h1>
+      {{#if loggedIn}}
+      <a class="usa-button" href="/subscriptions">Review subscriptions</a>
+      {{else}}
       <p>Sign up to receive email notifications when COLA rates change for posts you select.</p>
+      <a class="usa-button" href="/login">Login</a>
       <a class="usa-button" href="/create_account">Sign up</a>
+      {{/if}}
     </div>
   </div>
   </section>

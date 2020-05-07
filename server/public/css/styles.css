@@ -140,3 +140,9 @@ body {
     display:grid;
 
 }
+.usa-footer__secondary-section a:visited {
+    color: #a9aeb1 !important;
+}
+.usa-footer__secondary-section a:hover {
+    color: #f0f0f0 !important;
+}

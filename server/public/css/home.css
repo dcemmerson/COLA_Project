@@ -2,5 +2,9 @@
     color: #a9aeb1 !important;
 }
 .usa-media-block__body a:hover {
-    color: #005ea2 !important;
+    color: #f0f0f0 !important;
+}
+
+#usa-hero-cust {
+    background-color: #162e51;
 }
