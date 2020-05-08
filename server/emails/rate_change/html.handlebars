@@ -13,7 +13,7 @@
     <div class="">
       <p>
 	The COLA rate for {{changed.country}} ({{changed.post}}) has changed from
-	<strong>{{changed.previous_allowance}}% </strong>
+	<strong>{{#if changed.previous_allownance}}{{changed.previous_allowance}}{{else}}{{changed.prevAllowance}}{{/if}}% </strong>
 	to <strong>{{changed.allowance}}%</strong>.
       </p>
       <p>
