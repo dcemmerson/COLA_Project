@@ -1,2 +1,198 @@
-#addSubscriptionsContainer #subscriptionContainer{background:#fdfdfd;border-radius:3px;-webkit-box-shadow:5px 5px 5px #dfe1e2;box-shadow:5px 5px 5px #dfe1e2;border:1px solid #dfe1e2}#addSubscriptionsContainer #addPostForm{width:100%!important;max-width:30rem}#viewSubscriptionsContainer{background:-webkit-gradient(linear,left top,left bottom,from(#f0f0f0),color-stop(#fff),to(#fff));background:linear-gradient(#f0f0f0,#fff,#fff)}#viewSubscriptionsContainer #tableContainer table{border:1px solid #dfe1e2}#viewSubscriptionsContainer #tableContainer tbody tr:nth-child(even){background:rgba(255,255,255,.8)}#viewSubscriptionsContainer #tableContainer tbody tr:nth-child(odd){background:rgba(255,255,255,.9)}#viewSubscriptionsContainer #tableContainer thead tr{background:rgba(255,255,255,.65)}#subscriptionsContainer{overflow:auto;min-height:200px}#subscriptionFormContainer{max-width:700px}.unsubscribeAlert{width:100%}.dismiss-alert::before,.invalid::after{position:relative;content:" - template must be doc/docx";left:.25rem;display:inline-block}.btn-clear{background-color:transparent;border:0}.btn-minus-tiny{max-width:2.5rem;min-width:1.9rem}#uploadTemplate{border:0!important}.dismiss-alert{position:absolute;right:0;top:0}.dismiss-alert::before{left:-.25rem;top:0;margin-left:.25rem;background-image:url(/uswds/img/close-gray-90-alt.svg),-webkit-gradient(linear,left top,left bottom,from(transparent),to(transparent));background-image:url(/uswds/img/close-gray-90-alt.svg),linear-gradient(transparent,transparent);content:"";background-repeat:no-repeat;background-position:center;background-size:.75rem;height:2rem;width:2rem}.dismiss-alert:hover::before{background-image:url(/uswds/img/close-blue-30-alt.svg),-webkit-gradient(linear,left top,left bottom,from(transparent),to(transparent));background-image:url(/uswds/img/close-blue-30-alt.svg),linear-gradient(transparent,transparent)}.modal-dialog{max-width:1000px;width:95%;height:95%}.modal-content{height:95%}.modal-body{overflow:auto}.light-border{border:1px solid #e0e0e0}
-/*# sourceMappingURL=subscriptions.css.map */
+
+#addSubscriptionsContainer #subscriptionContainer {
+	background: #fdfdfd;
+	border-radius: 3px;
+	box-shadow: 5px 5px 5px #dfe1e2;
+	border: 1px solid #dfe1e2;
+}
+
+#addSubscriptionsContainer #addPostForm {
+	width: 100% !important;
+	max-width: 30rem;
+}
+#viewSubscriptionsContainer {
+    background: linear-gradient(#f0f0f0, #ffffff, #ffffff);
+}
+#viewSubscriptionsContainer #tableContainer table {
+    border: 1px solid #dfe1e2;
+}
+#viewSubscriptionsContainer #tableContainer tbody tr:nth-child(even){
+	    background: rgba(255,255,255,0.8);
+}
+#viewSubscriptionsContainer #tableContainer tbody tr:nth-child(odd){
+    background: rgba(255,255,255,0.9);
+}
+#viewSubscriptionsContainer #tableContainer thead tr{
+    background: rgba(255, 255, 255, 0.65);
+}
+
+#subscriptionsContainer {
+    overflow: auto;
+    min-height: 200px;
+}
+
+#subscriptionFormContainer {
+    max-width: 700px;
+}
+.unsubscribeAlert {
+    width: 100%;
+}
+.invalid::after {
+    position: relative;
+    content: " - template must be doc/docx";
+    left: 0.25rem;
+    display: inline-block;
+}
+
+.btn-clear {
+    background-color: rgba(255,255,255,0);
+    border: none;
+}
+.btn-minus-tiny {
+    max-width: 2.5rem;
+    min-width: 1.9rem;
+}
+#uploadTemplate {
+    border: none !important;
+}
+.dismiss-alert {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+}
+.dismiss-alert::before {
+    position: relative;
+    left: -0.25rem;
+    top: 0rem;
+    margin-left: 0.25rem;
+    background-image: url(/uswds/img/close-gray-90-alt.svg), linear-gradient(transparent,transparent);
+    content: "";
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 0.75rem;
+    display: inline-block;
+    height: 2rem;
+    width: 2rem;
+
+}
+.dismiss-alert:hover::before {
+    background-image: url(/uswds/img/close-blue-30-alt.svg), linear-gradient(transparent,transparent);
+}
+
+.modal-dialog {
+    max-width: 1000px;
+    width: 95%;
+    height: 95%;
+}
+.modal-content {
+    height: 95%
+}
+.modal-body {
+    overflow: auto;
+}
+.light-border {
+    border: 1px solid #E0E0E0;
+}
+.trashCan {
+    content: url(/img/trash-alt.png);
+    width: 0.85rem;
+    height: 0.85rem;
+    repeat: no-repeat;
+    position: center;
+}
+.trashCan:hover {
+    position: relative;
+    content: url(/img/trash-alt--danger.png);
+    width: 0.85rem;
+    height: 0.85rem;
+    repeat: no-repeat;
+    position: center;
+}
+.downloadSubscription {
+    content: url(/img/download.png);
+    width: 0.85rem;
+    height: 0.85rem;
+    repeat: no-repeat;
+    position: center;
+}
+.downloadSubscriptionError {
+    content: url(/img/download--danger.png);
+    width: 0.85rem;
+    height: 0.85rem;
+    repeat: no-repeat;
+    position: center;
+}
+.downloadSubscriptionSuccess {
+    content: url(/img/download--success.png);
+    width: 0.85rem;
+    height: 0.85rem;
+    repeat: no-repeat;
+    position: center;
+}
+.downloadSubscription:hover {
+    position: relative;
+    content: url(/img/download--primary.png);
+    width: 0.85rem;
+    height: 0.85rem;
+    repeat: no-repeat;
+    position: center;
+}
+.email {
+    content: url(/img/envelope.png);
+    width: 0.85rem;
+    height: 0.85rem;
+    repeat: no-repeat;
+    position: center;
+}
+.emailSuccess {
+    content: url(/img/envelope--success.png);
+    width: 0.85rem;
+    height: 0.85rem;
+    repeat: no-repeat;
+    position: center;
+}
+.emailError {
+    content: url(/img/envelope--danger.png);
+    width: 0.85rem;
+    height: 0.85rem;
+    repeat: no-repeat;
+    position: center;
+}
+.email:hover {
+    position: relative;
+    content: url(/img/envelope--primary.png);
+    width: 0.85rem;
+    height: 0.85rem;
+    repeat: no-repeat;
+    position: center;
+}
+.preview {
+    content: url(/img/file-alt.png);
+    width: 0.85rem;
+    height: 0.85rem;
+    repeat: no-repeat;
+    position: center;
+}
+.preview:hover {
+    position: relative;
+    content: url(/img/file-alt--primary.png);
+    width: 0.85rem;
+    height: 0.85rem;
+    repeat: no-repeat;
+    position: center;
+}
+
+.td {
+    vertical-align: middle !important;
+}
+td td {
+    padding: 0rem !important;
+    border: none !important;
+}
+td td button {
+    margin-left: 0rem !important;
+    margin-right: 0rem !important;
+}
+.tdButtons {
+    padding: 0.25rem !important;
+}

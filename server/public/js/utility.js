@@ -6,6 +6,15 @@ function hidden_timer(element, time=5000){
 	element.hidden = true;
     }, time);
 }
+function class_timer(element, from, to, time=4000){
+    element.classList.remove(from);
+    element.classList.add(to);
+    
+    setTimeout(() => {
+	element.classList.remove(to);
+	element.classList.add(from);
+    }, time)
+}
 function show_spinner(element, lg='', insertFirst=false){
     let i = document.createElement('i');
     i.setAttribute('class', `fa fa-spinner fa-spin spinner${lg}`);

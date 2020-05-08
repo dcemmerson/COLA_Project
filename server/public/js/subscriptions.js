@@ -2,7 +2,7 @@ const LINESPACING = 10;
 document.addEventListener('DOMContentLoaded', async () => {
     let subscription_list = await fetch_user_subscription_list();
 
-//    set_window_prefs();
+    //    set_window_prefs();
     initialize_form();
     document.getElementById('subscribeAdditional').addEventListener('click', () => {
 	hide_elements($('.alert'));
@@ -39,7 +39,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 	clear_canvas(document.getElementById('previewCanvas'));
 	document.getElementById('previewTemplateLabel').innerText = "";
     });
-    
     
 });
 function pdf_to_canvas(uint8arr){
@@ -102,7 +101,7 @@ function clear_user_subscriptions(){
 
     $('#subscriptionsTable')[0].style.display = 'none';
     $('#noActiveSubscriptions')[0].style.display = 'none';
- 
+    
 }
 
 function clear_dropdown(dropdown){
@@ -116,8 +115,8 @@ function new_subscription_success(postId){
     hide_elements($('#subscriptionFormContainer'));
     let successContainer = $('#successContainer')[0];
     successContainer.style.display = 'block';
-   
-	/////////////// find which post this postId corresponds to ////////////////
+    
+    /////////////// find which post this postId corresponds to ////////////////
     for (let [num, option] of Object.entries($('#postSelect option'))) {
 	if(option.getAttribute('data-COLARatesId') == postId){
 	    $('#successSpan')[0].innerText = option.innerText;
@@ -137,12 +136,12 @@ function new_subscription_fail(cont, postId){
 /* name: initialize_form
    preconditions: subscription html DOM content has loaded
    postcondition: if user refreshed page and has a template still selected,
-                  check if that template is of type doc/docx. If not, then
-		  highlight it with red border and place x in alert box.
-		  We didn't use refresh flag on window to ensure there is
-		  no browser incapatability, as not running this initial
-		  validation check could cause user confusion if they
-		  refresh page.
+   check if that template is of type doc/docx. If not, then
+   highlight it with red border and place x in alert box.
+   We didn't use refresh flag on window to ensure there is
+   no browser incapatability, as not running this initial
+   validation check could cause user confusion if they
+   refresh page.
 */
 function initialize_form(){
     let tempVal = $('.templateVal');
@@ -281,13 +280,13 @@ function display_unsubscribe_alert(element, post, country, tok){
 
 function restore_subscription(e){
     e.preventDefault();
-//    console.log($('#undoLink')[0].getAttribute('data-tok'));
+    //    console.log($('#undoLink')[0].getAttribute('data-tok'));
     let undoLink = $('#undoLink')[0];
     
     delete_subscription(undoLink.getAttribute('data-tok'),
 			undoLink.getAttribute('data-post'),
 			undoLink.getAttribute('data-country'));
-			
+    
 }
 
 function check_empty_subscriptions(){
@@ -320,4 +319,124 @@ function populate_template_dropdown(dropdown, templates){
 	
 	dropdown.appendChild(option);
     })
+}
+
+function populate_subscription_table(res){
+    let tbody = document.getElementById('subscriptionTbody');
+    res.subscription_list.forEach(sub => {
+	let last_mod = new Date(sub.last_modified);
+	let last_mod_month = new Intl.DateTimeFormat('en-US', {month: 'short'}).format(last_mod);
+	let tr = document.createElement('tr');
+	tr.setAttribute('data-subscriptionId', sub.subscriptionId);
+
+	add_table_icons(tr, sub);
+
+	let td1 = document.createElement('td');
+	td1.setAttribute('class', 'td');
+	td1.innerText = sub.country;
+	tr.appendChild(td1);
+	let td2 = document.createElement('td');
+	td2.setAttribute('class', 'td');
+	td2.innerText = sub.post;
+	tr.appendChild(td2);
+	let td3 = document.createElement('td');
+	td3.setAttribute('class', 'td');
+	td3.innerText = sub.allowance;
+	tr.appendChild(td3);
+	let td4 = document.createElement('td');
+	td4.setAttribute('class', 'td');
+	td4.innerText = last_mod.getDate() + ' '
+	    + last_mod_month + ' '
+	    + last_mod.getFullYear();
+	tr.appendChild(td4);
+	
+	tbody.appendChild(tr);
+    })
+}
+
+/* name: add_table_icons
+   description: place email, download, preview, and delete font awesome icons in
+                this table tr row. Attach event listeners and necessary tokens and other
+		values for event handles.
+ */
+function add_table_icons(tr, sub){
+    //we are adding 2 tr inside tdMain, then two td inside each tr
+    let tdMain = document.createElement('td');
+
+    let tr1 = document.createElement('tr');
+    let tr2 = document.createElement('tr');
+    let td1 = document.createElement('td');
+    let td2 = document.createElement('td');
+    let td3 = document.createElement('td');
+    let td4 = document.createElement('td');
+
+    tdMain.setAttribute('class', 'td tdButtons');
+    
+    
+    //preview doc button
+    let prevBtn = document.createElement('button');
+    prevBtn.setAttribute('class', 'btn-clear');
+    prevBtn.setAttribute('data-subscriptionId', sub.subscriptionId); 
+    prevBtn.setAttribute('title', `Preview ${sub.country} (${sub.post}) document`);
+    prevBtn.addEventListener('click', e => {
+	e.preventDefault();
+	template_preview(null, sub.tok);
+    });
+    let iPrev = document.createElement('i');
+    iPrev.setAttribute('class', 'preview');
+    prevBtn.appendChild(iPrev);
+    td1.appendChild(prevBtn);
+
+    //download doc button
+    let downloadBtn = document.createElement('button');
+    downloadBtn.setAttribute('class', 'btn-clear');
+    downloadBtn.setAttribute('data-subscriptionId', sub.subscriptionId);
+    downloadBtn.setAttribute('title', `Download ${sub.country} (${sub.post}) document`);
+    let iDl = document.createElement('i');
+    iDl.setAttribute('class', 'downloadSubscription');
+    downloadBtn.appendChild(iDl);
+    downloadBtn.addEventListener('click', e => {
+	e.preventDefault();
+	download_subscription(iDl, sub.tok, sub.post, sub.country);
+    });
+    td2.appendChild(downloadBtn);
+    
+    //delete button
+    let delBtn = document.createElement('button');
+    delBtn.setAttribute('class', 'btn-clear');
+    delBtn.setAttribute('data-subscriptionId', sub.subscriptionId); 
+    delBtn.setAttribute('title', `Delete ${sub.country} (${sub.post}) subscription`);
+    delBtn.addEventListener('click', e => {
+	e.preventDefault();
+	delete_subscription(sub.tok, sub.post, sub.country);
+    });
+    let iDel = document.createElement('i');
+    iDel.setAttribute('class', 'trashCan');
+    delBtn.appendChild(iDel);
+    td3.appendChild(delBtn);
+    
+    //fire off email button
+    let emailBtn = document.createElement('button');
+    emailBtn.setAttribute('class', 'btn-clear');
+    emailBtn.setAttribute('data-subscriptionId', sub.subscriptionId);
+    emailBtn.setAttribute('title', `Send email for this subscription: ${sub.country} (${sub.post}) now`);
+    let iEmail = document.createElement('i');
+    iEmail.setAttribute('class', 'email');
+    emailBtn.appendChild(iEmail);
+    emailBtn.addEventListener('click', e => {
+	e.preventDefault();
+	fire_subscription_email(iEmail, sub.tok, sub.post, sub.country);
+    });
+    td4.appendChild(emailBtn);
+
+
+    tdMain.appendChild(tr1);
+    tr1.appendChild(td1);
+    tr1.appendChild(td2);
+
+    tdMain.appendChild(tr2);
+    tr2.appendChild(td3);
+    tr2.appendChild(td4);
+    
+    tr.appendChild(tdMain);
 }

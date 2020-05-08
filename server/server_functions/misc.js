@@ -333,7 +333,7 @@ module.exports = {
 	})
     },
 
-    preview_template: function(userId, templateId, context){
+    preview_template: function(userId, templateId, context, fillValues){
 	return new Promise((resolve, reject) => {
 	    db.get_user_template(userId, templateId)
 		.then(response => {
@@ -342,9 +342,22 @@ module.exports = {
 					+ ` (userId=${userId},`
 					+ ` templateId=${templateId})`));
 		    }
+
 		    context.filename = response[0].name;
 		    context.uploaded = response[0].uploaded;
-		    return tm.docx_to_pdf(response[0].file);
+		    if(fillValues){
+			return db.get_cola_rate(fillValues.country, fillValues.post)
+			    .then(postInfo => {
+				context.file = response[0].file;
+				context.username = response[0].email;
+				context.file = tm.manip_template(context, postInfo[0]);
+				
+				return tm.docx_to_pdf(context.file);
+			    })
+		    }
+		    else{
+			return tm.docx_to_pdf(response[0].file);
+		    }
 		})
 		.then(pdfBuf => {
 		    context.file = pdfBuf;

@@ -21,15 +21,16 @@ module.exports = {
     */
     manip_template: function(user, changed){
 	try{
+
 	    const date_long = new Intl.DateTimeFormat('en-US', {month: 'short'})
 		  .format(changed.last_modified);
 	    let content = user.file;
 	    let zip = new PizZip(content);
 	    let doc = new DocxTemplater();
-
+	    
 	    doc.loadZip(zip);
 	    doc.setData({
-		old_cola: changed.previous_allowance,
+		old_cola: changed.previous_allowance || changed.prevAllowance,
 		new_cola: changed.allowance,
 		date: changed.last_modified.getUTCDate()
 		    + ` ${date_long} `
@@ -38,10 +39,12 @@ module.exports = {
 		    + ` ${date_long} `
 		    + changed.last_modified.getUTCFullYear(),
 		post: changed.post,
-		country: changed.country
+		country: changed.country,
+		mgt_number: "Mgt no."
 	    });
 	    doc.render();
 	    user.fileError = false;
+	    
 	    return doc.getZip().generate({type: 'nodebuffer'});
 	}
 	catch(err){

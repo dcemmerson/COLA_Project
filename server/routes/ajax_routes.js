@@ -1,5 +1,5 @@
 const db = require('../server_functions/db_functions.js');
-
+const tm = require('../server_functions/template_manip.js');
 const misc = require('../server_functions/misc.js');
 const crs = require('../server_functions/cola_rates_script.js');
 const emails = require('../server_functions/emails.js');
@@ -41,10 +41,12 @@ module.exports = function(app, passport){
 			    return new Promise((resolve, reject) => {
 				let await_signing = [];
 				subs.forEach(sub => {
-				    await_signing.push(misc.jwt_sign({post:sub.post,
-								      country:sub.country,
-								      subscriptionId:sub.subscriptionId
-								     })
+				    await_signing.push(misc.jwt_sign({
+					templateId: sub.templateId,
+					post:sub.post,
+					country:sub.country,
+					subscriptionId:sub.subscriptionId
+				    })
 						       .then(tok => {
 							   sub.tok = tok;
 							   context.subscription_list.push(sub);
@@ -142,6 +144,7 @@ module.exports = function(app, passport){
 			res.send(context);
 		    })
 	    });
+    
     app.get('/download_template', db.authenticationMiddleware(),
 	    function (req, res) {
 		var userId = req.session.passport.user.user_id;
@@ -170,6 +173,121 @@ module.exports = function(app, passport){
 		    })
 	    });
     
+    
+
+    /***************************************************/
+    /* functionallity for current subscription buttons */
+    /***************************************************/
+    // download button
+        app.get('/download_subscription', db.authenticationMiddleware(),
+		function (req, res) {
+		    var userId = req.session.passport.user.user_id;
+		    var context = {};
+		    var decrypted;
+		    //if user is trying to preview default template, change user
+		    //id to match the default template user id for sql query
+		    if(req.query.templateId == process.env.DEFAULT_TEMPLATE_ID){
+			userId = process.env.DEFAULT_TEMPLATE_USER_ID; 
+		    }
+		    
+		    misc.jwt_verify(req.query.tok)
+			.then(dec => {
+			    decrypted = dec;
+			    return db.get_user_template(userId, decrypted.templateId);
+			})
+			.then(response => {
+			    context.filename = response[0].name;
+			    context.uploaded = response[0].uploaded;
+			    context.file = response[0].file;
+			    context.success = true;
+			    return db.get_cola_rate(decrypted.country, decrypted.post);
+			})
+			.then(postInfo => {
+			    context.file = tm.manip_template(context, postInfo[0]);
+			    context.success = true;
+			})
+			.catch(err => {
+			    if(err) console.log(err);
+			    context.msg = "Error retrieving file";
+			    context.success = false;
+			})
+			.finally(() => {
+			    res.send(context);
+			})
+		});
+        // fire email button
+        app.get('/fire_subscription_email', db.authenticationMiddleware(),
+		function (req, res) {
+		    var userId = req.session.passport.user.user_id;
+		    var context = {};
+		    var user = {};
+		    var decrypted;
+		    
+		    misc.jwt_verify(req.query.tok)
+		    	.then(dec => {
+			    decrypted = dec;
+			    return db.get_user_by_id(userId, user);
+			})
+			.then(() => {
+			    //if user is using default template, change user
+			    //id to match the default template user id for sql query
+			    if(req.query.templateId == process.env.DEFAULT_TEMPLATE_ID){
+				userId = process.env.DEFAULT_TEMPLATE_USER_ID; 
+			    }
+
+			    return db.get_user_template(userId, decrypted.templateId);
+			})
+			.then(response => {
+			    user.filename = response[0].name;
+			    context.filename = response[0].name;
+			    context.uploaded = response[0].uploaded;
+			    context.file = response[0].file;
+			    return db.get_cola_rate(decrypted.country, decrypted.post);
+			})
+			.then(postInfo => {
+			    context.username = user.email;
+			    context.file = tm.manip_template(context, postInfo[0]);
+
+			    return emails.send_email(user, postInfo[0], context.file);
+			})
+			.then(() => {
+			    context.success = true;
+			})
+			.catch(err => {
+			    if(err) console.log(err);
+			    context.msg = "Error retrieving file";
+			    context.success = false;
+			})
+			.finally(() => {
+			    context.file = null;
+			    res.send(context);
+			})
+		});
+    // preview button
+		app.get('/preview_subscription', db.authenticationMiddleware(),
+			function (req, res) {
+			    const userId = req.session.passport.user.user_id;
+			    var context = {};
+			    //		var decrypted;
+		
+		misc.jwt_verify(req.query.tok)
+		    .then(dec => {
+//			decrypted = dec;
+			return misc.preview_template(userId, dec.templateId, context, dec);
+		    })
+		    .then(() => {
+			context.success = true;
+		    })
+		    .catch(err => {
+			console.log(err);
+			context.error = true;
+			context.success = true;
+			context.msg = "Error retrieving file";
+		    })
+		    .finally(() => {
+			res.send(context);
+		    })
+	    });
     app.get('/delete_subscription', db.authenticationMiddleware(),
 	    function (req, res) {
 		const userId = req.session.passport.user.user_id;

@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
 });
 
-async function template_preview(templateId){
+function template_preview(templateId, tok=null){
     var label = document.getElementById('previewTemplateLabel');
     var docContainer = document.getElementById('canvasSpinnerContainer');
     
@@ -43,9 +43,16 @@ async function template_preview(templateId){
     show_spinner(label);
     $('#previewTemplateModal').modal({keyboard: true, focus: true});
 
+    let fe;
     
-    fetch(`/preview_template?templateId=${templateId}`)
-	.then(response => {
+    if(templateId){
+	fe = fetch(`/preview_template?templateId=${templateId}`)
+    }
+    else{
+	fe = fetch(`/preview_subscription?tok=${tok}`)
+    }
+
+    fe.then(response => {
 	    if(response.status == 200)
 		return response.json();
 	    throw new Error("Error retrieving file");
@@ -68,9 +75,9 @@ async function template_preview(templateId){
 	.finally(() =>{
 	    remove_spinner(docContainer, '-lg');
 	    docContainer.innerText = "";
-	})   
+	})
 }
-async function template_download(templateId){
+function template_download(templateId){
     var dlts = document.getElementById('downloadTemplateSpan');
     dlts.classList.remove('downloadError', 'downloadSuccess');
 
@@ -252,47 +259,7 @@ async function fetch_user_subscription_list(){
     }
 }
 
-function populate_subscription_table(res){
-    let tbody = document.getElementById('subscriptionTbody');
-    res.subscription_list.forEach(sub => {
-	let last_mod = new Date(sub.last_modified);
-	let last_mod_month = new Intl.DateTimeFormat('en-US', {month: 'short'}).format(last_mod);
-	let tr = document.createElement('tr');
-	tr.setAttribute('data-subscriptionId', sub.subscriptionId);
-	
-	let td5 = document.createElement('td');
-	let del_btn = document.createElement('button');
-	del_btn.setAttribute('class', 'btn-clear btn-minus-tiny');
-	del_btn.setAttribute('data-subscriptionId', sub.subscriptionId); 
-	del_btn.addEventListener('click', () =>{
-	    delete_subscription(sub.tok, sub.post, sub.country);
-	});
-	del_btn.setAttribute('title', `Delete ${sub.country} (${sub.post}) subscription`);
-	let minimg = document.createElement('img');
-	minimg.setAttribute('src', '/img/minus-cust.png');
 
-	del_btn.appendChild(minimg);
-	td5.appendChild(del_btn);
-	tr.appendChild(td5);
-
-	let td1 = document.createElement('td');
-	td1.innerText = sub.post;
-	tr.appendChild(td1);
-	let td2 = document.createElement('td');
-	td2.innerText = sub.country;
-	tr.appendChild(td2);
-	let td3 = document.createElement('td');
-	td3.innerText = sub.allowance;
-	tr.appendChild(td3);
-	let td4 = document.createElement('td');
-	td4.innerText = last_mod.getDate() + ' '
-	    + last_mod_month + ' '
-	    + last_mod.getFullYear();
-	tr.appendChild(td4);
-	
-	tbody.appendChild(tr);
-    })
-}
 
 /* name: delete_subscription
    preconditions: tok contains all necessary info needed in /delete_subscriptions route,
@@ -311,8 +278,6 @@ async function delete_subscription(tok, post, country){
 	    document.getElementById('subscriptionsContainer')
 	]);
 	
-//	context.subscriptionId = subscriptionId;
-	
 	clear_user_subscriptions();
 	show_spinner($('#subscriptionsContainerSpinner')[0]);
 	
@@ -330,7 +295,6 @@ async function delete_subscription(tok, post, country){
 	else
 	    throw new Error(`Error updating ${res.country} (${res.post})`);
 	
-
     }
     catch(err){
 	if(err) console.log(err);
@@ -339,4 +303,86 @@ async function delete_subscription(tok, post, country){
     await fetch_user_subscription_list();
     
     scroll_restore(scroll);
+}
+
+
+/* name: download_subscription
+   preconditions: tok contains all necessary info needed in /download_subscription route,
+                    most importantly subscriptionId. Server validates requested template 
+		    belongs to requester. 
+		  post/country technically not necessary, and will only be required if an
+		    unexpected error occurs, to display to user - else, not needed.
+		  thisEl is reference to <i> element that contains download icon.
+   postconditions: subscription has been downloaded. Error message displayed to user
+                   if error occurred somewhere in process.
+*/
+function download_subscription(thisEl, tok, post, country){
+    var spinner = document.getElementById('tableSpinner');
+    spinner.style.display = 'inline-block';
+    
+    return fetch(`/download_subscription?tok=${tok}`)
+	.then(response => {
+	    if(response.status == 200)
+		return response.json();
+	    throw new Error("Error retrieving file");
+	})
+	.then(res => {
+	    if(!res.success)
+		throw new Error("Error retrieving file");
+
+	    client_download_file(res);
+	    class_timer(thisEl, 'downloadSubscription', 'downloadSubscriptionSuccess',5000);
+	})
+	.catch(err => {
+	    console.log(err);
+	    hide_elements(document.getElementsByClassName('unsubscribeAlert'));
+	    document.getElementById('downloadSubscriptionAlertError').style.display = 'block';
+	    document.getElementById('downloadSubscriptionErrorMsgSpan').innerText = `${country} (${post})`;
+	    class_timer(thisEl, 'downloadSubscription', 'downloadSubscriptionError',8000);
+	})
+	.finally(() => {
+	    spinner.style.display = 'none';
+
+	})
+}
+/* name: fire_subscription_email
+   preconditions: tok contains all necessary info needed in /fire_subscription_email route,
+                    most importantly subscriptionId. Server validates requested template 
+		    belongs to requester. 
+		  post/country technically not necessary, and will only be required if an
+		    unexpected error occurs, to display to user - else, not needed.
+		  thisEl is reference to <i> element that contains download icon.
+   postconditions: subscription has been downloaded. Error message displayed to user
+                   if error occurred somewhere in process.
+*/
+function fire_subscription_email(thisEl, tok, post, country){
+    var spinner = document.getElementById('tableSpinner');
+    spinner.style.display = 'inline-block';
+    
+    return fetch(`/fire_subscription_email?tok=${tok}`)
+	.then(response => {
+	    if(response.status == 200)
+		return response.json();
+	    throw new Error("Error retrieving file");
+	})
+	.then(res => {
+	    if(!res.success)
+		throw new Error("Error retrieving file");
+
+	    console.log(res);
+//	    client_download_file(res);
+	    class_timer(thisEl, 'email', 'emailSuccess',5000);
+	})
+	.catch(err => {
+	    console.log(err);
+	    hide_elements(document.getElementsByClassName('unsubscribeAlert'));
+	    document.getElementById('fireSubscriptionEmailAlertError').style.display = 'block';
+	    document.getElementById('fireSubscriptionEmailErrorMsgSpan').innerText = `${country} (${post})`;
+	    document.getElementById('fireSubscriptionEmailErrorToSpan').innerText = document.getElementById('userEmail').value;
+	    class_timer(thisEl, 'email', 'emailError',8000);
+	})
+	.finally(() =>{
+	    spinner.style.display = 'none';
+
+	})    
 }

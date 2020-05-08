@@ -191,7 +191,7 @@ function update_changed_rates(changed_rates){
     let queries = [];
     
     changed_rates.forEach(changed => {
-	let query = db.update_cola_rate(changed.postId, changed.allowance)
+	let query = db.update_cola_rate(changed.postId, changed.allowance, changed.previous_allowance)
 	    .catch(err => {
 		console.log(err);
 		reject(err);

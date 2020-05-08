@@ -134,6 +134,7 @@ module.exports = {
 		});
 	})
     },
+    
     /* name: get_user_by_id
        preconditions: userId to search for in db
                       context is object we will fill with response information
@@ -159,6 +160,7 @@ module.exports = {
 		    else {
 			context.userId = result[0].id;
 			context.email = result[0].email;
+			context.username = result[0].email;
 			context.modified = result[0].modified;
 			resolve(result[0].password);
 		    }    
@@ -328,16 +330,16 @@ module.exports = {
        postconditions: COLARate.id has been updated with new_allowance
        description:
     */
-    update_cola_rate: function (COLARate_id, new_allowance) {
+    update_cola_rate: function (COLARate_id, new_allowance, prev_allowance) {
 	return new Promise((resolve, reject) => {
-	    const sql = `UPDATE COLARates SET allowance=?, last_modified=NOW() WHERE id=?`
-	    const values = [new_allowance, COLARate_id];
+	    const sql = `UPDATE COLARates SET allowance=?, prevAllowance=?, last_modified=NOW() WHERE id=?`
+	    const values = [new_allowance, prev_allowance, COLARate_id];
 	    queryDB(sql, values, mysql)
 		.then(res => resolve(res))
 		.catch(err => console.log(err))
 	});
     },
-    /* name: get_users_subsribed_to_post
+    /* name: get_users_subscribed_to_post
        preconditions: post is name of post in db
        country is name of country that corresponds to post
        postconditions: return list of users subscribed to post, along with
@@ -390,9 +392,10 @@ module.exports = {
     get_user_subscription_list: function (user_id) {
 	return new Promise((resolve, reject) => {
 	    const sql = `SELECT cr.post, cr.country, cr.allowance, cr.last_modified,`
-		  + ` s.id AS subscriptionId, s.name, s.comment`
+		  + ` s.id AS subscriptionId, s.name, s.comment, t.id AS templateId`
 		  + ` FROM user u`
 		  + ` INNER JOIN subscription s ON u.id=s.userId`
+		  + ` INNER JOIN template t ON s.templateId=t.id`
 		  + ` INNER JOIN COLARates_subscription crs ON s.id=crs.subscriptionId`
 		  + ` INNER JOIN COLARates cr ON crs.COLARatesId=cr.id`
 		  + ` WHERE u.id=? AND s.active=1`
@@ -513,12 +516,16 @@ module.exports = {
        preconditions: userId is valid logged in user id
                       templateId is valid template id, which probably came from 
 		        subscription page when user selected from template dropdown
-       postconditions:  return Promise that returns user template when fulfilled
+       postconditions:  return Promise that returns user template when fulfilled.
+                        Additoinally, method performs join user to get username, in
+			case error thrown when manip template, we can log more info
+			about what went wrong.
     */
     get_user_template: function (userId, templateId) {
 	return new Promise((resolve, reject) => {
-	    const sql = `SELECT name, file, uploaded FROM template `
-	    + ` WHERE (id=? AND userId=?)`;
+	    const sql = `SELECT u.email, t.name, t.file, t.uploaded FROM template t`
+	    + ` INNER JOIN user u on t.userId=u.id`
+	    + ` WHERE (t.id=? AND userId=?)`;
 	    const values = [templateId, userId];
 
 	    queryDB(sql, values, mysql)

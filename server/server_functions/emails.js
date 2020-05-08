@@ -81,8 +81,9 @@ module.exports = {
 		    const file = tm.manip_template(user, changed);
 
 		    //ugly but necessary to then chain this rather than return it
+
 		    send_email(user, changed, file)
-			.then((res) => {
+			.then(resMsg => {
 			    console.log(`Email sent to ${user.username} with '${user.filename}'`
 					+ ` attached. ${changed.post}, ${changed.country}: `
 				 	+ `prev_rate: ${changed.previous_allowance}, `
@@ -101,6 +102,9 @@ module.exports = {
 				+ `${changed.post}, ${changed.country}.`);
 		})    
 	});
+    },
+    send_email: function(user, changed, file){
+	return send_email(user, changed, file);
     }
 }
 
@@ -120,95 +124,86 @@ module.exports = {
 	       user easy one-click unsubscribe.
 */
 function send_email(user, changed, file){
+
+    const month_long = new Intl.DateTimeFormat('en-US', {month: 'long'})
+	  .format(changed.last_modified);
     
-    return new Promise((resolve, reject) => {
-	const month_long = new Intl.DateTimeFormat('en-US', {month: 'long'})
-	      .format(changed.last_modified);
-	
-	misc.jwt_sign({username: user.username,
-		       subscriptionId: user.subscriptionId,
-		       userId: user.userId,
-		       post: changed.post,
-		       country: changed.country,
-		       postId: changed.postId,
-		       makeActive: false
-		      })
-	    .then(token => {
+    return misc.jwt_sign({username: user.username,
+			  subscriptionId: user.subscriptionId,
+			  userId: user.userId,
+			  post: changed.post,
+			  country: changed.country,
+			  postId: changed.postId,
+			  makeActive: false
+			 })
+	.then(token => {
 
-		const em = new Email({
-		    message: {
-			attachments: [
-			    {
-				filename: user.filename,
-				content: file
-			    }]
-		    },
-		    views: {
-			options: {
-			    extension: 'handlebars'
-			}
-		    },
-		    juice: true,
-		    juiceResources: {
-			preserveImportant: true,
-			webResources: {
-			    relativeTo: path.join(__dirname, '..', '/emails/build'),
-			    images: true
-			}
+	    const em = new Email({
+
+		views: {
+		    options: {
+			extension: 'handlebars'
 		    }
-		});
+		},
+		juice: true,
+		juiceResources: {
+		    preserveImportant: true,
+		    webResources: {
+			relativeTo: path.join(__dirname, '..', '/emails/build'),
+			images: true
+		    }
+		}
+	    });
 
-		let awaitPromises = [
-		    em.render('rate_change/html.handlebars', {
-			locale: 'en',
-			title: `COLA Rate Change ${changed.country} (${changed.post})`,
-			username: user.username,
-			changed: changed,
-			date: changed.last_modified.getUTCDate(),
-			month: month_long,
-			year: changed.last_modified.getUTCFullYear(),
-			host: process.env.HOST,
-			jwt: token,
-			errorFilename: user.errorFilename,
-			fileError: user.fileError,
-			style: ['rate_change_email.css']
-		    }),
-		    em.render('rate_change/text.handlebars', {
-			locale: 'en',
-			title: `COLA Rate Change ${changed.country} (${changed.post})`,
-			username: user.username,
-			changed: changed,
-			date: changed.last_modified.getUTCDate(),
-			month: month_long,
-			year: changed.last_modified.getUTCFullYear(),
-			host: process.env.HOST,
-			jwt: token,
-			errorFilename: user.errorFilename,
-			fileError: user.fileError,
-			style: ['rate_change_email.css']
-		    })
-		];
+	    let awaitPromises = [
+		em.render('rate_change/html.handlebars', {
+		    locale: 'en',
+		    title: `COLA Rate Change ${changed.country} (${changed.post})`,
+		    username: user.username,
+		    changed: changed,
+		    date: changed.last_modified.getUTCDate(),
+		    month: month_long,
+		    year: changed.last_modified.getUTCFullYear(),
+		    host: process.env.HOST,
+		    jwt: token,
+		    errorFilename: user.errorFilename,
+		    fileError: user.fileError,
+		    style: ['rate_change_email.css']
+		}),
+		em.render('rate_change/text.handlebars', {
+		    locale: 'en',
+		    title: `COLA Rate Change ${changed.country} (${changed.post})`,
+		    username: user.username,
+		    changed: changed,
+		    date: changed.last_modified.getUTCDate(),
+		    month: month_long,
+		    year: changed.last_modified.getUTCFullYear(),
+		    host: process.env.HOST,
+		    jwt: token,
+		    errorFilename: user.errorFilename,
+		    fileError: user.fileError,
+		    style: ['rate_change_email.css']
+		})
+	    ];
 
-		return Promise.all(awaitPromises)
-		    .then(res => {
-			const msg = {
-			    from: process.env.FROM_EMAIL,
-			    to: user.username,
-			    subject: `COLA Rate Change ${changed.country} (${changed.post})`,
-			    text: res[1],
-			    html: res[0],
-			    attachments: [{
-				filename: user.filename,
-				content: Buffer.from(file).toString('base64')
-			    }]
-			};
-			return sgMail.send(msg);			
-		    })
-		    .catch(err => {
-			if(err)
-			    console.log(err);
-		    })
-		
-	    })
-    })
+	    return Promise.all(awaitPromises)
+		.then(res => {
+		    const msg = {
+			from: process.env.FROM_EMAIL,
+			to: user.username,
+			subject: `COLA Rate Change ${changed.country} (${changed.post})`,
+			text: res[1],
+			html: res[0],
+			attachments: [{
+			    filename: user.filename,
+			    content: Buffer.from(file).toString('base64')
+			}]
+
+		    };
+		    
+		    return sgMail.send(msg);			
+		})
+	    
+	})
 }
+
