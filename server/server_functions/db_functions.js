@@ -403,7 +403,29 @@ module.exports = {
 	    const values = [user_id];
 	    queryDB(sql, values, mysql)
 		.then(res => resolve(res))
-		.catch(err => console.log(err))
+		.catch(reject)
+	});
+    },
+    /* name: get_user_subscription_by_id
+       preconditions: subscriptionId matches subscription we are querying
+       postconditions:  return Promise that returns subscription match subscriptionId 
+       subscription when fulfilled
+    */
+    get_user_subscription_by_id: function (subscriptionId) {
+	return new Promise((resolve, reject) => {
+	    const sql = `SELECT cr.post, cr.country, cr.allowance, cr.last_modified,`
+		  + ` s.id AS subscriptionId, s.name, s.comment`
+		  + ` FROM user u`
+		  + ` INNER JOIN subscription s ON u.id=s.userId`
+//		  + ` INNER JOIN template t ON s.templateId=t.id`
+		  + ` INNER JOIN COLARates_subscription crs ON s.id=crs.subscriptionId`
+		  + ` INNER JOIN COLARates cr ON crs.COLARatesId=cr.id`
+		  + ` WHERE s.id=?`
+		  + ` ORDER BY cr.country ASC, cr.post ASC`;
+	    const values = [subscriptionId];
+	    queryDB(sql, values, mysql)
+		.then(res => resolve(res[0]))
+		.catch(reject)
 	});
     },
     /* name: get_user_template_names
@@ -449,7 +471,7 @@ module.exports = {
        comment is any comment the user added when uploading file.
        postconditions:  return Promise that fulfills after new subscription added
     */
-    insert_new_subscription_with_template_file: function (user_id, post_id, filename, file, comment="") {
+    insert_new_subscription_with_template_file: function (user_id, post_id, filename, file, comment="", context) {
 	return new Promise((resolve, reject) => {
 	    let sql = `INSERT INTO template (name, file, comment, userId) VALUES (?, ?, ?, ?);`
 	    
@@ -459,15 +481,17 @@ module.exports = {
 		.then(res => {
 		    sql = `INSERT INTO subscription (name, comment, userId, templateId, active) VALUES (?, ?, ?, ?, ?);`
 		    values = ["", "", user_id, res.insertId, 1];
+		    context.templateId = res.insertId;
 		    return queryDB(sql,values, mysql);
 		})
 	    	.then(res => {
 		    sql = ` INSERT INTO COLARates_subscription (subscriptionId, COLARatesId) VALUES (?, ?);`
 		    values = [res.insertId, post_id];
+		    context.subscriptionId = res.insertId;
 		    return queryDB(sql,values, mysql);
 		})
 		.then(() => resolve())
-		.catch(err => console.log(err))
+		.catch(reject)
 	});
     },
     /* name: insert_new_subscription_with_prev_template
@@ -476,18 +500,20 @@ module.exports = {
        template_id is id corresponding to primary key in template table
        postconditions:  return Promise that fulfills after new subscription added
     */
-    insert_new_subscription_with_prev_template: function (user_id, post_id, template_id, comment="") {
+    insert_new_subscription_with_prev_template: function (user_id, post_id, template_id, comment="", context) {
 	return new Promise((resolve, reject) => {
 	    let sql = `INSERT INTO subscription (name, comment, userId, templateId, active) VALUES (?, ?, ?, ?, ?);`
 	    let values = ["", "", user_id, template_id, 1];
+	    context.templateId = template_id;
 	    queryDB(sql, values, mysql)
 	    	.then(res => {
 		    sql = ` INSERT INTO COLARates_subscription (subscriptionId, COLARatesId) VALUES (?, ?);`
 		    values = [res.insertId, post_id];
+		    context.subscriptionId = res.insertId;
 		    return queryDB(sql,values, mysql);
 		})
 	    	.then(() => resolve())
-		.catch(err => console.log(err))
+		.catch(reject)
 	});
     },
     /* name: update_user_subscription

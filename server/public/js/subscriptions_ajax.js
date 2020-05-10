@@ -112,6 +112,9 @@ async function submit_new_subscription(){
     let post = $('#postSelect')[0];
     let post_id = post[post.selectedIndex].getAttribute('data-COLARatesId');
 
+    show_spinner($('#subscriptionsContainerSpinner')[0]);
+    document.getElementById('tableSpinner').display = 'inline-block';
+
     try{
 	if(upload_temp[0].value){
 	    var upload = true;
@@ -127,7 +130,10 @@ async function submit_new_subscription(){
 	    prev_temp[0].selectedIndex = 0;
 	    upload_temp[0].value = "";
 	    new_subscription_success(post_id);
-	    fetch_user_templates()
+	    
+	    let tempFetch = fetch_user_templates();
+
+	    add_subscription_to_table(result);
 	}
 	else if(result.error)
 	    throw new Error(result.error); //custom error originating from server
@@ -152,22 +158,12 @@ async function submit_new_subscription(){
 	    
 	}
     }
-    
-
-    //MOVE INTO final part of previous try/catch
-    //keep this in a separate try/catch statement. Will ensure if there is
-    //an error at some point in the above try catch, the subscription list
-    //will remain accurate, even if we deleted the subscription on server
-    //and at some later point something unexpectedly threw an error.
-    try{
-	show_spinner($('#subscriptionsContainerSpinner')[0]);
-	clear_user_subscriptions();
-	await fetch_user_subscription_list();
+    finally{
+//	clear_user_subscriptions();
+	//	await fetch_user_subscription_list();
+	document.getElementById('tableSpinner').display = 'none';
+	remove_spinner($('#subscriptionsContainerSpinner')[0]);
     }
-    catch(err){
-	console.log(err);
-    }
-    remove_spinner($('#subscriptionsContainerSpinner')[0]);
 }
 
 async function add_new_subscription_prev_template(post_id, prev_temp){     
@@ -266,43 +262,61 @@ async function fetch_user_subscription_list(){
                     most importantly subscriptionId and makeActive (bool)
 		  post/country technically not necessary, and will only be required if an
 		    unexpected error occurs, to display to user - else, not needed.
+		  thisEl is reference to <i> element that contains download icon.
    postconditions: subscription has been either deactivated or reactivated, depending on
                    calling context and token
 */
-async function delete_subscription(tok, post, country){
+async function delete_subscription(thisEl, tok, post, country, subscriptionId){
     try{
 	var context = {};
-	hide_elements($('.unsubscribeAlert'));
-	var scroll = scroll_save([
-	    document.getElementsByTagName('html')[0],
-	    document.getElementById('subscriptionsContainer')
-	]);
-	
-	clear_user_subscriptions();
-	show_spinner($('#subscriptionsContainerSpinner')[0]);
+	var spinner = document.getElementById('tableSpinner');
+	var tableCover = document.getElementById('tableCover');
+
+	if(thisEl){
+	    thisEl.parentNode.disabled = true;
+	    class_timer(thisEl, 'trashCan', 'trashCanSecondary');
+	}
+
+	tableCover.style.display = 'block';
+	spinner.style.display = 'inline-block';
 	
 	let response = await fetch(`/delete_subscription?tok=${tok}`)
 	let res = await response.json();
 
+
+	hide_elements($('.unsubscribeAlert'));
 	if(res.deleted){
 	    display_unsubscribe_alert($('#unsubscribeAlertSuccess')[0],
-				      res.post, res.country, res.tok);
+				      res.post, res.country, res.tok, subscriptionId);
+	    update_table(subscriptionId, true);
+	    
 	}
 	else if(res.restored){
 	    display_unsubscribe_alert($('#resubscribeAlertSuccess')[0],
 				      res.post, res.country);
+	    update_table(subscriptionId, false);
 	}
 	else
 	    throw new Error(`Error updating ${res.country} (${res.post})`);
-	
+
     }
     catch(err){
 	if(err) console.log(err);
-	display_unsubscribe_alert($('#unsubscribeAlertError')[0], post, country)	
+	display_unsubscribe_alert($('#unsubscribeAlertError')[0], post, country);	
     }
-    await fetch_user_subscription_list();
+    finally{
+	
+	if(thisEl){
+	    thisEl.parentNode.disabled = false;
+	    class_timer(thisEl, 'trashCanSecondary', 'trashCan');
+	}
+	tableCover.style.display = 'block';
+//	tableCover.style.animation = 'slideCoverRemove 0.5s 1 forwards';
+	spinner.style.display = 'none';
+    }
+//    await fetch_user_subscription_list();
     
-    scroll_restore(scroll);
+//    scroll_restore(scroll);
 }
 
 
@@ -319,7 +333,9 @@ async function delete_subscription(tok, post, country){
 function download_subscription(thisEl, tok, post, country){
     var spinner = document.getElementById('tableSpinner');
     spinner.style.display = 'inline-block';
-    
+
+    thisEl.parentNode.disabled = true;
+    class_timer(thisEl, 'downloadSubscription', 'downloadSubscriptionSecondary');    
     return fetch(`/download_subscription?tok=${tok}`)
 	.then(response => {
 	    if(response.status == 200)
@@ -331,16 +347,17 @@ function download_subscription(thisEl, tok, post, country){
 		throw new Error("Error retrieving file");
 
 	    client_download_file(res);
-	    class_timer(thisEl, 'downloadSubscription', 'downloadSubscriptionSuccess',5000);
+	    class_timer(thisEl,  'downloadSubscriptionSecondary', 'downloadSubscriptionSuccess', 'downloadSubscription',5000);
 	})
 	.catch(err => {
 	    console.log(err);
 	    hide_elements(document.getElementsByClassName('unsubscribeAlert'));
 	    document.getElementById('downloadSubscriptionAlertError').style.display = 'block';
 	    document.getElementById('downloadSubscriptionErrorMsgSpan').innerText = `${country} (${post})`;
-	    class_timer(thisEl, 'downloadSubscription', 'downloadSubscriptionError',8000);
+	    class_timer(thisEl, 'downloadSubscriptionSecondary', 'downloadSubscriptionError', 'downloadSubscription',8000);
 	})
 	.finally(() => {
+	    thisEl.parentNode.disabled = false;
 	    spinner.style.display = 'none';
 
 	})
@@ -358,6 +375,9 @@ function download_subscription(thisEl, tok, post, country){
 function fire_subscription_email(thisEl, tok, post, country){
     var spinner = document.getElementById('tableSpinner');
     spinner.style.display = 'inline-block';
+
+    thisEl.parentNode.disabled = true;
+    class_timer(thisEl, 'email', 'emailSecondary');
     
     return fetch(`/fire_subscription_email?tok=${tok}`)
 	.then(response => {
@@ -371,7 +391,7 @@ function fire_subscription_email(thisEl, tok, post, country){
 
 	    console.log(res);
 //	    client_download_file(res);
-	    class_timer(thisEl, 'email', 'emailSuccess',5000);
+	    class_timer(thisEl, 'emailSecondary', 'emailSuccess', 'email',5000);
 	})
 	.catch(err => {
 	    console.log(err);
@@ -379,9 +399,10 @@ function fire_subscription_email(thisEl, tok, post, country){
 	    document.getElementById('fireSubscriptionEmailAlertError').style.display = 'block';
 	    document.getElementById('fireSubscriptionEmailErrorMsgSpan').innerText = `${country} (${post})`;
 	    document.getElementById('fireSubscriptionEmailErrorToSpan').innerText = document.getElementById('userEmail').value;
-	    class_timer(thisEl, 'email', 'emailError',8000);
+	    class_timer(thisEl, 'emailSecondary', 'emailError', 'email',8000);
 	})
-	.finally(() =>{
+	.finally(() => {
+	    thisEl.parentNode.disabled = false;
 	    spinner.style.display = 'none';
 
 	})    

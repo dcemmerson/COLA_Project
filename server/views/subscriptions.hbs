@@ -40,7 +40,7 @@
       </div>
       <div id="errorContainer" class="alert" style="display:none">
 	<div class="usa-alert usa-alert--error" id="">
-	  v	  <div class="usa-alert__body">
+	  <div class="usa-alert__body">
 	    <h3 class="usa-alert__heading">New subscription - error</h3>
 	    <p class="usa-alert__text"><strong>Something has gone wrong!</strong></p>
 	    <p class="usa-alert__text val postVal">Select a post</p>
@@ -121,7 +121,7 @@
     <div class="col-12">
       <br>
       <div class="row justify-content-around">
-	<div class="container" id="subscriptionsOuterContainer">
+	<div class="width-100" id="subscriptionsOuterContainer">
 	  <div class="mx-3">
 	    <div id="unsubscribeAlertBlank" class="unsubscribeAlert">
 	      <br><br><br><br>
@@ -195,9 +195,12 @@
 	  </div>
 	  <br>
 	  <div class="" id="tableContainer">
-	    <h2 class="h4 ml-4 ml-md-2" id="currentSubscriptions"><b>Current Subscriptions</b></h2>
+	    <div id="tableCover"></div>
+	    <h2 class="h4 pl-4 py-3" id="currentSubscriptions">
+	      <b>Current Subscriptions</b>
+	    </h2>
 
-	    <div id="subscriptionsContainer" class=" ml-1 mt-1">
+	    <div id="subscriptionsContainer" class="">
 	      <input id="userEmail" style="display:none" value="{{email}}">
 	      <table class="table" id="subscriptionsTable">
 		<thead>

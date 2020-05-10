@@ -6,14 +6,16 @@ function hidden_timer(element, time=5000){
 	element.hidden = true;
     }, time);
 }
-function class_timer(element, from, to, time=4000){
+function class_timer(element, from, to, fin, time=null){
     element.classList.remove(from);
     element.classList.add(to);
-    
-    setTimeout(() => {
-	element.classList.remove(to);
-	element.classList.add(from);
-    }, time)
+
+    if(time){
+	setTimeout(() => {
+	    element.classList.remove(to);
+	    element.classList.add(fin);
+	}, time)
+    }
 }
 function show_spinner(element, lg='', insertFirst=false){
     let i = document.createElement('i');

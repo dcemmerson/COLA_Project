@@ -88,15 +88,31 @@ module.exports = function(app, passport){
 		     .then(() => db.insert_new_subscription_with_template_file(userId,
 									       req.body.post_id,
 									       req.file.originalname,
-									       req.file.buffer))
+									       req.file.buffer, '',
+									       context))
+		     .then(() => db.get_user_subscription_by_id(context.subscriptionId))
+		     .then(sub => {
+			 console.log(sub);
+			 context = sub;
+			 return misc.jwt_sign({
+			     templateId: sub.templateId,
+			     post:sub.post,
+			     country:sub.country,
+			     subscriptionId:sub.subscriptionId
+			 })
+			     .then(tok => {
+				 context.tok = tok;
+			     })
+		     })		 
 		     .then(() => {
 			 context.success = true;
-			 res.send(context);
 		     })
 		     .catch(err => {
 			 if(err) console.log(err);
 			 context.success = false;
 			 context.error = err;
+		     })
+		     .finally(() => {
 			 res.send(context);
 		     })
 	     });
@@ -107,15 +123,31 @@ module.exports = function(app, passport){
 
 		 db.insert_new_subscription_with_prev_template(userId,
 							       req.body.post_id,
-							       req.body.template_id)
+							       req.body.template_id, '',
+							       context)
+		     .then(() => db.get_user_subscription_by_id(context.subscriptionId))
+		     .then(sub => {
+			 console.log(sub);
+			 context = sub;
+			 return misc.jwt_sign({
+			     templateId: sub.templateId,
+			     post:sub.post,
+			     country:sub.country,
+			     subscriptionId:sub.subscriptionId
+			 })
+			     .then(tok => {
+				 context.tok = tok;
+			     })
+		     })		 
 		     .then(() => {
 			 context.success = true;
-			 res.send(context);
 		     })
 		     .catch(err => {
+			 if(err) console.log(err);
 			 context.success = false;
 			 context.error = err;
-			 console.log(err);
+		     })
+		     .finally(() => {
 			 res.send(context);
 		     })
 	     });

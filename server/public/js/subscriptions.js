@@ -266,26 +266,29 @@ function validate_subscription(submit=false){
     return valid;
 }
 
-function display_unsubscribe_alert(element, post, country, tok){
+function display_unsubscribe_alert(element, post, country, tok, subscriptionId){
     element.getElementsByClassName('unsubscribeMsgSpan')[0].innerText = `${country} (${post})`;
     element.style.display = 'block';
     
     $('#undoLink')[0].setAttribute('data-tok', tok);
     $('#undoLink')[0].setAttribute('data-post', post);
     $('#undoLink')[0].setAttribute('data-country', country);
+    $('#undoLink')[0].setAttribute('data-subscriptionId', subscriptionId);
     
     $('#undoLink')[0].removeEventListener('click', restore_subscription);    
     $('#undoLink')[0].addEventListener('click', restore_subscription);
+
 }
 
 function restore_subscription(e){
     e.preventDefault();
-    //    console.log($('#undoLink')[0].getAttribute('data-tok'));
+
     let undoLink = $('#undoLink')[0];
     
-    delete_subscription(undoLink.getAttribute('data-tok'),
+    delete_subscription(null, undoLink.getAttribute('data-tok'),
 			undoLink.getAttribute('data-post'),
-			undoLink.getAttribute('data-country'));
+			undoLink.getAttribute('data-country'),
+			undoLink.getAttribute('data-subscriptionId'));
     
 }
 
@@ -321,18 +324,43 @@ function populate_template_dropdown(dropdown, templates){
     })
 }
 
-function populate_subscription_table(res){
+function add_subscription_to_table(sub){
+    let tbody = document.getElementById('subscriptionTbody');
+    let rowNum = 0;
+    let tr;
+
+    // iterate through table to determine where we should add new row to keep
+    // table organized in alphabetical order by country name
+    do {
+	tr = tbody.getElementsByClassName('subscriptionRow')[rowNum];
+	rowNum++;
+    } while(tr !== null & tr.getElementsByClassName('countryName')[0].innerText < sub.country);
+
+
+    var res = {subscription_list: [sub]};
+    if(tr === null){
+	populate_subscription_table(res);
+    }
+    else {
+	populate_subscription_table(res, rowNum);
+    }
+
+	
+
+}
+function populate_subscription_table(res, rowNum=null){
     let tbody = document.getElementById('subscriptionTbody');
     res.subscription_list.forEach(sub => {
 	let last_mod = new Date(sub.last_modified);
 	let last_mod_month = new Intl.DateTimeFormat('en-US', {month: 'short'}).format(last_mod);
 	let tr = document.createElement('tr');
 	tr.setAttribute('data-subscriptionId', sub.subscriptionId);
+	tr.setAttribute('class', 'subscriptionRow');
 
 	add_table_icons(tr, sub);
 
 	let td1 = document.createElement('td');
-	td1.setAttribute('class', 'td');
+	td1.setAttribute('class', 'td countryName');
 	td1.innerText = sub.country;
 	tr.appendChild(td1);
 	let td2 = document.createElement('td');
@@ -347,10 +375,15 @@ function populate_subscription_table(res){
 	td4.setAttribute('class', 'td');
 	td4.innerText = last_mod.getDate() + ' '
 	    + last_mod_month + ' '
-	    + last_mod.getFullYear();
+	    + last_mod.getFullYear();	    
 	tr.appendChild(td4);
-	
-	tbody.appendChild(tr);
+
+	if(rowNum === null){
+	    tbody.appendChild(tr);
+	}
+	else{
+	    tbody.insertBefore(tr, tbody.childNodes[rowNum - 1]);
+	}
     })
 }
 
@@ -406,13 +439,13 @@ function add_table_icons(tr, sub){
     delBtn.setAttribute('class', 'btn-clear');
     delBtn.setAttribute('data-subscriptionId', sub.subscriptionId); 
     delBtn.setAttribute('title', `Delete ${sub.country} (${sub.post}) subscription`);
-    delBtn.addEventListener('click', e => {
-	e.preventDefault();
-	delete_subscription(sub.tok, sub.post, sub.country);
-    });
     let iDel = document.createElement('i');
     iDel.setAttribute('class', 'trashCan');
     delBtn.appendChild(iDel);
+    delBtn.addEventListener('click', e => {
+	e.preventDefault();
+	delete_subscription(iDel, sub.tok, sub.post, sub.country, sub.subscriptionId);
+    });
     td3.appendChild(delBtn);
     
     //fire off email button
@@ -439,4 +472,26 @@ function add_table_icons(tr, sub){
     tr2.appendChild(td4);
     
     tr.appendChild(tdMain);
+}
+
+/* name: update_table
+   precondition: subscriptionId must is id of valid subscription in db
+                 del is boolean. true means we will hide this elemnet from table, else display.
+   postconditions: table has been search for subscription id and tr corresponding to
+                   subscriptionId has been either hidden or deleted depending on del.
+*/
+function update_table(subscriptionId, del){
+    let tbody = document.getElementById('subscriptionTbody');
+    let trs = tbody.getElementsByTagName('tr');
+
+    for(let i = 0; i < trs.length; i++){
+	if(trs[i].getAttribute('data-subscriptionId') == subscriptionId){
+	    if(del){
+		trs[i].style.display = 'none';
+	    }
+	    else{
+		trs[i].style.display = 'table-row';
+	    }
+	}
+    }
 }
