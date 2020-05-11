@@ -404,7 +404,7 @@ function populate_subscription_table(res, rowNum=null){
 	tr.appendChild(td3);
 	let td4 = document.createElement('td');
 	td4.setAttribute('class', 'td prevAllowance');	    
-	td4.innerText = sub.prevAllowance;
+	td4.innerText = sub.prevAllowance + '%';
 	tr.appendChild(td4);
 	if(sub.prevAllowance === -99){
 	    td4.innerText = 'n/a';
