@@ -6,6 +6,21 @@ body {
     display: grid;
     grid-template-rows: auto 1fr auto;
 }
+
+.usa-logo .usa-logo__text::before{
+    background-image: url(/img/logo.png);
+    height: 1.5rem;
+    width: 1.5rem;
+    content: "";
+    background-repeat: no-repeat;
+    background-size: 100% auto;
+    display: inline-block;
+    margin-left: 2px;
+    margin-right: 0.25rem;
+    position:relative;
+    top: 2px;
+}
+
 .underline {
     
     text-decoration: 1px underline #dee2e6;

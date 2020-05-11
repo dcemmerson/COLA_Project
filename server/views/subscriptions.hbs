@@ -2,7 +2,7 @@
   <h1 class="h2 border-bottom px-2 pt-4 pb-2"><strong>Manage Subscriptions </strong></h1>
 </div>
 
-<div class="container-fluid">
+<section class="container-fluid">
   <div class="row" id="viewSubscriptionsContainer">
     <!-- first row in main screen -->
     <div class="col-12">
@@ -28,10 +28,10 @@
 		  <span role="button" class="dismiss-alert-button"></span>
 		</div>
 		<div class="usa-alert__body">
-		    <h3 class="usa-alert__heading">Unsubscribed!
-		      <a id="undoLink" href="#" class="usa-link sm">undo</a>
-		    </h3>
-		 
+		  <h3 class="usa-alert__heading">Unsubscribed!
+		    <a id="undoLink" href="#" class="usa-link sm">undo</a>
+		  </h3>
+		  
 		  <p class="usa-alert__text">You have unsubscribed from <span class="unsubscribeMsgSpan">{error}</span></p>
 		</div>
 	      </div>
@@ -129,9 +129,9 @@
       <br><br><br><br>
     </div>
   </div>
-</div>
+</section>
 <!-- second row in main screen -->
-<div id="lowerContentArea" class="container-fluid pt-5">
+<section id="lowerContentArea" class="container-fluid pt-5">
   <div class="row mt-5 pb-3 justify-content-around" id="addSubscriptionsContainer">
     <!-- main center screen -->
     <div class="col-12 pt-3 pb-3 mb-4 mt-4" id="subscriptionContainer">
@@ -241,19 +241,21 @@
       </div>
     </div>
   </div>
-</div>
-
-<section class="grid-container usa-section">
+</section>
+<!-- third section - we notify you... -->
+<section id="aboutSection" class="py-sm-2 py-md-3 py-lg-4 mt-5">
+  <div class="grid-container usa-section">
     <div class="grid-row grid-gap">
       <div class="tablet:grid-col-4">
-        <h2 class="font-heading-xl margin-top-0 tablet:margin-bottom-0">We notify you when COLA rates change</h2>
+	<h2 class="font-heading-xl margin-top-0 tablet:margin-bottom-0">We notify you when COLA rates change</h2>
       </div>
       <div class="tablet:grid-col-8 usa-prose">
-        <p>Choose which posts to be notified about when cost of living adjustment (COLA) rates change. Receive emails when these rates change.</p>
-	<p>Our system monitors COLA rates found at <a class="usa-link usa-link--external" href="https://aoprals.state.gov/Web920/cola.asp">aoprals.state.gov</a> daily. Upon COLA rates changing to a post to which you are subscribed, we will notify you via email within 24 hours.</p>
+	<p>Choose which posts to be notified about when cost of living adjustment (COLA) rates change and receive emails when these rates change.</p>
+	<p>Our system monitors COLA rates found at <a class="usa-link usa-link--alt usa-link--external" href="https://aoprals.state.gov/Web920/cola.asp">aoprals.state.gov</a> daily. Upon COLA rates changing to a post to which you are subscribed, we will notify you via email within 24 hours.</p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
 <!-- Modal -->
 <div class="modal fade" id="previewTemplateModal" tabindex="-1" role="dialog" aria-labelledby="previewTemplates" aria-hidden="true">

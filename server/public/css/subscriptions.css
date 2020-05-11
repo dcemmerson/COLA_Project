@@ -1,3 +1,16 @@
+#aboutSection {
+    background-color: #162e51;
+    color: #f0f0f0;
+    background-image: url(/img/hero_cust.png);
+    background-position: center;
+}
+
+#aboutSection a:visited{
+    color: #a9aeb1 !important;
+}
+#aboutSection a:hover{
+    color: #f0f0f0 !important
+}
 #subscriptionsTable th {
     z-index: 2;
 }
