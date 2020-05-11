@@ -371,7 +371,7 @@ function add_subscription_to_table(sub){
 function check_previous_allowance_99(){
     let prevs = document.getElementsByClassName('prevAllowance');
     for(let i = 0; i < prevs.length; i++){
-	if(prevs[i].innerText.match('-99') && prevs[i].parentElement.style.display !== "none"){
+	if(prevs[i].innerText.match('n/a') && prevs[i].parentElement.style.display !== "none"){
 	    document.getElementById('prevAllowanceWarning').style.display = 'flow';
 	    return;
 	}
@@ -400,13 +400,14 @@ function populate_subscription_table(res, rowNum=null){
 	tr.appendChild(td2);
 	let td3 = document.createElement('td');
 	td3.setAttribute('class', 'td');
-	td3.innerText = sub.allowance;
+	td3.innerText = sub.allowance + '%';
 	tr.appendChild(td3);
 	let td4 = document.createElement('td');
 	td4.setAttribute('class', 'td prevAllowance');	    
 	td4.innerText = sub.prevAllowance;
 	tr.appendChild(td4);
 	if(sub.prevAllowance === -99){
+	    td4.innerText = 'n/a';
 	    let sup = document.createElement('sup');
 	    sup.innerText = '*';
 	    td4.appendChild(sup);

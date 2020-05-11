@@ -1,3 +1,9 @@
+#subscriptionsTable th {
+    z-index: 2;
+}
+#subscriptionsTable td {
+    z-index: 1;
+}
 
 .tableCover {
     border-radius: 3px;

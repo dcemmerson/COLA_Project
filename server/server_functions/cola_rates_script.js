@@ -152,6 +152,34 @@ module.exports = {
 	    start_cola_rate_change_script();
 	});
 	console.log("Cola rate change script schduled to start at: " + midnight);
+    },
+
+    scrape_previous_cola_rates: async function(){
+	try {
+//	    let rateDates = set_previous_dates(new Date('March 3, 2019'));
+//	    let rateDates = set_previous_dates(new Date('March 1, 2020'));
+	    //	    let rateDates = set_previous_dates(new Date('May 10, 2020'));
+	    let rateDates = set_previous_dates(new Date('March 11, 2012'));
+	    
+	    let scrape = await check_previous_rates_99();
+	    let counter = 1;
+	    
+	    while(scrape === true && counter < rateDates.length){
+		console.log('start scrape again ' + counter);
+		let prevRates = await scrape_previous_allowances(rateDates[counter].dateStr);
+		//		console.log(prevRates);
+
+		if(prevRates.length === 0) return;
+		
+		await update_previous_allowances(prevRates, rateDates[counter - 1].date);
+		
+		scrape = await check_previous_rates_99();
+		counter++;
+	    }
+	}
+	catch(err) {
+	    console.log(err);
+	}
     }
 }
     /* name: start_cola_rate_change_script
@@ -306,6 +334,112 @@ function parse_cola_page(html){
     })
     return context;
 }
-function format_string(str){
+
+/******************************************************************/
+/************ functions for setting prev allowances ***************/
+/*************** Note used in app anywhere else *******************/
+/******************************************************************/
+
+
+function check_previous_rates_99(){
+    return new Promise((resolve, reject) => {
+	db.get_prev_allowances_99()
+	    .then(res => {
+		if(res.length > 0){
+		    console.log(res.length + " posts remaining with previous allowance of -99");
+		    resolve(true);
+		}
+		else {
+		    console.log("All posts' previous allowances updated.");
+		    resolve(false);
+		    
+		}
+		
+	    })
+	    .catch(err => {
+		console.log('error in check_previous_rates_99');
+		reject(err);
+	    })
+    })
+}
+function scrape_previous_allowances(date){
+	let changed_rates = [];
+    return new Promise((resolve, reject) => {
+	console.log(`trying to scrape: https://aoprals.state.gov/Web920/cola.asp?EffectiveDate=${date}`);
+	after_load(`https://aoprals.state.gov/Web920/cola.asp?EffectiveDate=${date}`,html => {
+	    let prevRates = parse_cola_page(html);
+	    if(prevRates.length == 0) console.log('No scraped data ' + date);
+	    resolve(prevRates);
+	    
+	});
+    })
+}
+function update_previous_allowances(prevRates, effectiveDate){
+    return new Promise((resolve, reject) => {
+	let awaitPromises = [];
+	prevRates.forEach(prevRate => {
+	    let query = db.get_cola_rate(prevRate.country, prevRate.post)
+		.then(dbRes => {
+		   
+		    if(dbRes[0].prevAllowance == -99 && dbRes[0].allowance != prevRate.allowance){
+			//update prevAllowance for this post in db
+			return db.set_prev_allowance(dbRes[0].id, prevRate.allowance, effectiveDate);
+		    }
+		    else{
+			return;
+		    }
+		})
+		.then(dbRes => {
+		    if(dbRes && dbRes.affectedRows === 1){
+			console.log(`Updated ${prevRate.post}, ${prevRate.country}, `
+				    + `set allowance = ${prevRate.allowance}`);
+		    }
+		})
+		.catch(err => {
+		    
+		    console.log(`Post no longer exists: ${prevRate.post}, ${prevRate.country}.`);
+//		    console.log(err);
+		    return;
+		})
+	    awaitPromises.push(query);
+	})
+	Promise.all(awaitPromises)
+	    .then(() => {
+		resolve();
+	    })
+	    .catch(err => {
+		console.log('error in update previous allowances');
+		reject(err);
+	    })
+    })
+}
+
+function set_previous_dates(start){
+    let rateDates = [];
+
+    //start i at -1 so we can start first scrape date as a future scrape date.
+    //This way, if the first time we detect a change in the COLA rates on the
+    //first valid scrape date that isnt the start scrape date, we can correctly
+    //update the last_modified, aka effective date, in the db
+    for(let i = -1; i < 400; i++){
+	let date = new Date(start - i * 14 * 1000 * 60 * 60 * 24 );
+	let dateString = String(date.getFullYear());
+
+	if(date.getMonth() < 9) dateString +=  "0";
+	
+	dateString += String(date.getMonth() + 1);
+	
+	if(date.getDate() < 10) dateString += "0";
+	dateString += String(date.getDate());
+	
+	console.log(date);
+	console.log(dateString);
+	
+	rateDates.push({
+	    dateStr: dateString,
+	    date: date
+	});
+    }
     
+    return rateDates;	    
 }

@@ -69,6 +69,8 @@ app.set('port', 10000);
 const crcs = require('./server_functions/cola_rates_script.js')
 crcs.schedule_crcs();
 
+//crcs.scrape_previous_cola_rates();
+
 let cssFile;
 app.get(`/css/${cssFile}`, function (req, res) {
     res.send(`/css/${cssFile}`);

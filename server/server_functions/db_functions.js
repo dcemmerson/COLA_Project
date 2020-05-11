@@ -624,10 +624,43 @@ module.exports = {
 		.catch(err => reject(err));
 	    
 	})
-    }
+    },
     
     /*******************************************************************/
     /********************** END ACCOUNT PAGE QUERIES *******************/
+    /*******************************************************************/
+
+    /*******************************************************************/
+    /********************** SET PREV ALLOWANCE QUERIES *****************/
+    /*******************************************************************/
+    get_prev_allowances_99: function(){
+	return new Promise((resolve, reject) => {
+	    const sql = `SELECT * FROM COLARates WHERE prevAllowance=?`;
+	    const values = [-99];
+	    queryDB(sql, values, mysql)
+		.then(res => {
+		    resolve(res);
+		})
+		.catch(err => reject(err));
+	    
+	})
+    },
+    set_prev_allowance: function(postId, prevAllowance, modifiedDate){
+	return new Promise((resolve, reject) => {
+	    const sql = `UPDATE COLARates SET prevAllowance=?, last_modified=? WHERE id=?`;
+	    const values = [prevAllowance, modifiedDate, postId];
+	    queryDB(sql, values, mysql)
+		.then(res => {
+		    console.log("postId = " + postId + " updated to prevAllowance = " + prevAllowance);
+		    resolve(res);
+		})
+		.catch(reject);
+	    
+	})
+    }
+    
+    /*******************************************************************/
+    /********************** END PREV ALLOWANCE QUERIES *******************/
     /*******************************************************************/
     
 }
