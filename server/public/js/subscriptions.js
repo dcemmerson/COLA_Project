@@ -70,7 +70,7 @@ function pdf_to_canvas(uint8arr){
 	});
     })
 }
-
+/*
 function set_window_prefs(){
     size_table();
     let in_progress = false;
@@ -93,7 +93,7 @@ function size_table(){
     document.getElementById('subscriptionsContainer')
 	.setAttribute('style', `max-height:${size}px`);
 }
-
+*/
 function clear_user_subscriptions(){
     let tbody = document.getElementById('subscriptionTbody');
     while(tbody.firstChild)
@@ -293,11 +293,17 @@ function restore_subscription(e){
 }
 
 function check_empty_subscriptions(){
-    let table = $('#subscriptionsTable')[0];
-    let tbody = $('#subscriptionTbody')[0];
-    let msgDiv = $('#noActiveSubscriptions')[0];
+    let table = document.getElementById('subscriptionsTable');
+    let tbody = document.getElementById('subscriptionTbody');
+    let msgDiv = document.getElementById('noActiveSubscriptions');
+    let isVisibleRow = false;
+
+    //iterate through table to check if there are any visible rows
+    tbody.childNodes.forEach(row => {
+	if(row.style.display !== "none") isVisibleRow = true;
+    })
     
-    if(!tbody.firstChild){
+    if(!isVisibleRow){
 	table.style.display = 'none';
 	msgDiv.style.display = 'block';
     }
@@ -325,28 +331,53 @@ function populate_template_dropdown(dropdown, templates){
 }
 
 function add_subscription_to_table(sub){
-    let tbody = document.getElementById('subscriptionTbody');
-    let rowNum = 0;
+    let trs = document.getElementById('subscriptionTbody')
+	.getElementsByClassName('subscriptionRow');
+    let rowNum = 0, insertBefore = 0;
     let tr;
 
     // iterate through table to determine where we should add new row to keep
     // table organized in alphabetical order by country name
-    do {
-	tr = tbody.getElementsByClassName('subscriptionRow')[rowNum];
+    while(rowNum < trs.length){
+	tr = trs[rowNum];
+	if(sub.country.toLowerCase() >
+	   tr.getElementsByClassName('countryName')[0].innerText.toLowerCase()
+	  ){
+	    insertBefore = rowNum;
+	}
+	else if(sub.country.toLowerCase() ==
+		tr.getElementsByClassName('countryName')[0].innerText.toLowerCase() &&
+		sub.post.toLowerCase() >
+		tr.getElementsByClassName('postName')[0].innerText.toLowerCase()
+	       ){
+	    insertBefore = rowNum;
+	    
+	}
 	rowNum++;
-    } while(tr !== null & tr.getElementsByClassName('countryName')[0].innerText < sub.country);
+    } 
 
 
     var res = {subscription_list: [sub]};
-    if(tr === null){
-	populate_subscription_table(res);
-    }
-    else {
-	populate_subscription_table(res, rowNum);
-    }
+//    if(tr === null){
+//	populate_subscription_table(res);
+//    }
+//    else {
+    populate_subscription_table(res, insertBefore + 2);
+//    }
 
 	
 
+}
+function check_previous_allowance_99(){
+    let prevs = document.getElementsByClassName('prevAllowance');
+    for(let i = 0; i < prevs.length; i++){
+	if(prevs[i].innerText.match('-99') && prevs[i].parentElement.style.display !== "none"){
+	    document.getElementById('prevAllowanceWarning').style.display = 'flow';
+	    return;
+	}
+    }
+    
+    document.getElementById('prevAllowanceWarning').style.display = 'none';
 }
 function populate_subscription_table(res, rowNum=null){
     let tbody = document.getElementById('subscriptionTbody');
@@ -364,7 +395,7 @@ function populate_subscription_table(res, rowNum=null){
 	td1.innerText = sub.country;
 	tr.appendChild(td1);
 	let td2 = document.createElement('td');
-	td2.setAttribute('class', 'td');
+	td2.setAttribute('class', 'td postName');
 	td2.innerText = sub.post;
 	tr.appendChild(td2);
 	let td3 = document.createElement('td');
@@ -372,11 +403,21 @@ function populate_subscription_table(res, rowNum=null){
 	td3.innerText = sub.allowance;
 	tr.appendChild(td3);
 	let td4 = document.createElement('td');
-	td4.setAttribute('class', 'td');
-	td4.innerText = last_mod.getDate() + ' '
+	td4.setAttribute('class', 'td prevAllowance');	    
+	td4.innerText = sub.prevAllowance;
+	tr.appendChild(td4);
+	if(sub.prevAllowance === -99){
+	    let sup = document.createElement('sup');
+	    sup.innerText = '*';
+	    td4.appendChild(sup);
+	}
+	
+	let td5 = document.createElement('td');
+	td5.setAttribute('class', 'td');
+	td5.innerText = last_mod.getDate() + ' '
 	    + last_mod_month + ' '
 	    + last_mod.getFullYear();	    
-	tr.appendChild(td4);
+	tr.appendChild(td5);
 
 	if(rowNum === null){
 	    tbody.appendChild(tr);
@@ -385,6 +426,8 @@ function populate_subscription_table(res, rowNum=null){
 	    tbody.insertBefore(tr, tbody.childNodes[rowNum - 1]);
 	}
     })
+    
+    check_previous_allowance_99();
 }
 
 /* name: add_table_icons

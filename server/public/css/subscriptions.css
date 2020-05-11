@@ -1,3 +1,4 @@
+
 .tableCover {
     border-radius: 3px;
     position: absolute;
@@ -60,19 +61,23 @@ table {
     border: none !important;
 }
 
+#lowerContentArea {
+    background: linear-gradient(#f0f0f0, #ffffff, #ffffff);
+}
 #addSubscriptionsContainer #subscriptionContainer {
-	background: #fdfdfd;
-	border-radius: 3px;
-	box-shadow: 5px 5px 5px #dfe1e2;
-	border: 1px solid #dfe1e2;
+    background: #fdfdfd;
+    border-radius: 3px;
+    box-shadow: 5px 5px 5px #dfe1e2;
+    border: 1px solid #dfe1e2;
 }
 
 #addSubscriptionsContainer #addPostForm {
-	width: 100% !important;
-	max-width: 30rem;
+    width: 100% !important;
+    max-width: 30rem;
 }
 #viewSubscriptionsContainer {
-    background: linear-gradient(#f0f0f0, #ffffff, #ffffff);
+    background: #fdfdfd;
+    max-width: 100vw;
 }
 #tableContainer {
     position: relative;
@@ -88,7 +93,8 @@ table {
 }
 #subscriptionsContainer {
     overflow: auto;
-    min-height: 200px;
+    min-height: 150px;
+    max-height: 60vh;
 }
 
 #subscriptionFormContainer {
@@ -96,6 +102,9 @@ table {
 }
 .unsubscribeAlert {
     width: 100%;
+}
+#unsubscribeAlertBlank {
+    visibility: hidden;
 }
 .invalid::after {
     position: relative;

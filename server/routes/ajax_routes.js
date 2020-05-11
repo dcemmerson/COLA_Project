@@ -127,7 +127,6 @@ module.exports = function(app, passport){
 							       context)
 		     .then(() => db.get_user_subscription_by_id(context.subscriptionId))
 		     .then(sub => {
-			 console.log(sub);
 			 context = sub;
 			 return misc.jwt_sign({
 			     templateId: sub.templateId,
@@ -216,15 +215,17 @@ module.exports = function(app, passport){
 		    var userId = req.session.passport.user.user_id;
 		    var context = {};
 		    var decrypted;
-		    //if user is trying to preview default template, change user
-		    //id to match the default template user id for sql query
-		    if(req.query.templateId == process.env.DEFAULT_TEMPLATE_ID){
-			userId = process.env.DEFAULT_TEMPLATE_USER_ID; 
-		    }
 		    
 		    misc.jwt_verify(req.query.tok)
 			.then(dec => {
 			    decrypted = dec;
+
+			    //if user is using default template, change user
+			    //id to match the default template user id for sql query
+			    if(decrypted.templateId == process.env.DEFAULT_TEMPLATE_ID){
+				userId = process.env.DEFAULT_TEMPLATE_USER_ID; 
+			    }
+
 			    return db.get_user_template(userId, decrypted.templateId);
 			})
 			.then(response => {
@@ -263,7 +264,7 @@ module.exports = function(app, passport){
 			.then(() => {
 			    //if user is using default template, change user
 			    //id to match the default template user id for sql query
-			    if(req.query.templateId == process.env.DEFAULT_TEMPLATE_ID){
+			    if(decrypted.templateId == process.env.DEFAULT_TEMPLATE_ID){
 				userId = process.env.DEFAULT_TEMPLATE_USER_ID; 
 			    }
 
@@ -271,6 +272,7 @@ module.exports = function(app, passport){
 			})
 			.then(response => {
 			    user.filename = response[0].name;
+			    user.subscriptionId = decrypted.subscriptionId;
 			    context.filename = response[0].name;
 			    context.uploaded = response[0].uploaded;
 			    context.file = response[0].file;
@@ -296,15 +298,18 @@ module.exports = function(app, passport){
 			})
 		});
     // preview button
-		app.get('/preview_subscription', db.authenticationMiddleware(),
-			function (req, res) {
-			    const userId = req.session.passport.user.user_id;
-			    var context = {};
-			    //		var decrypted;
-		
+    app.get('/preview_subscription', db.authenticationMiddleware(),
+	    function (req, res) {
+		var userId = req.session.passport.user.user_id;
+		var context = {};
+		//		var decrypted;
 		misc.jwt_verify(req.query.tok)
 		    .then(dec => {
-//			decrypted = dec;
+			//if user is trying to preview default template, change user
+			//id to match the default template user id for sql query
+			if(dec.templateId == process.env.DEFAULT_TEMPLATE_ID){
+			    userId = process.env.DEFAULT_TEMPLATE_USER_ID; 
+			}
 			return misc.preview_template(userId, dec.templateId, context, dec);
 		    })
 		    .then(() => {
@@ -488,6 +493,7 @@ module.exports = function(app, passport){
 	
 	misc.jwt_verify(req.query.tok)
 	    .then(dec => {
+		console.log(dec);
 		decrypted = dec;
 		
 		context.country = dec.country;

@@ -3,9 +3,137 @@
 </div>
 
 <div class="container-fluid">
-  <div class="row mt-3 pt-3 pb-3 justify-content-around" id="addSubscriptionsContainer">
-    <!-- main center screen -->
+  <div class="row" id="viewSubscriptionsContainer">
+    <!-- first row in main screen -->
+    <div class="col-12">
+      <div class="row justify-content-around">
+	<div class="width-100" id="subscriptionsOuterContainer">
+	  <div class="mx-3">
+	    <div id="unsubscribeAlertBlank" class="unsubscribeAlert">
+	      <div class="usa-alert usa-alert--info">
+		<div class="dismiss-alert">
+		  <span role="button" class="dismiss-alert-button"></span>
+		</div>
+		<div class="usa-alert__body">
+		  <h3 class="usa-alert__heading">placeholder</h3>
+		  <p class="usa-alert__text">undefined</p>
+		</div>
+	      </div>
+	    </div>
 
+	    <div id="unsubscribeAlertSuccess" class="unsubscribeAlert" style="display:none">
+	      <div class="usa-alert usa-alert--warning">
+		<div class="dismiss-alert"
+		     onclick="dismiss_alert(this.parentNode.parentNode)">
+		  <span role="button" class="dismiss-alert-button"></span>
+		</div>
+		<div class="usa-alert__body">
+		    <h3 class="usa-alert__heading">Unsubscribed!
+		      <a id="undoLink" href="#" class="usa-link sm">undo</a>
+		    </h3>
+		 
+		  <p class="usa-alert__text">You have unsubscribed from <span class="unsubscribeMsgSpan">{error}</span></p>
+		</div>
+	      </div>
+	    </div>
+	    <div id="resubscribeAlertSuccess" class="unsubscribeAlert" style="display:none">
+	      <div class="usa-alert usa-alert--success">
+		<div class="dismiss-alert"
+		     onclick="dismiss_alert(this.parentNode.parentNode)">
+		  <span role="button" class="dismiss-alert-button"></span>
+		</div>
+		<div class="usa-alert__body">
+		  <h3 class="usa-alert__heading">Undone!</h3>
+		  <p class="usa-alert__text">You have resubscribed to <span class="unsubscribeMsgSpan">{error}</span></p>
+		</div>
+	      </div>
+	    </div>
+
+	    <div id="unsubscribeAlertError" class="unsubscribeAlert" style="display:none">
+	      <div class="usa-alert usa-alert--error">
+		<div class="dismiss-alert"
+		     onclick="dismiss_alert(this.parentNode.parentNode)">
+		  <span role="button" class="dismiss-alert-button"></span>
+		</div>
+		<div class="usa-alert__body">
+		  <h3 class="usa-alert__heading">Error unsubscribing!</h3>
+		  <p class="usa-alert__text">Unable to unsubscribe from <span class="unsubscribeMsgSpan">{error}</span> at this time</p>
+		</div>
+	      </div>
+	    </div>
+	    <div id="downloadSubscriptionAlertError" class="unsubscribeAlert" style="display:none">
+	      <div class="usa-alert usa-alert--error">
+		<div class="dismiss-alert"
+		     onclick="dismiss_alert(this.parentNode.parentNode)">
+		  <span role="button" class="dismiss-alert-button"></span>
+		</div>
+		<div class="usa-alert__body">
+		  <h3 class="usa-alert__heading">Error downloading!</h3>
+		  <p class="usa-alert__text">Something unexpected occurred when attempting to download template for <span id="downloadSubscriptionErrorMsgSpan">{error}</span>. Unable to download at this time.</p>
+		</div>
+	      </div>
+	    </div>
+	    <div id="fireSubscriptionEmailAlertError" class="unsubscribeAlert" style="display:none">
+	      <div class="usa-alert usa-alert--error">
+		<div class="dismiss-alert"
+		     onclick="dismiss_alert(this.parentNode.parentNode)">
+		  <span role="button" class="dismiss-alert-button"></span>
+		</div>
+		<div class="usa-alert__body">
+		  <h3 class="usa-alert__heading">Error sending email!</h3>
+		  <p class="usa-alert__text">Something unexpected occurred when attempting to send email to <span id="fireSubscriptionEmailErrorToSpan">{error}</span> for subscription to <span id="fireSubscriptionEmailErrorMsgSpan">{error}</span>. Unable to send email at this time.</p>
+		</div>
+	      </div>
+	    </div>
+	  </div>
+	  <div class="mt-2" id="tableContainer">
+	    <div id="tableCover"></div>
+	    <h2 class="h4 pl-4 py-3" id="currentSubscriptions">
+	      <b>Current Subscriptions</b>
+	    </h2>
+
+	    <div id="subscriptionsContainer" class="">
+	      <input id="userEmail" style="display:none" value="{{email}}">
+	      <table class="table" id="subscriptionsTable">
+		<thead>
+		  <tr>
+		    <th scope="col">
+		      <i id="tableSpinner" class="fa fa-spinner fa-spin" style="display:none"></i>
+		    </th>
+		    <th scope="col">Country</th>
+		    <th scope="col">Post</th>
+		    <th scope="col">Allowance</th>
+		    <th scope="col">Previous Allowance</th>
+		    <th scope="col">Last Adjusted</th>
+		  </tr>
+		</thead>
+		
+		<tbody class="subscriptions" id="subscriptionTbody">
+
+		</tbody>
+	      </table>
+	      <div id="noActiveSubscriptions" class="ml-4" style="display:none;">
+		You have no active subscriptions. <a class="usa-link" href="#addSubscriptionsContainer">Add subscription</a>
+	      </div>
+	      <div id="subscriptionsContainerSpinner">
+		<i class="fa fa-spinner fa-spin spinner ml-4"></i>
+	      </div>
+	    </div>
+	    <div id="prevAllowanceWarning" class="ml-2 mb-1 sm" style="display:none">
+	      <sup class="md">*</sup>
+	      Unable to retrieve previous allowance at this time.
+	    </div>
+	  </div>
+	</div>
+      </div>
+      <br><br><br><br>
+    </div>
+  </div>
+</div>
+<!-- second row in main screen -->
+<div id="lowerContentArea" class="container-fluid pt-5">
+  <div class="row mt-5 pb-3 justify-content-around" id="addSubscriptionsContainer">
+    <!-- main center screen -->
     <div class="col-12 pt-3 pb-3 mb-4 mt-4" id="subscriptionContainer">
       <h2 class="h4 ml-4"><b>Add Subscription</b></h2>
       <div id="successContainer" class="alert" style="display:none">
@@ -16,7 +144,7 @@
 	    <p class="usa-alert__text"><a class="usa-link" id="subscribeAdditional" href="#subscribeContainer">Subscribe to additional posts</a></p>
 	  </div>
 	</div>
-	<br><br><br>
+	<br>
       </div>
       <div id="infoContainer" class="alert">
 	<div class="usa-alert usa-alert--info" id="addSubscription">
@@ -111,125 +239,6 @@
 	</form>
 	</div>
       </div>
-    </div>
-  </div>
-</div>
-<div class="container-fluid">
-  <div class="row" id="viewSubscriptionsContainer">
-    <br>
-    <!-- second row in main screen -->
-    <div class="col-12">
-      <br>
-      <div class="row justify-content-around">
-	<div class="width-100" id="subscriptionsOuterContainer">
-	  <div class="mx-3">
-	    <div id="unsubscribeAlertBlank" class="unsubscribeAlert">
-	      <br><br><br><br>
-	    </div>
-
-	    <div id="unsubscribeAlertSuccess" class="unsubscribeAlert" style="display:none">
-	      <div class="usa-alert usa-alert--warning">
-		<div class="dismiss-alert"
-		     onclick="dismiss_alert(this.parentNode.parentNode)">
-		  <span role="button" class="dismiss-alert-button"></span>
-		</div>
-		<div class="usa-alert__body">
-		  <span>
-		    <h3 class="usa-alert__heading">Unsubscribed!
-		      <button id="undoLink" class="btn btn-link sm">undo</button>
-		    </h3>
-		  </span>
-		  <p class="usa-alert__text">You have unsubscribed from <span class="unsubscribeMsgSpan">{error}</span></p>
-		</div>
-	      </div>
-	    </div>
-	    <div id="resubscribeAlertSuccess" class="unsubscribeAlert" style="display:none">
-	      <div class="usa-alert usa-alert--success">
-		<div class="dismiss-alert"
-		     onclick="dismiss_alert(this.parentNode.parentNode)">
-		  <span role="button" class="dismiss-alert-button"></span>
-		</div>
-		<div class="usa-alert__body">
-		  <h3 class="usa-alert__heading">Undone!</h3>
-		  <p class="usa-alert__text">You have resubscribed to <span class="unsubscribeMsgSpan">{error}</span></p>
-		</div>
-	      </div>
-	    </div>
-
-	    <div id="unsubscribeAlertError" class="unsubscribeAlert" style="display:none">
-	      <div class="usa-alert usa-alert--error">
-		<div class="dismiss-alert"
-		     onclick="dismiss_alert(this.parentNode.parentNode)">
-		  <span role="button" class="dismiss-alert-button"></span>
-		</div>
-		<div class="usa-alert__body">
-		  <h3 class="usa-alert__heading">Error unsubscribing!</h3>
-		  <p class="usa-alert__text">Unable to unsubscribe from <span class="unsubscribeMsgSpan">{error}</span> at this time</p>
-		</div>
-	      </div>
-	    </div>
-	    <div id="downloadSubscriptionAlertError" class="unsubscribeAlert" style="display:none">
-	      <div class="usa-alert usa-alert--error">
-		<div class="dismiss-alert"
-		     onclick="dismiss_alert(this.parentNode.parentNode)">
-		  <span role="button" class="dismiss-alert-button"></span>
-		</div>
-		<div class="usa-alert__body">
-		  <h3 class="usa-alert__heading">Error downloading!</h3>
-		  <p class="usa-alert__text">Something unexpected occurred when attempting to download template for <span id="downloadSubscriptionErrorMsgSpan">{error}</span>. Unable to download at this time.</p>
-		</div>
-	      </div>
-	    </div>
-	    <div id="fireSubscriptionEmailAlertError" class="unsubscribeAlert" style="display:none">
-	      <div class="usa-alert usa-alert--error">
-		<div class="dismiss-alert"
-		     onclick="dismiss_alert(this.parentNode.parentNode)">
-		  <span role="button" class="dismiss-alert-button"></span>
-		</div>
-		<div class="usa-alert__body">
-		  <h3 class="usa-alert__heading">Error sending email!</h3>
-		  <p class="usa-alert__text">Something unexpected occurred when attempting to send email to <span id="fireSubscriptionEmailErrorToSpan">{error}</span> for subscription to <span id="fireSubscriptionEmailErrorMsgSpan">{error}</span>. Unable to download at this time.</p>
-		</div>
-	      </div>
-	    </div>
-	  </div>
-	  <br>
-	  <div class="" id="tableContainer">
-	    <div id="tableCover"></div>
-	    <h2 class="h4 pl-4 py-3" id="currentSubscriptions">
-	      <b>Current Subscriptions</b>
-	    </h2>
-
-	    <div id="subscriptionsContainer" class="">
-	      <input id="userEmail" style="display:none" value="{{email}}">
-	      <table class="table" id="subscriptionsTable">
-		<thead>
-		  <tr>
-		    <th scope="col">
-		      <i id="tableSpinner" class="fa fa-spinner fa-spin" style="display:none"></i>
-		    </th>
-		    <th scope="col">Country</th>
-		    <th scope="col">Post</th>
-		    <th scope="col">Allowance</th>
-		    <th scope="col">Last Adjusted</th>
-		  </tr>
-		</thead>
-		
-		<tbody class="subscriptions" id="subscriptionTbody">
-
-		</tbody>
-	      </table>
-	      <div id="noActiveSubscriptions" style="display:none;">
-		You have no active subscriptions. <a class="usa-link" href="#addSubscription">Add subscriptions</a>
-	      </div>
-	      <div id="subscriptionsContainerSpinner">
-		<i class="fa fa-spinner fa-spin spinner"></i>
-	      </div>
-	    </div>
-	  </div>
-	</div>
-      </div>
-      <br><br><br><br>
     </div>
   </div>
 </div>

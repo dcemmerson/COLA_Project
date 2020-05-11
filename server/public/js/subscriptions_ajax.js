@@ -19,17 +19,17 @@ document.addEventListener('DOMContentLoaded', () => {
 	$('#submitNewSubscription')[0].disabled = true;
 	show_spinner($('#addNewSubscriptionButtons')[0]);
 
-	var scroll = scroll_save([
+/*	var scroll = scroll_save([
 	    document.getElementsByTagName('body')[0],
 	    document.getElementById('subscriptionsContainer')
 	]);
-	
+*/	
 	if(validate_subscription(true))
 	    await submit_new_subscription();
 	
 	$('#submitNewSubscription')[0].disabled = false;
 	remove_spinner($('#addNewSubscriptionButtons')[0]);
-	scroll_restore(scroll);
+//	scroll_restore(scroll);
     });
     
 });
@@ -141,6 +141,7 @@ async function submit_new_subscription(){
 	    throw result; //something else went wrong
     }
     catch(err){
+	console.log(err);
 	hide_elements($('.alert'));
 	if(!result.success){
 	    $('#warningContainer')[0].style.display = 'block';
@@ -163,6 +164,7 @@ async function submit_new_subscription(){
 	//	await fetch_user_subscription_list();
 	document.getElementById('tableSpinner').display = 'none';
 	remove_spinner($('#subscriptionsContainerSpinner')[0]);
+	check_empty_subscriptions();
     }
 }
 
@@ -251,7 +253,7 @@ async function fetch_user_subscription_list(){
 	console.log(err);
     }
     finally{
-	size_table();
+//	size_table();
     }
 }
 
@@ -313,10 +315,9 @@ async function delete_subscription(thisEl, tok, post, country, subscriptionId){
 	tableCover.style.display = 'block';
 //	tableCover.style.animation = 'slideCoverRemove 0.5s 1 forwards';
 	spinner.style.display = 'none';
+	check_empty_subscriptions();
+	check_previous_allowance_99();
     }
-//    await fetch_user_subscription_list();
-    
-//    scroll_restore(scroll);
 }
 
 

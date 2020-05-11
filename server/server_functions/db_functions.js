@@ -147,6 +147,7 @@ module.exports = {
     get_user_by_id: function (userId, context) {
 	var sql = "SELECT id, email, password, modified FROM user WHERE id=?"
 	var values = [userId];
+
 	return new Promise((resolve, reject) => {
 	    queryDB(sql, values, mysql)
 		.then(result => {
@@ -391,7 +392,7 @@ module.exports = {
     */
     get_user_subscription_list: function (user_id) {
 	return new Promise((resolve, reject) => {
-	    const sql = `SELECT cr.post, cr.country, cr.allowance, cr.last_modified,`
+	    const sql = `SELECT cr.post, cr.country, cr.allowance, cr.prevAllowance, cr.last_modified,`
 		  + ` s.id AS subscriptionId, s.name, s.comment, t.id AS templateId`
 		  + ` FROM user u`
 		  + ` INNER JOIN subscription s ON u.id=s.userId`
@@ -413,11 +414,13 @@ module.exports = {
     */
     get_user_subscription_by_id: function (subscriptionId) {
 	return new Promise((resolve, reject) => {
-	    const sql = `SELECT cr.post, cr.country, cr.allowance, cr.last_modified,`
-		  + ` s.id AS subscriptionId, s.name, s.comment`
+	    const sql = `SELECT cr.post, cr.country, cr.allowance,`
+		  + ` cr.prevAllowance, cr.last_modified,`
+		  + ` s.id AS subscriptionId, s.name, s.comment, `
+		  + ` t.id as templateId` 
 		  + ` FROM user u`
 		  + ` INNER JOIN subscription s ON u.id=s.userId`
-//		  + ` INNER JOIN template t ON s.templateId=t.id`
+		  + ` INNER JOIN template t ON s.templateId=t.id`
 		  + ` INNER JOIN COLARates_subscription crs ON s.id=crs.subscriptionId`
 		  + ` INNER JOIN COLARates cr ON crs.COLARatesId=cr.id`
 		  + ` WHERE s.id=?`
@@ -553,10 +556,9 @@ module.exports = {
 	    + ` INNER JOIN user u on t.userId=u.id`
 	    + ` WHERE (t.id=? AND userId=?)`;
 	    const values = [templateId, userId];
-
 	    queryDB(sql, values, mysql)
-		.then(res => resolve(res))
-		.catch(err => console.log(err))
+		.then(resolve)
+		.catch(reject)
 	});
     },
     /*******************************************************************/
