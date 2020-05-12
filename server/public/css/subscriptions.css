@@ -5,10 +5,10 @@
     background-position: center;
 }
 
-#aboutSection a:visited{
+.projectSection a:visited{
     color: #a9aeb1 !important;
 }
-#aboutSection a:hover{
+.projectSection a:hover{
     color: #f0f0f0 !important
 }
 #subscriptionsTable th {

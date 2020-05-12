@@ -20,6 +20,12 @@ i.e.
 ----------------------------------------
 */
 
+.usa-section--dark .usa-link {
+    color: color('base-light');
+}
+.usa-section--dark .usa-link:hover {
+    color: color('base-lightest');
+}
 .usa-hero {
     background-image: url(/img/hero_cust.png);
 }

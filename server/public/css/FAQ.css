@@ -24,9 +24,11 @@
 #faqSection {
 
 }
-#projectSection a:visited{
+/*
+.projectSection a:visited{
     color: #a9aeb1 !important;
 }
-#projectSection a:hover{
-    color: #f0f0f0 !important
+.projectSection a:hover{
+    color: #f0f0f0 !important;
 }
+*/
