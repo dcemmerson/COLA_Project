@@ -74,7 +74,7 @@ By making a contribution to this project, I certify that:
 
 ## Getting Started
 
-Cola.govapps.us is a static website genetated using NodeJS which can be installed [here]((https://nodejs.org/en/).
+Cola.govapps.us is a static website genetated using NodeJS which can be installed [here](https://nodejs.org/en/).
 
 ### Making Changes
 
@@ -110,7 +110,7 @@ When making your changes, it is highly encouraged that you use a [branch in Git]
 
 After review by the COLA project team, your PR will either be commented on with a request for more information or changes, or it will be merged into the `master` branch and deployed to a URL for testing purposes.
 
-Assuming everything checks out, the Cola project team will merge the `master` branch into the `production` branch which will be automatically deployed to the production hosting environment, making your changes available on [cola.govapps.us](cola.govapps.us).
+Assuming everything checks out, the Cola project team will merge the `master` branch into the `production` branch which will be automatically deployed to the production hosting environment, making your changes available on [cola.govapps.us](https://cola.govapps.us/).
 
 ### Check Your Changes
 
