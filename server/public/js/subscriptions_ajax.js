@@ -236,7 +236,6 @@ async function fetch_user_templates(){
 	templateSelect.innerHTML = '<option>Error retrieving templates</option>';
     }
     finally{
-	console.log('finally');
     }
 }
 

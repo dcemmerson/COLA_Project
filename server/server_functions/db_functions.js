@@ -464,7 +464,7 @@ module.exports = {
     get_user_subscription_by_id: function (subscriptionId) {
 	return new Promise((resolve, reject) => {
 	    const sql = `SELECT cr.post, cr.country, cr.allowance,`
-		  + ` cr.prevAllowance, cr.last_modified,`
+		  + ` cr.prevAllowance, cr.effectiveDate, cr.last_modified,`
 		  + ` s.id AS subscriptionId, s.name, s.comment, `
 		  + ` t.id as templateId` 
 		  + ` FROM user u`

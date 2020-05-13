@@ -103,7 +103,7 @@ module.exports = function(app, passport){
 			     .then(tok => {
 				 context.tok = tok;
 			     })
-		     })		 
+		     })
 		     .then(() => {
 			 context.success = true;
 		     })

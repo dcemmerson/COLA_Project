@@ -399,19 +399,22 @@ function populate_subscription_table(res, rowNum=null){
 	td2.innerText = sub.post;
 	tr.appendChild(td2);
 	let td3 = document.createElement('td');
-	td3.setAttribute('class', 'td');
-	td3.innerText = sub.allowance + '%';
+	td3.setAttribute('class', 'td prevAllowance');	    
+	td3.innerText = sub.prevAllowance + '%';
 	tr.appendChild(td3);
-	let td4 = document.createElement('td');
-	td4.setAttribute('class', 'td prevAllowance');	    
-	td4.innerText = sub.prevAllowance + '%';
-	tr.appendChild(td4);
+
 	if(sub.prevAllowance === -99){
-	    td4.innerText = 'n/a';
+	    td3.innerText = 'n/a';
 	    let sup = document.createElement('sup');
 	    sup.innerText = '*';
-	    td4.appendChild(sup);
+	    td3.appendChild(sup);
 	}
+
+	
+	let td4 = document.createElement('td');
+	td4.setAttribute('class', 'td');
+	td4.innerText = sub.allowance + '%';
+	tr.appendChild(td4);
 	
 	let td5 = document.createElement('td');
 	td5.setAttribute('class', 'td');
