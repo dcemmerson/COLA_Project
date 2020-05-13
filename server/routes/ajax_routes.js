@@ -428,14 +428,38 @@ module.exports = function(app, passport){
 	    .then(() => misc.validate_password_new_account(pwd, pwdRe, context))
 	    .then(() => misc.hash_password(pwd))
 	    .then(hashedPwd => db.add_user(email, hashedPwd, context))
+	    .then(dbRes => db.get_user_by_id(dbRes.insertId, context))
 	    .then(() => {
-                context.accountCreated = true;
-		context.success = true;
-		context.redirect = '/subscriptions';
-		req.body.username = req.body.email;
+		context.accountCreated = true;
+		// create two tokens:
+		// one that we will email the user and can be used to verify account
+		// a second that we will return to the user. Allow the user to follow redirect,
+		// then use token to decide how to render redirect page.
+		let emailToken = misc.jwt_sign({
+		    userId: context.userId,
+		    email: context.username,
+		    verify: true
+		}, process.env.JWT_SECRET);
 
-		//now log user in
-		return misc.login_helper(passport, req, res, next, context)
+		let returnToken = misc.jwt_sign({
+		    userId: context.userId,
+		    email: context.username,
+		    verificationSent: true,
+		    verify: false
+		}, process.env.JWT_SECRET);
+
+		return Promise.all([emailToken, returnToken]);
+	    })
+	    .then(tokens => {
+		let emailToken = tokens[0];
+		context.returnToken = tokens[1];
+		
+		context.success = true;
+		context.redirect = `/verify?tok=${context.returnToken}`;
+		
+		//now send email
+		return emails.send_verification_email(email, emailToken);
+				
             })
             .catch(err => {
 		console.log('error route');
@@ -445,8 +469,8 @@ module.exports = function(app, passport){
             })
 	    .finally(() => res.send(context))
 	    
-    })
- 
+    });
+    
 	
     /********************* End Account page ajax routes *********************/
     /********************* Start FAQ page ajax routes *********************/

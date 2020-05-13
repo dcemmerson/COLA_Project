@@ -39,13 +39,13 @@ module.exports = {
     */
     add_user: function (email, hashedPwd, context) {
 	return new Promise((resolve, reject) => {
-	    const sql = "INSERT INTO user (email, password) VALUES (?, ?)"
-	    const values = [email, hashedPwd];
+	    const sql = "INSERT INTO user (email, password, isVerified) VALUES (?, ?, ?)"
+	    const values = [email, hashedPwd, false];
 
 	    queryDB(sql, values, mysql)
 		.then(res => {
 		    if(res.affectedRows == 1){
-			resolve();
+			resolve(res);
 		    }
 		    else{
 			reject();
@@ -134,6 +134,37 @@ module.exports = {
 		});
 	})
     },
+    /* name: verify_email
+       preconditions: email is user supplied email during successful create account process.
+                      userId is user.id selected from db when creating account.
+		      context is object where we will set flag indicating success for failure
+       postconditions: user email has been verified in db and user can now successfully log in
+       description: Update db isVerified boolean in user table for userId. Email should never
+                    never actually be used in this method, but should be supplied in case
+		    an unexpected error occurs, we can log the error more verbosely.
+     */
+    verify_email: function (userId, email, context) {
+	var sql = "UPDATE user SET isVerified=? WHERE id=?"
+	var values = [true, userId];
+	return new Promise((resolve, reject) => {
+	    queryDB(sql, values, mysql)
+		.then(result => {
+		    if (result.affectedRows === 1) {
+			//success
+			context.verified = true;
+			resolve()
+		    }
+		    else {
+			context.verified = false;
+			reject();
+		    }    
+		})
+		.catch(err => {
+		    context.verified = false;
+		    reject(err);
+		});
+	})
+    },
     
     /* name: get_user_by_id
        preconditions: userId to search for in db
@@ -145,7 +176,7 @@ module.exports = {
 		    set context.error to true, and reject. 
      */
     get_user_by_id: function (userId, context) {
-	var sql = "SELECT id, email, password, modified FROM user WHERE id=?"
+	var sql = "SELECT id, email, password, isVerified, modified FROM user WHERE id=?"
 	var values = [userId];
 
 	return new Promise((resolve, reject) => {
@@ -163,6 +194,7 @@ module.exports = {
 			context.email = result[0].email;
 			context.username = result[0].email;
 			context.modified = result[0].modified;
+			context.isVerified = result[0].isVerified;
 			resolve(result[0].password);
 		    }    
 		})
@@ -331,13 +363,28 @@ module.exports = {
        postconditions: COLARate.id has been updated with new_allowance
        description:
     */
-    update_cola_rate: function (COLARate_id, new_allowance, prev_allowance) {
+    update_cola_rate: function (COLARate_id, new_allowance, prev_allowance, effectiveDate) {
 	return new Promise((resolve, reject) => {
-	    const sql = `UPDATE COLARates SET allowance=?, prevAllowance=?, last_modified=NOW() WHERE id=?`
-	    const values = [new_allowance, prev_allowance, COLARate_id];
+	    const sql = `UPDATE COLARates SET allowance=?, prevAllowance=?, effectiveDate=?, last_modified=NOW() WHERE id=?`
+	    const values = [new_allowance, prev_allowance, COLARate_id, effectiveDate];
 	    queryDB(sql, values, mysql)
 		.then(res => resolve(res))
 		.catch(err => console.log(err))
+	});
+    },
+    /* name: update_cola_rate_effective_date
+       preconditions: COLARateId is is of corresponding post/country needing update
+                      effectiveDate is just that - we will update COLARate.effective_date
+		        with effectiveDate
+       postconditions: COLARate.id has been updated with effectiveDate
+    */
+    update_cola_rate_effective_date: function (COLARateId, effectiveDate) {
+	return new Promise((resolve, reject) => {
+	    const sql = `UPDATE COLARates SET effectiveDate=? WHERE id=?`
+	    const values = [effectiveDate, COLARateId];
+	    queryDB(sql, values, mysql)
+		.then(resolve)
+		.catch(reject)
 	});
     },
     /* name: get_users_subscribed_to_post
@@ -392,7 +439,7 @@ module.exports = {
     */
     get_user_subscription_list: function (user_id) {
 	return new Promise((resolve, reject) => {
-	    const sql = `SELECT cr.post, cr.country, cr.allowance, cr.prevAllowance, cr.last_modified,`
+	    const sql = `SELECT cr.post, cr.country, cr.allowance, cr.prevAllowance, cr.effectiveDate,`
 		  + ` s.id AS subscriptionId, s.name, s.comment, t.id AS templateId`
 		  + ` FROM user u`
 		  + ` INNER JOIN subscription s ON u.id=s.userId`
@@ -645,6 +692,18 @@ module.exports = {
 	    
 	})
     },
+    get_prev_allowances_99_no_effective: function(){
+	return new Promise((resolve, reject) => {
+	    const sql = `SELECT * FROM COLARates WHERE prevAllowance=? AND effectiveDate=?`;
+	    const values = [-99, "2020-05-11 10:50:13"];
+	    queryDB(sql, values, mysql)
+		.then(res => {
+		    resolve(res);
+		})
+		.catch(err => reject(err));
+	    
+	})
+    },
     set_prev_allowance: function(postId, prevAllowance, modifiedDate){
 	return new Promise((resolve, reject) => {
 	    const sql = `UPDATE COLARates SET prevAllowance=?, last_modified=? WHERE id=?`;
@@ -676,14 +735,20 @@ passport.deserializeUser(function (user_id, done) {
 
 
 passport.use(new LocalStrategy(function(username, password, done) {
-    var sql="SELECT id, password FROM user WHERE email=?"
-    values = [username]
+    var sql="SELECT id, isVerified, password FROM user WHERE email=?";
+    values = [username];
+    
     queryDB(sql, values, mysql)
 	.then(message => {
 	    if (message.length == 0){
 		console.log("wrong keyword entry");
 		return done(null, false)
 	    }
+	    else if(!message[0].isVerified){
+		console.log(`${username} needs to be verified`);
+		return done(null, false);
+	    }
+
 	    const hash = message[0].password.toString();
 	    bcrypt.compare(password, hash, function(err, response){
 		if (response == true){
@@ -695,7 +760,7 @@ passport.use(new LocalStrategy(function(username, password, done) {
 	    });
 	})
 	.catch(err => {
-	    
+	    console.log(err);
 	})
     
     

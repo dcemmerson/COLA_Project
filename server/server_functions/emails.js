@@ -65,6 +65,55 @@ module.exports = {
 	    })
 	
     },
+    send_verification_email: function (email, token) {
+	
+	const em = new Email({
+	    view: {
+		options: {
+		    extension: 'handlebars'
+		},
+		juice: true,
+		juiceResources: {
+		    preserveImportant: true,
+		    webResources: {
+			relativeTo: path.join(__dirname, '..', '/emails/build'),
+			images: true
+		    }
+		}
+	    }
+	});
+
+	let awaitPromises = [
+	    em.render('verification_email/html.handlebars', {
+		locale: 'en',
+		title: "Action required: Verify your email",
+		email: email,
+		host: process.env.HOST,
+		jwt: token,
+	    }),
+	    em.render('verification_email/text.handlebars', {
+		locale: 'en',
+		title: "Action required: Verify your email",
+		email: email,
+		host: process.env.HOST,
+		jwt: token,
+	    })
+	];
+
+	return Promise.all(awaitPromises)
+	    .then(res => {
+		const msg = {
+		    from: process.env.FROM_EMAIL,
+		    to: email,
+		    subject: 'Action required: Verify your email for COLA notification system',
+		    text: res[1],
+		    html: res[0]
+		};
+		console.log('now send');
+		return sgMail.send(msg);
+	    })
+	
+    },
     /* name: send_emails
        preconditions: changed_rates contains array of objects that contains each
        post that has changed cola rate, including information db id,

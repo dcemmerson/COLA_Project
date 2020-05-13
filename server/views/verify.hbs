@@ -1,0 +1,82 @@
+<div class="container mt-4 mb-4">
+  {{#if verified}}
+  <div>
+    <div class="usa-alert usa-alert--success max-width-900 mt-2 mt-md-4 mt-lg-5">
+      <div class="usa-alert__body">
+	<span>
+	  <h2 class="h3 usa-alert__heading">Email verified</h2>
+	</span>
+	<p class="usa-alert__text">{{verifyEmail}} has been successfully verified.
+	  Please <a title="Login" href="/login" class="usa-link">login</a>.
+	</p>
+      </div>
+    </div>
+  </div>
+  {{else if isAlreadyVerified}}
+  <div>
+    <div class="usa-alert usa-alert--info max-width-900 mt-2 mt-md-4 mt-lg-5">
+      <div class="usa-alert__body">
+	<span>
+	  <h2 class="h3 usa-alert__heading">Email Already Verified</h2>
+	</span>
+	{{#if loggedIn}}
+	<p class="usa-alert__text">{{verifyEmail}} has already been verified.</p>
+	<p class="usa-alert__text mt-2">You are currently logged in as {{email}}. Manage
+	  <a title="Go to subscriptions" href="/subscriptions" class="usa-link">subscriptions</a>.
+	</p>
+	{{else}}
+	<p class="usa-alert__text">{{verifyEmail}} has already been verified.
+	  Please <a title="Login" href="/login" class="usa-link">login</a>.
+	</p>
+	{{/if}}
+      </div>
+    </div>
+  </div>  
+  {{else if loggedIn}}
+  <div>
+    <div class="usa-alert usa-alert--warning max-width-900 mt-2 mt-md-4 mt-lg-5">
+      <div class="usa-alert__body">
+	<span>
+	  <h2 class="h3 usa-alert__heading">Logged in as {{email}}</h2>
+	</span>
+	<p class="usa-alert__text">You must be logged out to verify an email. Please <a title="Logout" href="/logout" class="usa-link">logout</a> and try again.</p>
+      </div>
+    </div>
+  </div>
+  {{else if verificationSent}}
+  <div>
+    <div class="usa-alert usa-alert--info max-width-900 mt-2 mt-md-4 mt-lg-5">
+      <div class="usa-alert__body">
+	<span>
+	  <h2 class="h3 usa-alert__heading">Verification Email Sent!</h2>
+	</span>
+	<p class="usa-alert__text">A verification email has been sent to {{verifyEmail}}.</p>
+	<p class="usa-alert__text">Don't see it? <a title="Resend verification email" href="/resendverification" class="usa-link">Send</a> again.</p>
+      </div>
+    </div>
+  </div>
+  {{else if invalidToken}}
+  <div>
+    <div class="usa-alert usa-alert--error max-width-900 mt-2 mt-md-4 mt-lg-5">
+      <div class="usa-alert__body">
+	<span>
+	  <h2 class="h3 usa-alert__heading">Invalid Verification Code</h2>
+	</span>
+	<p class="usa-alert__text">The verification code in the URL seems to be invalid. Unable to verify email.</p>
+	<p class="usa-alert__text">If you are trying to verify your email, try <a title="Resend verification email" href="/resend">resending</a> verification email.</p>
+      </div>
+    </div>
+  </div>
+  {{else}}
+  <div>
+    <div class="usa-alert usa-alert--error max-width-900 mt-2 mt-md-4 mt-lg-5">
+      <div class="usa-alert__body">
+	<span>
+	  <h2 class="h3 usa-alert__heading">Something Unexpected Occurred</h2>
+	</span>
+	<p class="usa-alert__text">An error appears to have occured. Please try again.</p>
+      </div>
+    </div>
+  </div>
+  {{/if}}
+</div>

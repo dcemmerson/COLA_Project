@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{title}}</title>
+    <link rel="canonical" href="https://..."/>
+    <meta charset="utf-8"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+    {{#each style}}
+    <link rel="stylesheet" type="text/css" href="/css/{{this}}"></link>
+    {{/each}}
+  </head>
+  <body>
+    <p>
+      Please <a href="{{host}}/verify?tok={{jwt}}">verify</a> your email to use the COLA change notification system.
+    </p>
+  </body>
+</html>

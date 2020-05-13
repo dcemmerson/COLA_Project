@@ -70,6 +70,7 @@ const crcs = require('./server_functions/cola_rates_script.js')
 crcs.schedule_crcs();
 
 //crcs.scrape_previous_cola_rates();
+//crcs.scrape_effective_dates_no_cola_change();
 
 let cssFile;
 app.get(`/css/${cssFile}`, function (req, res) {

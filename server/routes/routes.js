@@ -49,6 +49,47 @@ module.exports = function (app) {
 	    .catch(() => console.log('error in set_layout'))
 	    .finally(() => res.render('create', context))
     });
+
+    app.get('/verify', function (req, res) {
+	var decrypted = {};
+	let context = {
+	    title: 'Account Verification - COLA',
+	    style: ['styles.css', 'font_size.css']
+	}
+
+	misc.set_layout(req, context)
+	    .then(() => misc.jwt_verify(req.query.tok))
+	    .then(dec => {
+		decrypted = dec;
+		context.verificationSent = decrypted.verificationSent;
+		context.loggedInEmail = context.email;
+		return db.get_user_by_id(decrypted.userId, context);
+	    })
+	    .then(() => {
+		context.verifyEmail = context.email;
+		context.email = context.loggedInEmail;
+		if(context.isVerified){
+		    //this tokens already been used/email has been verified
+		    context.isAlreadyVerified = true;
+		}
+		else if(!context.loggedIn && decrypted.verify){
+		    return db.verify_email(decrypted.userId, decrypted.email, context);
+		}
+		else{
+		    return;
+		}
+		
+	    })
+	    .catch(err => {
+		if(err) console.log(err);
+		context.invalidToken = true;
+		context.success = false;
+	    })
+	    .finally(() => {
+		console.log(context);
+		res.render('verify', context);
+	    })
+    });
 	
     app.get(`/reset`, function (req, res) {
 	if(req.isAuthenticated()){

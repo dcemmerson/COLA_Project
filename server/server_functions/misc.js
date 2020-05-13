@@ -40,12 +40,13 @@ module.exports = {
 	    return new Promise((resolve, reject) => {
 		jwt.sign(payload, jwtSecret,
 			 {expiresIn: expiresIn}, (err, token) => {
-		    if(err){
-			console.log(err);
-			reject(err);
-		    }
-		    resolve(token);
-		})	
+			     if(err){
+				 console.log(err);
+				 reject(err);
+			     }
+			     console.log('resolving sign');
+			     resolve(token);
+			 })	
 	    });
 	}
 	else{
