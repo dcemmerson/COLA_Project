@@ -1,6 +1,6 @@
 # Contributing 
 
-Thanks for thinking about using or contributing to this software ("Project") and its documentation!
+Thanks for thinking about using or contributing to this software (https://github.com/dcemmerson/COLA_Project) and its documentation!
 
 * [Policy & Legal Info](#policy)
 * [Getting Started](#getting-started)
@@ -11,11 +11,11 @@ Thanks for thinking about using or contributing to this software ("Project") and
 
 ### 1. Introduction
 
-The project maintainer for this Project will only accept contributions using the Developer's Certificate of Origin 1.1 located at [developercertificate.org](https://developercertificate.org) ("DCO"). The DCO is a legally binding statement asserting that you are the creator of your contribution, or that you otherwise have the authority to distribute the contribution, and that you are intentionally making the contribution available under the license associated with the Project ("License").
+The project maintainer for this Project will only accept contributions using the Developer's Certificate of Origin 1.1 located at [developercertificate.org](https://developercertificate.org) ("DCO"). The DCO is a legally binding statement asserting that you are the creator of your contribution, or that you otherwise have the authority to distribute the contribution, and that you are intentionally making the contribution available under the license associated with the Project (https://github.com/dcemmerson/COLA_Project/blob/master/LICENSE.md).
 
 ### 2. Developer Certificate of Origin Process
 
-Before submitting contributing code to this repository for the first time, you'll need to sign a Developer Certificate of Origin (DCO) (see below). To agree to the DCO, add your name and email address to the [CONTRIBUTORS.md] file. At a high level, adding your information to this file tells us that you have the right to submit the work you're contributing and indicates that you consent to our treating the contribution in a way consistent with the license associated with this software (as described in [LICENSE.md](https://github.com/dcemmerson/COLA_Project/blob/master/LICENSE.md)) and its documentation ("Project").
+Before submitting contributing code to this repository for the first time, you'll need to sign a Developer Certificate of Origin (DCO) (see below). To agree to the DCO, add your name and email address to the [CONTRIBUTORS.md] file. At a high level, adding your information to this file tells us that you have the right to submit the work you're contributing and indicates that you consent to our treating the contribution in a way consistent with the license associated with this software (as described in [LICENSE.md](https://github.com/dcemmerson/COLA_Project/blob/master/LICENSE.md)) and its documentation.
 
 ### 3. Important Points
 
