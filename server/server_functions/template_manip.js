@@ -21,9 +21,12 @@ module.exports = {
     */
     manip_template: function(user, changed){
 	try{
-
+	    const today = new Date();
 	    const date_long = new Intl.DateTimeFormat('en-US', {month: 'short'})
 		  .format(changed.effectiveDate);
+	    const today_date_long = new Intl.DateTimeFormat('en-US', {month: 'short'})
+		  .format(today);
+	    
 	    let content = user.file;
 	    let zip = new PizZip(content);
 	    let doc = new DocxTemplater();
@@ -38,6 +41,9 @@ module.exports = {
 		effective_date: changed.effectiveDate.getUTCDate()
 		    + ` ${date_long} `
 		    + changed.effectiveDate.getUTCFullYear(),
+		current_date: today.getUTCDate()
+		    + ` ${today_date_long} `
+		    + today.getUTCFullYear(),
 		post: changed.post,
 		country: changed.country,
 		mgt_number: "Mgt no."
