@@ -23,7 +23,7 @@ module.exports = {
 	try{
 
 	    const date_long = new Intl.DateTimeFormat('en-US', {month: 'short'})
-		  .format(changed.last_modified);
+		  .format(changed.effectiveDate);
 	    let content = user.file;
 	    let zip = new PizZip(content);
 	    let doc = new DocxTemplater();
@@ -32,12 +32,12 @@ module.exports = {
 	    doc.setData({
 		old_cola: changed.previous_allowance || changed.prevAllowance,
 		new_cola: changed.allowance,
-		date: changed.last_modified.getUTCDate()
+		date: changed.effectiveDate.getUTCDate()
 		    + ` ${date_long} `
-		    + changed.last_modified.getUTCFullYear(),
-		effective_date: changed.last_modified.getUTCDate()
+		    + changed.effectiveDate.getUTCFullYear(),
+		effective_date: changed.effectiveDate.getUTCDate()
 		    + ` ${date_long} `
-		    + changed.last_modified.getUTCFullYear(),
+		    + changed.effectiveDate.getUTCFullYear(),
 		post: changed.post,
 		country: changed.country,
 		mgt_number: "Mgt no."

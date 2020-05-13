@@ -1,6 +1,6 @@
 The COLA rate for {{changed.country}} ({{changed.post}}) has changed from
-{{changed.previous_allowance}}% to {{changed.allowance}}%.
-
+{{#if changed.previous_allowance}}{{changed.previous_allowance}}{{else}}{{changed.prevAllowance}}{{/if}}% to {{changed.allowance}}%.
+	
 Management template attached.
 
 {{#if fileError}}

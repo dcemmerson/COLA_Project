@@ -328,10 +328,10 @@ module.exports = {
        are inserted into db. If any inserts fail, error 
        message printed and function returns immediately.
     */
-    add_cola_rate: function (country, post, allowance) {
+    add_cola_rate: function (country, post, allowance, effectiveDate) {
 	return new Promise((resolve, reject) => {
-	    const sql = `INSERT INTO COLARates (country, post, allowance, last_modified) VALUES (?, ?, ?, now())`
-	    let values = [country, post, allowance];
+	    const sql = `INSERT INTO COLARates (country, post, allowance, effectiveDate, last_modified) VALUES (?, ?, ?, ?, now())`
+	    let values = [country, post, allowance, effectiveDate];
 	    queryDB(sql, values, mysql)
 		.then(res => {
 		    resolve(res)
@@ -368,10 +368,10 @@ module.exports = {
     update_cola_rate: function (COLARate_id, new_allowance, prev_allowance, effectiveDate) {
 	return new Promise((resolve, reject) => {
 	    const sql = `UPDATE COLARates SET allowance=?, prevAllowance=?, effectiveDate=?, last_modified=NOW() WHERE id=?`
-	    const values = [new_allowance, prev_allowance, COLARate_id, effectiveDate];
+	    const values = [new_allowance, prev_allowance, effectiveDate, COLARate_id];
 	    queryDB(sql, values, mysql)
 		.then(res => resolve(res))
-		.catch(err => console.log(err))
+		.catch(reject)
 	});
     },
     /* name: update_cola_rate_effective_date

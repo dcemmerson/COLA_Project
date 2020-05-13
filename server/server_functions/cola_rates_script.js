@@ -220,18 +220,18 @@ module.exports = {
 	}
     }
 }
-    /* name: start_cola_rate_change_script
-       preconditions: None
-       postconditions: cola_rate_change script will continue to run at
-       set intervals every 24 hours at 00:00:00 GMT
-       description: This method must be run just once upon server startup.
-    */
+/* name: start_cola_rate_change_script
+   preconditions: None
+   postconditions: cola_rate_change script will continue to run at
+                   set intervals every 24 hours at 00:00:00 GMT
+   description: This method must be run just once upon server startup.
+*/
 function start_cola_rate_change_script(){
     set_interval.start(() => {
 	let changed_rates = [];
 	after_load('https://aoprals.state.gov/Web920/cola.asp', html => {
 	    const scraped = parse_cola_page(html);
-	    check_rate_changes(scraped.rates, changed_rates)
+	    check_rate_changes(scraped.rates, changed_rates, scraped.effectiveDate)
 		.then(() => update_changed_rates(changed_rates, scraped.effectiveDate))
 	    	.then(() => {
 		    console.log(new Date() + ': COLA rates updated');
@@ -284,7 +284,7 @@ function update_changed_rates(changed_rates, effectiveDate){
 		newly scraped allowance. If allowance is different, add to changed_rates
 		array.
 */
-function check_rate_changes(scraped_rates, changed_rates){
+function check_rate_changes(scraped_rates, changed_rates, effectiveDate){
     let queries = []; 
     scraped_rates.forEach(element => {
 	let query = db.get_cola_rate(element.country, element.post)
@@ -298,6 +298,7 @@ function check_rate_changes(scraped_rates, changed_rates){
 			    post: res[0].post,
 			    previous_allowance: res[0].allowance,
 			    allowance: element.allowance,
+			    effectiveDate: new Date(effectiveDate),
 			    last_modified: new Date(),
 			    previously_last_modified: res[0].last_modified
 			});
@@ -305,13 +306,13 @@ function check_rate_changes(scraped_rates, changed_rates){
 		    else if(!res[0]){
 			console.log("Post does not exist in db: "
 				    + element.post + ", " + element.country + ". Adding...");
-			let add_query = db.add_cola_rate(element.country, element.post, element.allowance)
+			return db.add_cola_rate(element.country, element.post, element.allowance)
 			    .then(res => console.log("Added new post: " + element.post + ", "
 						     + element.country + "."))
 			    .catch(err => console.log(err + "\nError adding "
 						      + element.post + ", "
 						      + element.country + "."))
-			queries.push(add_query);
+//			queries.push(add_query);
 		    }   
 		}
 		catch(err){

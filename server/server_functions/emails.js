@@ -130,7 +130,6 @@ module.exports = {
 		    const file = tm.manip_template(user, changed);
 
 		    //ugly but necessary to then chain this rather than return it
-
 		    send_email(user, changed, file)
 			.then(resMsg => {
 			    console.log(`Email sent to ${user.username} with '${user.filename}'`
@@ -175,7 +174,7 @@ module.exports = {
 function send_email(user, changed, file){
 
     const month_long = new Intl.DateTimeFormat('en-US', {month: 'long'})
-	  .format(changed.last_modified);
+	  .format(changed.effectiveDate);
     
     return misc.jwt_sign({username: user.username,
 			  subscriptionId: user.subscriptionId,
@@ -203,16 +202,16 @@ function send_email(user, changed, file){
 		    }
 		}
 	    });
-
+	    
 	    let awaitPromises = [
 		em.render('rate_change/html.handlebars', {
 		    locale: 'en',
 		    title: `COLA Rate Change ${changed.country} (${changed.post})`,
 		    username: user.username,
 		    changed: changed,
-		    date: changed.last_modified.getUTCDate(),
+		    date: changed.effectiveDate.getUTCDate(),
 		    month: month_long,
-		    year: changed.last_modified.getUTCFullYear(),
+		    year: changed.effectiveDate.getUTCFullYear(),
 		    host: process.env.HOST,
 		    jwt: token,
 		    errorFilename: user.errorFilename,
@@ -224,9 +223,9 @@ function send_email(user, changed, file){
 		    title: `COLA Rate Change ${changed.country} (${changed.post})`,
 		    username: user.username,
 		    changed: changed,
-		    date: changed.last_modified.getUTCDate(),
+		    date: changed.effectiveDate.getUTCDate(),
 		    month: month_long,
-		    year: changed.last_modified.getUTCFullYear(),
+		    year: changed.effectiveDate.getUTCFullYear(),
 		    host: process.env.HOST,
 		    jwt: token,
 		    errorFilename: user.errorFilename,
@@ -234,7 +233,7 @@ function send_email(user, changed, file){
 		    style: ['rate_change_email.css']
 		})
 	    ];
-
+	    
 	    return Promise.all(awaitPromises)
 		.then(res => {
 		    const msg = {
