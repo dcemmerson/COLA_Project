@@ -1,6 +1,4 @@
-# Contributing to Our Projects, Version 1.5
-
-**NOTE: This CONTRIBUTING.md is for software contributions. You do not need to follow the Developer's Certificate of Origin (DCO) process for commenting on the Code.mil repository documentation, such as CONTRIBUTING.md, INTENT.md, etc. or for submitting issues.**
+# Contributing 
 
 Thanks for thinking about using or contributing to this software ("Project") and its documentation!
 
