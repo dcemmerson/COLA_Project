@@ -29,7 +29,7 @@ module.exports = function (app) {
 	    layout: 'loginLayout.hbs',
 	    title: 'Login - COLA',
 	    login: true,
-	    style: ['login.css', 'styles.css', 'font_size.css'],
+ 	    style: ['login.css', 'styles.css', 'font_size.css'],
 	    script: ['login.js', 'login_ajax.js', 'utility.js']
 	}
 	
@@ -55,12 +55,13 @@ module.exports = function (app) {
 	let context = {
 	    title: 'Account Verification - COLA',
 	    style: ['styles.css', 'font_size.css']
-	}
+	};
 
 	misc.set_layout(req, context)
 	    .then(() => misc.jwt_verify(req.query.tok))
 	    .then(dec => {
 		decrypted = dec;
+		context.tok = req.query.tok;
 		context.verificationSent = decrypted.verificationSent;
 		context.loggedInEmail = context.email;
 		return db.get_user_by_id(decrypted.userId, context);
@@ -90,7 +91,21 @@ module.exports = function (app) {
 		res.render('verify', context);
 	    })
     });
+
+    app.get('/requestVerificationCode', function (req, res) {
+	let context = {
+	    title: 'Request New Verification Code - COLA',
+ 	    style: ['login.css', 'styles.css', 'font_size.css'],
+	    script: ['requestVerificationCode.js', 'requestVerificationCode_ajax.js', 'utility.js']
+
+	}
 	
+	misc.set_layout(req, context)
+	    .then(() => {
+		res.render('requestVerificationCode', context);
+	    })
+    });
+    
     app.get(`/reset`, function (req, res) {
 	if(req.isAuthenticated()){
 	    res.redirect('account');

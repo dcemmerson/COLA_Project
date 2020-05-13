@@ -205,7 +205,7 @@ module.exports = {
     },
     
     get_user_by_email: function (email, context) {
-	var sql = "SELECT id, email, password, modified FROM user WHERE id=?"
+	var sql = "SELECT id, email, password, isVerified, modified FROM user WHERE email=?"
 	var values = [email];
 	return new Promise((resolve, reject) => {
 	    queryDB(sql, values, mysql)
@@ -221,6 +221,7 @@ module.exports = {
 			context.userId = result[0].id;
 			context.email = result[0].email;
 			context.modified = result[0].modified;
+			context.isVerified = result[0].isVerified;
 			resolve(result[0].password);
 		    }    
 		})
@@ -230,7 +231,8 @@ module.exports = {
 	})
     },
     
-    
+    /* i dont think this is being used? There are several issues with get_user as written
+       - try/catch inside a promise, not returning the promise, rendering inside db file...
     get_user: function (req, res, id, token) {
 	var sql = "SELECT password, created FROM user WHERE id= ?"
 	var values = [id];
@@ -256,7 +258,7 @@ module.exports = {
 		    res.render('recover',/* {
 			id: id,
 			//	token: token
-		    */ context)
+		     context)
 		}catch(err) {if(err) res.redirect('/login');
 			     
 			    };
@@ -266,7 +268,7 @@ module.exports = {
 
 	})
     },
-    
+ */   
     update_user: function (id, pwd) {
 	return new Promise((resolve, reject) => {
 	    bcrypt.hash(pwd, saltRounds, function (err, hash) {

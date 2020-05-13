@@ -468,7 +468,59 @@ module.exports = function(app, passport){
 		context.error = true;
             })
 	    .finally(() => res.send(context))
-	    
+	
+    });
+    
+    app.post(`/requestVerificationCode`, function (req, res, next){
+        var context = {};
+	var email = req.body.username;
+
+	// no need to validate email. Just check if email exists in our
+	// db (avoiding sql injection) and send email if it is.
+	db.get_user_by_email(email, context)
+	     .then(() => {
+		 if(context.isVerified){
+		     context.alreadyVerified = true;
+		     throw new Error(`${email} already verified.`);
+		     return;
+		 }
+		 // create two tokens (same process as create_account post route):
+		 // one that we will email the user and can be used to verify account
+		 // a second that we will return to the user. Allow the user to follow redirect,
+		 // then use token to decide how to render redirect page.
+		 let emailToken = misc.jwt_sign({
+		     userId: context.userId,
+		     email: context.username,
+		     verify: true
+		 }, process.env.JWT_SECRET);
+
+		 let returnToken = misc.jwt_sign({
+		     userId: context.userId,
+		     email: context.username,
+		     verificationSent: true,
+		     verify: false
+		 }, process.env.JWT_SECRET);
+
+		 return Promise.all([emailToken, returnToken]);
+	     })
+	    .then(tokens => {
+		let emailToken = tokens[0];
+		context.returnToken = tokens[1];
+		
+		context.success = true;
+		context.redirect = `/verify?tok=${context.returnToken}`;
+		
+		//now send email
+		return emails.send_verification_email(email, emailToken);
+		
+            })
+            .catch(err => {
+		if (err) console.log(err);
+
+		context.error = true;
+            })
+	    .finally(() => res.send(context))
+	
     });
     
 	

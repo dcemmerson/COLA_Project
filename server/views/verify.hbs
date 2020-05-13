@@ -37,9 +37,9 @@
     <div class="usa-alert usa-alert--warning max-width-900 mt-2 mt-md-4 mt-lg-5">
       <div class="usa-alert__body">
 	<span>
-	  <h2 class="h3 usa-alert__heading">Logged in as {{email}}</h2>
+	  <h2 class="h3 usa-alert__heading">Currently Logged In</h2>
 	</span>
-	<p class="usa-alert__text">You must be logged out to verify an email. Please <a title="Logout" href="/logout" class="usa-link">logout</a> and try again.</p>
+	<p class="usa-alert__text">You are currently logged in as {{email}}. Please <a title="Logout" href="/logout" class="usa-link">logout</a> and try again.</p>
       </div>
     </div>
   </div>
@@ -51,7 +51,7 @@
 	  <h2 class="h3 usa-alert__heading">Verification Email Sent!</h2>
 	</span>
 	<p class="usa-alert__text">A verification email has been sent to {{verifyEmail}}.</p>
-	<p class="usa-alert__text">Don't see it? <a title="Resend verification email" href="/resendverification" class="usa-link">Send</a> again.</p>
+	<p class="usa-alert__text">Don't see it? <a title="Resend verification email" href="/verify?tok={{tok}}" class="usa-link">Resend</a> verification email.</p>
       </div>
     </div>
   </div>
@@ -63,7 +63,7 @@
 	  <h2 class="h3 usa-alert__heading">Invalid Verification Code</h2>
 	</span>
 	<p class="usa-alert__text">The verification code in the URL seems to be invalid. Unable to verify email.</p>
-	<p class="usa-alert__text">If you are trying to verify your email, try <a title="Resend verification email" href="/resend">resending</a> verification email.</p>
+	<p class="usa-alert__text mt-2">If you are trying to verify your email, <a title="Request new verification code" href="/requestverificationcode">request new verification code</a>.</p>
       </div>
     </div>
   </div>
