@@ -1,10 +1,15 @@
+$theme-color-base-lightest: #f0f0f0;
+$theme-color-base-lighter: #dfe1e2;
+$theme-color-base-light: #a9aeb1;
+
 #addSubscriptionsContainer {
     //    background: linear-gradient(color("blue-cool-40"), color("blue-cool-40"), color("base-dark"));
 
     #subscriptionContainer {
-	background: rgba(248,248,248, 0.95);
+	background: #fdfdfd;
 	border-radius: 3px;
-	box-shadow: 5px 5px 5px color("base");
+	box-shadow: 5px 5px 5px $theme-color-base-lighter;
+	border: 1px solid $theme-color-base-lighter;
     }
     #addPostForm {
 	width: 100% !important;
@@ -15,13 +20,13 @@
 
 #viewSubscriptionsContainer {
     //    background: linear-gradient(#f8f8f8, color("base-lightest"));
-    background: linear-gradient(color("base-lightest"), color("white"), color("white"));
+    background: linear-gradient($theme-color-base-lightest, #ffffff, #ffffff);
     #tableContainer {
 //	background: color("base");
 //	background: linear-gradient( #4b596d, color("primary-darker"));
 //	color: color("base-lightest");
 /*	h2 {
-	    color: color("base-lighter");
+	    color: color($theme-color-base-lighter);
 	}
 	a {
 	    color: color("base-light");
@@ -31,7 +36,7 @@
 	}
 */
 	table {
-	    border: 1px solid color("base-lighter");
+	    border: 1px solid $theme-color-base-lighter;
 	}
 	tbody tr:nth-child(even){
 	    background: rgba(255,255,255,0.8);

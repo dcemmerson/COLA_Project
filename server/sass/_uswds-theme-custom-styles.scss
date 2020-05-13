@@ -49,3 +49,35 @@ i.e.
 .usa-hero__callout {
     box-shadow: 5px 5px 5px color("base-darkest");
 }
+
+.usa-link-github {
+    background-image: url(/img/github.svg);
+}
+
+.usa-social_link {
+    @include at-media-max($theme-header-min-width) {
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: auto 2.5rem;
+	display: inline-block;
+	height: 3.5rem;
+	width: 3.5rem;
+	position: relative;
+	text-align: center;
+	
+    }
+    @include at-media($theme-header-min-width) {
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: auto 3rem;
+	display: inline-block;
+	height: 4.4rem;
+	width: 4.4rem;
+	position: relative;
+	text-align: center;
+    }
+    .usa-social_link__text {
+	display: none;
+    }
+    
+}
