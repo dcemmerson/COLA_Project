@@ -72,15 +72,16 @@ By making a contribution to this project, I certify that:
 
 ## Getting Started
 
-Cola.govapps.us is a static website genetated using NodeJS which can be installed [here](https://nodejs.org/en/).
+cola.govapps.us is a webapp built using NodeJS which can be installed [here](https://nodejs.org/en/). Dependencies are managed using Node Package Manager, NPM. MariaDB is used as the SQL server.
 
 ### Making Changes
 
-In order to run the site locally
+To run the site locally:
 
 1) Clone this repository
-2) Run npm install from the server folder, in order to install dependenices
-3 Run 'npm start' and the website will be available at localhost:10000
+2) Run `npm install` from within the server folder to install dependenices
+3) Import the test database file /sql/cola_testdb_dump.sql into MariaDB
+4) Run `node server` and the website will be accessible at localhost:10000
 
 ### Code Style
 
