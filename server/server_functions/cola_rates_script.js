@@ -21,31 +21,31 @@ module.exports = {
 		    row, stored in an object, and pushed into array
 		    that is returned from this method.
      */
-/*    parse_cola_page: function(html){
-	const cherio = require('cherio');
-	var context = [];
-	const $ = cherio.load(html);
-	
-	$('.web920_left tr').each((index, tr) => {
-	    const country = $(tr)
-		  .find('td[title="Country Name"]')
-		  .find('a').text();
-	    const post = $(tr)
-		  .find('td[title="Post Name"]')
-		  .text();
-	    const post_allowance = $(tr)
-		  .find('td[title="Post Allowance"]')
-		  .text();
-	    if(country != '')
-		context.push({
-		    country: country,
-		    post: post,
-		    allowance: post_allowance.slice(0, post_allowance.search(/%/))
-		});
-	})
-	return context;
-    },
-*/
+    /*    parse_cola_page: function(html){
+        const cherio = require('cherio');
+        var context = [];
+        const $ = cherio.load(html);
+    	
+        $('.web920_left tr').each((index, tr) => {
+            const country = $(tr)
+              .find('td[title="Country Name"]')
+              .find('a').text();
+            const post = $(tr)
+              .find('td[title="Post Name"]')
+              .text();
+            const post_allowance = $(tr)
+              .find('td[title="Post Allowance"]')
+              .text();
+            if(country != '')
+            context.push({
+                country: country,
+                post: post,
+                allowance: post_allowance.slice(0, post_allowance.search(/%/))
+            });
+        })
+        return context;
+        },
+    */
     /****************** MARKED FOR REMOVAL ******************/
     /* name: check_rate_changes
        preconditions: scraped_rates contains array of objects obtained by scraping
@@ -60,36 +60,36 @@ module.exports = {
 		    newly scraped allowance. If allowance is different, add to changed_rates
 		    array.
      */
-/*    check_rate_changes: function(scraped_rates, changed_rates){
-	let queries = []; 
-	
-	scraped_rates.forEach(element => {
-	    let query = db.get_cola_rate(element.country, element.post)
-		.then(res => {
-		    if(res[0].allowance != element.allowance){
-			changed_rates.push({
-			    id: res[0].id,
-			    country: res[0].country,
-			    post: res[0].post,
-			    allowance: element.allowance,
-			    previously_last_modified: res[0].last_modified
-			});
-		    }
-		})
-		.catch(err => {
-		    console.log(err);
-		    reject(err);
-		})
-	    queries.push(query);
-	});
-
-	return new Promise((resolve, reject) => {
-	    Promise.all(queries).then(() =>{
-		resolve();
-	    });
-	})
-    },
-  */  
+    /*    check_rate_changes: function(scraped_rates, changed_rates){
+        let queries = []; 
+    	
+        scraped_rates.forEach(element => {
+            let query = db.get_cola_rate(element.country, element.post)
+            .then(res => {
+                if(res[0].allowance != element.allowance){
+                changed_rates.push({
+                    id: res[0].id,
+                    country: res[0].country,
+                    post: res[0].post,
+                    allowance: element.allowance,
+                    previously_last_modified: res[0].last_modified
+                });
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                reject(err);
+            })
+            queries.push(query);
+        });
+    
+        return new Promise((resolve, reject) => {
+            Promise.all(queries).then(() =>{
+            resolve();
+            });
+        })
+        },
+      */
     /****************** MARKED FOR REMOVAL ******************/
     /* name: update_changed_rates
        preconditions: changed_rates is array of objects for each post that has changed and
@@ -99,25 +99,25 @@ module.exports = {
 		       been completed.
        description: UPDATE each row allowance in db corresponding to changed_rates[].id
     */
-/*    update_changed_rates: function(changed_rates){
-	let queries = [];
-	
-	changed_rates.forEach(changed => {
-	    let query = db.update_cola_rate(changed.id, changed.allowance)
-		.catch(err => {
-		    console.log(err);
-			reject(err);
-		})
-	    queries.push(query);
-	});
-	
-	return new Promise((resolve, reject) => {
-	    Promise.all(queries).then(() =>{
-		resolve();
-	    });
-	})
-    },
-*/
+    /*    update_changed_rates: function(changed_rates){
+        let queries = [];
+    	
+        changed_rates.forEach(changed => {
+            let query = db.update_cola_rate(changed.id, changed.allowance)
+            .catch(err => {
+                console.log(err);
+                reject(err);
+            })
+            queries.push(query);
+        });
+    	
+        return new Promise((resolve, reject) => {
+            Promise.all(queries).then(() =>{
+            resolve();
+            });
+        })
+        },
+    */
     /* name: schedule_crcs
        preconditions: None
        postconditions: cola rate change script has been scheduled to run
@@ -128,57 +128,57 @@ module.exports = {
                     schedules for script to start at midnihgt, and then reoccur every 24
 		    hours.
     */
-    schedule_crcs: function(){
-	let schedule = require('node-schedule');
-	let today = new Date();
-	
-	let midnight = new Date(Date.UTC(today.getFullYear(),
-					 today.getMonth(),
-					 today.getDate() + 0,
-					 today.getHours() + 7, today.getMinutes(),
-					 today.getSeconds() + 1, 0));
-//					 0, 0, 0, 0));
-	//ensure we don't accidentally schedule the intervals to start
-	//at last night's midnight GMT if it already passed
-	if(midnight < new Date())
-	    midnight = new Date(Date.UTC(today.getFullYear(),
-					 today.getMonth(),
-					 today.getDate(),
-					 today.getHours() + 7, today.getMinutes(),
-					 today.getSeconds() + 1, 0));
-//						 0, 0, 0, 0));
-	
-	schedule.scheduleJob(midnight, () => {
-	    start_cola_rate_change_script();
-	});
-	console.log("Cola rate change script schduled to start at: " + midnight);
-    },
-    scrape_previous_cola_rates: async function(){
-	try {
-//	    let rateDates = set_previous_dates(new Date('March 3, 2019'));
-	    let rateDates = set_previous_dates(new Date('March 1, 2020'));
-	    //	    let rateDates = set_previous_dates(new Date('May 10, 2020'));
-	    //	    let rateDates = set_previous_dates(new Date('March 11, 2012'));
-	    
-	    let db99 = await check_previous_rates_99();
-	    let counter = 1;
-	    
-	    while(db99.length > 0 && counter < rateDates.length){
-		console.log('start scrape again ' + counter);
-		let prevRates = await scrape_previous_allowances(rateDates[counter].dateStr);
-		//		console.log(prevRates);
+    schedule_crcs: function () {
+        let schedule = require('node-schedule');
+        let today = new Date();
 
-		if(prevRates.rates.length === 0) return;
-		
-		await update_previous_allowances(prevRates.rates, rateDates[counter - 1].date);
-		
-		db99 = await check_previous_rates_99();
-		counter++;
-	    }
-	}
-	catch(err) {
-	    console.log(err);
-	}
+        let midnight = new Date(Date.UTC(today.getFullYear(),
+            today.getMonth(),
+            today.getDate() + 0,
+            today.getHours() + 7, today.getMinutes(),
+            today.getSeconds() + 1, 0));
+        //					 0, 0, 0, 0));
+        //ensure we don't accidentally schedule the intervals to start
+        //at last night's midnight GMT if it already passed
+        if (midnight < new Date())
+            midnight = new Date(Date.UTC(today.getFullYear(),
+                today.getMonth(),
+                today.getDate(),
+                today.getHours() + 7, today.getMinutes(),
+                today.getSeconds() + 1, 0));
+        //						 0, 0, 0, 0));
+
+        schedule.scheduleJob(midnight, () => {
+            start_cola_rate_change_script();
+        });
+        console.log("Cola rate change script schduled to start at: " + midnight);
+    },
+    scrape_previous_cola_rates: async function () {
+        try {
+            //	    let rateDates = set_previous_dates(new Date('March 3, 2019'));
+            let rateDates = set_previous_dates(new Date('March 1, 2020'));
+            //	    let rateDates = set_previous_dates(new Date('May 10, 2020'));
+            //	    let rateDates = set_previous_dates(new Date('March 11, 2012'));
+
+            let db99 = await check_previous_rates_99();
+            let counter = 1;
+
+            while (db99.length > 0 && counter < rateDates.length) {
+                console.log('start scrape again ' + counter);
+                let prevRates = await scrape_previous_allowances(rateDates[counter].dateStr);
+                //		console.log(prevRates);
+
+                if (prevRates.rates.length === 0) return;
+
+                await update_previous_allowances(prevRates.rates, rateDates[counter - 1].date);
+
+                db99 = await check_previous_rates_99();
+                counter++;
+            }
+        }
+        catch (err) {
+            console.log(err);
+        }
     },
     /* name: scrape_effective_dates_no_cola_change
        precondititions: none
@@ -187,37 +187,37 @@ module.exports = {
 			 being recorded on aoprols.gov...
        description:
      */
-    scrape_effective_dates_no_cola_change: async function(){
-	try {
-	    //	    let rateDates = set_previous_dates(new Date('March 3, 2019'));
-//	    let rateDates = set_previous_dates(new Date('March 1, 2020'));
-	    //	    let rateDates = set_previous_dates(new Date('May 10, 2020'));
-	    //	    let rateDates = set_previous_dates(new Date('March 11, 2012'));
-	    let rateDates = set_previous_dates(new Date('March 30, 1997'));
+    scrape_effective_dates_no_cola_change: async function () {
+        try {
+            //	    let rateDates = set_previous_dates(new Date('March 3, 2019'));
+            //	    let rateDates = set_previous_dates(new Date('March 1, 2020'));
+            //	    let rateDates = set_previous_dates(new Date('May 10, 2020'));
+            //	    let rateDates = set_previous_dates(new Date('March 11, 2012'));
+            let rateDates = set_previous_dates(new Date('March 30, 1997'));
 
-	    
-	    let db99 = await check_previous_rates_99();
-	    let counter = 1;
-	    
-	    while(db99.length > 0 && counter < rateDates.length){
-		console.log('start scrape again ' + counter);
-		let prevRates = await scrape_previous_allowances(rateDates[counter].dateStr);
-		//		console.log(prevRates);
 
-		if(prevRates.rates.length === 0){
-		    console.log("Exiting script. Issue with scrape dates.");
-		    return;
-		}
+            let db99 = await check_previous_rates_99();
+            let counter = 1;
 
-		await update_effective_date_no_rate_change(db99, prevRates.rates, rateDates[counter - 1].date);
+            while (db99.length > 0 && counter < rateDates.length) {
+                console.log('start scrape again ' + counter);
+                let prevRates = await scrape_previous_allowances(rateDates[counter].dateStr);
+                //		console.log(prevRates);
 
-//		db99 = await check_previous_rates_99();
-		counter++;
-	    }
-	}
-	catch(err) {
-	    console.log(err);
-	}
+                if (prevRates.rates.length === 0) {
+                    console.log("Exiting script. Issue with scrape dates.");
+                    return;
+                }
+
+                await update_effective_date_no_rate_change(db99, prevRates.rates, rateDates[counter - 1].date);
+
+                //		db99 = await check_previous_rates_99();
+                counter++;
+            }
+        }
+        catch (err) {
+            console.log(err);
+        }
     }
 }
 /* name: start_cola_rate_change_script
@@ -226,24 +226,24 @@ module.exports = {
                    set intervals every 24 hours at 00:00:00 GMT
    description: This method must be run just once upon server startup.
 */
-function start_cola_rate_change_script(){
+function start_cola_rate_change_script() {
     set_interval.start(() => {
-	let changed_rates = [];
-	after_load('https://aoprals.state.gov/Web920/cola.asp', html => {
-	    const scraped = parse_cola_page(html);
-	    check_rate_changes(scraped.rates, changed_rates, scraped.effectiveDate)
-		.then(() => update_changed_rates(changed_rates, scraped.effectiveDate))
-	    	.then(() => {
-		    console.log(new Date() + ': COLA rates updated');
-		    emails.start_sending_emails(changed_rates);
-		})
-		.catch(err => {
-		    console.log(err)
-		})
-	});
+        let changed_rates = [];
+        after_load('https://aoprals.state.gov/Web920/cola.asp', html => {
+            const scraped = parse_cola_page(html);
+            check_rate_changes(scraped.rates, changed_rates, scraped.effectiveDate)
+                .then(() => update_changed_rates(changed_rates, scraped.effectiveDate))
+                .then(() => {
+                    console.log(new Date() + ': COLA rates updated');
+                    emails.start_sending_emails(changed_rates);
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        });
     },
-//		       6000, 'update_cola_rates');
-		       24 * 60 * 60 * 1000, 'update_cola_rates');
+        //		       6000, 'update_cola_rates');
+        24 * 60 * 60 * 1000, 'update_cola_rates');
 }
 /* name: update_changed_rates
    preconditions: changed_rates is array of objects for each post that has changed and
@@ -253,22 +253,22 @@ function start_cola_rate_change_script(){
 		   been completed.
    description: UPDATE each row allowance in db corresponding to changed_rates[].id
 */
-function update_changed_rates(changed_rates, effectiveDate){
+function update_changed_rates(changed_rates, effectiveDate) {
     let queries = [];
-    
+
     changed_rates.forEach(changed => {
-	let query = db.update_cola_rate(changed.postId, changed.allowance, changed.previous_allowance, effectiveDate)
-	    .catch(err => {
-		console.log(err);
-		reject(err);
-		})
-	queries.push(query);
+        let query = db.update_cola_rate(changed.postId, changed.allowance, changed.previous_allowance, effectiveDate)
+            .catch(err => {
+                console.log(err);
+                reject(err);
+            })
+        queries.push(query);
     });
-    
+
     return new Promise((resolve, reject) => {
-	Promise.all(queries).then(() =>{
-	    resolve();
-	});
+        Promise.all(queries).then(() => {
+            resolve();
+        });
     })
 }
 /* name: check_rate_changes
@@ -284,56 +284,56 @@ function update_changed_rates(changed_rates, effectiveDate){
 		newly scraped allowance. If allowance is different, add to changed_rates
 		array.
 */
-function check_rate_changes(scraped_rates, changed_rates, effectiveDate){
-    let queries = []; 
+function check_rate_changes(scraped_rates, changed_rates, effectiveDate) {
+    let queries = [];
     scraped_rates.forEach(element => {
-	let query = db.get_cola_rate(element.country, element.post)
-	    .then(res => {
-		try{
-		    if(res[0] && res[0].allowance != element.allowance){
-			changed_rates.push({
-//			    id: res[0].id,
-			    postId: res[0].id,
-			    country: res[0].country,
-			    post: res[0].post,
-			    previous_allowance: res[0].allowance,
-			    allowance: element.allowance,
-			    effectiveDate: new Date(effectiveDate),
-			    last_modified: new Date(),
-			    previously_last_modified: res[0].last_modified
-			});
-		    }
-		    else if(!res[0]){
-			console.log("Post does not exist in db: "
-				    + element.post + ", " + element.country + ". Adding...");
-			return db.add_cola_rate(element.country, element.post, element.allowance)
-			    .then(res => console.log("Added new post: " + element.post + ", "
-						     + element.country + "."))
-			    .catch(err => console.log(err + "\nError adding "
-						      + element.post + ", "
-						      + element.country + "."))
-//			queries.push(add_query);
-		    }   
-		}
-		catch(err){
-		    console.log(err);
-		    console.log("Error updating values.");
-		}
-	    })
-	    .catch(err => {
-		console.log(err);
-		reject(err);
-	    })
-	queries.push(query);
+        let query = db.get_cola_rate(element.country, element.post)
+            .then(res => {
+                try {
+                    if (res[0] && res[0].allowance != element.allowance) {
+                        changed_rates.push({
+                            //			    id: res[0].id,
+                            postId: res[0].id,
+                            country: res[0].country,
+                            post: res[0].post,
+                            previous_allowance: res[0].allowance,
+                            allowance: element.allowance,
+                            effectiveDate: new Date(effectiveDate),
+                            last_modified: new Date(),
+                            previously_last_modified: res[0].last_modified
+                        });
+                    }
+                    else if (!res[0]) {
+                        console.log("Post does not exist in db: "
+                            + element.post + ", " + element.country + ". Adding...");
+                        return db.add_cola_rate(element.country, element.post, element.allowance)
+                            .then(res => console.log("Added new post: " + element.post + ", "
+                                + element.country + "."))
+                            .catch(err => console.log(err + "\nError adding "
+                                + element.post + ", "
+                                + element.country + "."))
+                        //			queries.push(add_query);
+                    }
+                }
+                catch (err) {
+                    console.log(err);
+                    console.log("Error updating values.");
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                reject(err);
+            })
+        queries.push(query);
     });
 
     return new Promise((resolve, reject) => {
-	Promise.all(queries).then(() =>{
-	    resolve();
-	});
+        Promise.all(queries).then(() => {
+            resolve();
+        });
     })
 }
-    
+
 /* name: parse_cola_page
    preconditions: html is passed as string containing html page
                   in which any js for that page has already made
@@ -349,36 +349,36 @@ function check_rate_changes(scraped_rates, changed_rates, effectiveDate){
 		row, stored in an object, and pushed into array
 		that is returned from this method.
 */
-function parse_cola_page(html){
+function parse_cola_page(html) {
     const cherio = require('cherio');
     var context = {
-	effectiveDate: null,
-	rates: []
+        effectiveDate: null,
+        rates: []
     };
     const $ = cherio.load(html);
-    
+
     $('.web920_left tr').each((index, tr) => {
-	const country = $(tr)
-	      .find('td[title="Country Name"]')
-	      .find('a').text();
-	const post = $(tr)
-	      .find('td[title="Post Name"]')
-	      .text();
-	const post_allowance = $(tr)
-	      .find('td[title="Post Allowance"]')
-	      .text();
-	if(country != '')
-	    context.rates.push({
-		country: country,
-		post: post,
-		allowance: post_allowance.slice(0, post_allowance.search(/%/))
-	    });
+        const country = $(tr)
+            .find('td[title="Country Name"]')
+            .find('a').text();
+        const post = $(tr)
+            .find('td[title="Post Name"]')
+            .text();
+        const post_allowance = $(tr)
+            .find('td[title="Post Allowance"]')
+            .text();
+        if (country != '')
+            context.rates.push({
+                country: country,
+                post: post,
+                allowance: post_allowance.slice(0, post_allowance.search(/%/))
+            });
     })
 
     // also grab effective date from the webpage
     const regex = /(.*?)Rates Effective: (.*?)/;
     context.effectiveDate = new Date($('tr td div h4').text().replace(regex, ''));
-    
+
     return context;
 }
 
@@ -393,104 +393,104 @@ function parse_cola_page(html){
    postconditions: resolve with array of posts whose previous allowance is 
                    still -99
 */
-function check_previous_rates_99(){
+function check_previous_rates_99() {
     return new Promise((resolve, reject) => {
-	db.get_prev_allowances_99_no_effective()
-	    .then(res => {
-		if(res.length > 0){
-		    console.log(res.length + " posts remaining with previous allowance of -99");
-		}
-		else {
-		    console.log("All posts' previous allowances updated.");
-		}
-		resolve(res);
-		
-	    })
-	    .catch(err => {
-		console.log('error in check_previous_rates_99');
-		reject(err);
-	    })
+        db.get_prev_allowances_99_no_effective()
+            .then(res => {
+                if (res.length > 0) {
+                    console.log(res.length + " posts remaining with previous allowance of -99");
+                }
+                else {
+                    console.log("All posts' previous allowances updated.");
+                }
+                resolve(res);
+
+            })
+            .catch(err => {
+                console.log('error in check_previous_rates_99');
+                reject(err);
+            })
     })
 }
-function scrape_previous_allowances(date){
-	let changed_rates = [];
+function scrape_previous_allowances(date) {
+    let changed_rates = [];
     return new Promise((resolve, reject) => {
-	console.log(`trying to scrape: https://aoprals.state.gov/Web920/cola.asp?EffectiveDate=${date}`);
-	after_load(`https://aoprals.state.gov/Web920/cola.asp?EffectiveDate=${date}`,html => {
-	    let prevRates = parse_cola_page(html);
-	    if(prevRates.rates.length == 0) console.log('No scraped data ' + date);
-	    resolve(prevRates);
-	    
-	});
+        console.log(`trying to scrape: https://aoprals.state.gov/Web920/cola.asp?EffectiveDate=${date}`);
+        after_load(`https://aoprals.state.gov/Web920/cola.asp?EffectiveDate=${date}`, html => {
+            let prevRates = parse_cola_page(html);
+            if (prevRates.rates.length == 0) console.log('No scraped data ' + date);
+            resolve(prevRates);
+
+        });
     })
 }
-function update_previous_allowances(prevRates, effectiveDate){
+function update_previous_allowances(prevRates, effectiveDate) {
     return new Promise((resolve, reject) => {
-	let awaitPromises = [];
-	prevRates.forEach(prevRate => {
-	    let query = db.get_cola_rate(prevRate.country, prevRate.post)
-		.then(dbRes => {
-		   
-		    if(dbRes[0].prevAllowance == -99 && dbRes[0].allowance != prevRate.allowance){
-			//update prevAllowance for this post in db
-			return db.set_prev_allowance(dbRes[0].id, prevRate.allowance, effectiveDate);
-		    }
-		    else{
-			return;
-		    }
-		})
-		.then(dbRes => {
-		    if(dbRes && dbRes.affectedRows === 1){
-			console.log(`Updated ${prevRate.post}, ${prevRate.country}, `
-				    + `set allowance = ${prevRate.allowance}`);
-		    }
-		})
-		.catch(err => {
-		    
-		    console.log(`Post no longer exists: ${prevRate.post}, ${prevRate.country}.`);
-		    return;
-		})
-	    awaitPromises.push(query);
-	})
-	Promise.all(awaitPromises)
-	    .then(() => {
-		resolve();
-	    })
-	    .catch(err => {
-		console.log('error in update previous allowances');
-		reject(err);
-	    })
+        let awaitPromises = [];
+        prevRates.forEach(prevRate => {
+            let query = db.get_cola_rate(prevRate.country, prevRate.post)
+                .then(dbRes => {
+
+                    if (dbRes[0].prevAllowance == -99 && dbRes[0].allowance != prevRate.allowance) {
+                        //update prevAllowance for this post in db
+                        return db.set_prev_allowance(dbRes[0].id, prevRate.allowance, effectiveDate);
+                    }
+                    else {
+                        return;
+                    }
+                })
+                .then(dbRes => {
+                    if (dbRes && dbRes.affectedRows === 1) {
+                        console.log(`Updated ${prevRate.post}, ${prevRate.country}, `
+                            + `set allowance = ${prevRate.allowance}`);
+                    }
+                })
+                .catch(err => {
+
+                    console.log(`Post no longer exists: ${prevRate.post}, ${prevRate.country}.`);
+                    return;
+                })
+            awaitPromises.push(query);
+        })
+        Promise.all(awaitPromises)
+            .then(() => {
+                resolve();
+            })
+            .catch(err => {
+                console.log('error in update previous allowances');
+                reject(err);
+            })
     })
 }
 
-function set_previous_dates(start){
+function set_previous_dates(start) {
     let rateDates = [];
 
     //start i at -1 so we can start first scrape date as a future scrape date.
     //This way, if the first time we detect a change in the COLA rates on the
     //first valid scrape date that isnt the start scrape date, we can correctly
     //update the last_modified, aka effective date, in the db
-    for(let i = -1; i < 100; i++){
-	let date = new Date(start - i * 14 * 1000 * 60 * 60 * 24 );
-	let dateString = String(date.getFullYear());
+    for (let i = -1; i < 100; i++) {
+        let date = new Date(start - i * 14 * 1000 * 60 * 60 * 24);
+        let dateString = String(date.getFullYear());
 
-	if(date.getMonth() < 9) dateString +=  "0";
-	
-	dateString += String(date.getMonth() + 1);
-	
-	if(date.getDate() < 10) dateString += "0";
-	dateString += String(date.getDate());
-	
-	console.log(date);
-	console.log(dateString);
-	
-	rateDates.push({
-	    dateStr: dateString,
-	    date: date
-	});
+        if (date.getMonth() < 9) dateString += "0";
+
+        dateString += String(date.getMonth() + 1);
+
+        if (date.getDate() < 10) dateString += "0";
+        dateString += String(date.getDate());
+
+        console.log(date);
+        console.log(dateString);
+
+        rateDates.push({
+            dateStr: dateString,
+            date: date
+        });
     }
-    
-    return rateDates;	    
+
+    return rateDates;
 }
 /******************************************************************/
 /* functions for setting effective dates for posts whose allowances 
@@ -521,26 +521,26 @@ function set_previous_dates(start){
 		 posts cola rates first began recording on aoprols.gov
 		 and update COLARates.effective date.
 */
-function update_effective_date_no_rate_change(db99Rates, prevRates, effectiveDate){
+function update_effective_date_no_rate_change(db99Rates, prevRates, effectiveDate) {
     return new Promise((resolve, reject) => {
-	let awaitPromises = [];
-	db99Rates.forEach((db99Rate, index) => {
-	    let found = false
-	    prevRates.forEach(prevRate => {
-		if(db99Rate.country == prevRate.country && db99Rate.post == prevRate.post){
-		    found = true;
-		}
-	    })
-	    if(!found){
-		console.log(`\n\nupdating db for ${db99Rate.post}, ${db99Rate.country},`
-			    + ` with effective date = ${effectiveDate}\n\n`);
-		
-		awaitPromises.push(db.update_cola_rate_effective_date(db99Rate.id, effectiveDate));
-		db99Rates.splice(index, 1);
-	    }
-	})
-	Promise.all(awaitPromises)
-	    .then(resolve)
+        let awaitPromises = [];
+        db99Rates.forEach((db99Rate, index) => {
+            let found = false
+            prevRates.forEach(prevRate => {
+                if (db99Rate.country == prevRate.country && db99Rate.post == prevRate.post) {
+                    found = true;
+                }
+            })
+            if (!found) {
+                console.log(`\n\nupdating db for ${db99Rate.post}, ${db99Rate.country},`
+                    + ` with effective date = ${effectiveDate}\n\n`);
+
+                awaitPromises.push(db.update_cola_rate_effective_date(db99Rate.id, effectiveDate));
+                db99Rates.splice(index, 1);
+            }
+        })
+        Promise.all(awaitPromises)
+            .then(resolve)
     })
-    
+
 }

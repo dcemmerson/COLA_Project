@@ -5,69 +5,69 @@ document.addEventListener('DOMContentLoaded', async () => {
     //    set_window_prefs();
     initialize_form();
     document.getElementById('subscribeAdditional').addEventListener('click', () => {
-	hide_elements($('.alert'));
-	$('#infoContainer')[0].style.display = "block";
-	$('#subscriptionFormContainer')[0].style.display = "block";
+        hide_elements($('.alert'));
+        $('#infoContainer')[0].style.display = "block";
+        $('#subscriptionFormContainer')[0].style.display = "block";
     });
-    
+
     document.getElementById('previewPrevTemplate').addEventListener('click', e => {
-	e.preventDefault();
-	let tempSelect = document.getElementById('templateSelect');
-	let templateId = tempSelect[tempSelect.selectedIndex].getAttribute('data-templateId');
+        e.preventDefault();
+        let tempSelect = document.getElementById('templateSelect');
+        let templateId = tempSelect[tempSelect.selectedIndex].getAttribute('data-templateId');
 
-	if(valid_preview()){
-	    template_preview(templateId);
-	}
+        if (valid_preview()) {
+            template_preview(templateId);
+        }
     });
-    
-    document.getElementById('downloadPrevTemplate').addEventListener('click', async function(e) {
-	e.preventDefault();
-	let tempSelect = document.getElementById('templateSelect');
-	let templateId = tempSelect[tempSelect.selectedIndex].getAttribute('data-templateId');
 
-	if(valid_preview(true)){
-	    this.disabled = true;
-	    await template_download(templateId);
-	    this.disabled = false;
-	    
-	}
+    document.getElementById('downloadPrevTemplate').addEventListener('click', async function (e) {
+        e.preventDefault();
+        let tempSelect = document.getElementById('templateSelect');
+        let templateId = tempSelect[tempSelect.selectedIndex].getAttribute('data-templateId');
+
+        if (valid_preview(true)) {
+            this.disabled = true;
+            await template_download(templateId);
+            this.disabled = false;
+
+        }
     });
 
     //when user exits modal, reset modal to be ready to user to preview
     //another template
     $('#previewTemplateModal').on('hidden.bs.modal', () => {
-	clear_canvas(document.getElementById('previewCanvas'));
-	document.getElementById('previewTemplateLabel').innerText = "";
+        clear_canvas(document.getElementById('previewCanvas'));
+        document.getElementById('previewTemplateLabel').innerText = "";
     });
-    
+
 });
-function pdf_to_canvas(uint8arr){
+function pdf_to_canvas(uint8arr) {
     return new Promise((resolve, reject) => {
-	var loadingTask = pdfjsLib.getDocument(uint8arr);
-	loadingTask.promise.then(function(pdf) {
-	    pdf.getPage(1)
-		.then(function(page) {
-		    var scale = 1;
-		    var viewport = page.getViewport({scale:scale});
+        var loadingTask = pdfjsLib.getDocument(uint8arr);
+        loadingTask.promise.then(function (pdf) {
+            pdf.getPage(1)
+                .then(function (page) {
+                    var scale = 1;
+                    var viewport = page.getViewport({ scale: scale });
 
-		    var canvas = document.getElementById('previewCanvas');
-		    var context = canvas.getContext('2d');
-		    canvas.height = viewport.height;
-		    canvas.width = viewport.width;
+                    var canvas = document.getElementById('previewCanvas');
+                    var context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
 
-		    var renderContext = {
-			canvasContext: context,
-			viewport: viewport
-		    };
-		    page.render(renderContext);
-		    resolve();
-		    
-		})
-		.catch(err => {
-		    console.log(err);
-		    reject("Error generating preview");
-		})
-	});
+                    var renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                    };
+                    page.render(renderContext);
+                    resolve();
+
+                })
+                .catch(err => {
+                    console.log(err);
+                    reject("Error generating preview");
+                })
+        });
     })
 }
 /*
@@ -94,37 +94,37 @@ function size_table(){
 	.setAttribute('style', `max-height:${size}px`);
 }
 */
-function clear_user_subscriptions(){
+function clear_user_subscriptions() {
     let tbody = document.getElementById('subscriptionTbody');
-    while(tbody.firstChild)
-	tbody.removeChild(tbody.firstChild);
+    while (tbody.firstChild)
+        tbody.removeChild(tbody.firstChild);
 
     $('#subscriptionsTable')[0].style.display = 'none';
     $('#noActiveSubscriptions')[0].style.display = 'none';
-    
+
 }
 
-function clear_dropdown(dropdown){
-    while(dropdown.firstChild){
-	dropdown.removeChild(dropdown.firstChild);
+function clear_dropdown(dropdown) {
+    while (dropdown.firstChild) {
+        dropdown.removeChild(dropdown.firstChild);
     }
 }
 
-function new_subscription_success(postId){
+function new_subscription_success(postId) {
     hide_elements($('.alert'));
     hide_elements($('#subscriptionFormContainer'));
     let successContainer = $('#successContainer')[0];
     successContainer.style.display = 'block';
-    
+
     /////////////// find which post this postId corresponds to ////////////////
     for (let [num, option] of Object.entries($('#postSelect option'))) {
-	if(option.getAttribute('data-COLARatesId') == postId){
-	    $('#successSpan')[0].innerText = option.innerText;
-	    return;
-	}
+        if (option.getAttribute('data-COLARatesId') == postId) {
+            $('#successSpan')[0].innerText = option.innerText;
+            return;
+        }
     }
 }
-function new_subscription_fail(cont, postId){
+function new_subscription_fail(cont, postId) {
     let valAlert = $('#infoCont')[0];
     let postVal = $('#postVal')[0];
     let tempVal = $('#templateVal')[0];
@@ -143,7 +143,7 @@ function new_subscription_fail(cont, postId){
    validation check could cause user confusion if they
    refresh page.
 */
-function initialize_form(){
+function initialize_form() {
     let tempVal = $('.templateVal');
     let upTemp = $('#uploadTemplate')[0];
     let prevTemp = $('#templateSelect')[0];
@@ -152,147 +152,147 @@ function initialize_form(){
     // check if there is a template selected, if so, run
     // post validation, otherwise don't and just leave checkmarks
     // on alert validation to help user understand the alert is responsive
-    if(upTemp.value && !reg.exec(upTemp.value)){
-	//ending of file is not .doc or .doc
-	remove_classes(tempVal, ['val', 'invalBlank']);
-	add_classes(tempVal, ['invalid']);
-	upTemp.classList.add('usa-input--error');
-	validate_post();
+    if (upTemp.value && !reg.exec(upTemp.value)) {
+        //ending of file is not .doc or .doc
+        remove_classes(tempVal, ['val', 'invalBlank']);
+        add_classes(tempVal, ['invalid']);
+        upTemp.classList.add('usa-input--error');
+        validate_post();
     }
-    else if(prevTemp.selectedIndex !== 0
-	    && !reg.exec(prevTemp[prevTemp.selectedIndex].value)){
-	//ending of file is not .doc or .doc
-	remove_classes(tempVal, ['val', 'invalBlank']);
-	add_classes(tempVal, ['invalid']);
-	prevTemp.classList.add('usa-input--error');
-	validate_post();
+    else if (prevTemp.selectedIndex !== 0
+        && !reg.exec(prevTemp[prevTemp.selectedIndex].value)) {
+        //ending of file is not .doc or .doc
+        remove_classes(tempVal, ['val', 'invalBlank']);
+        add_classes(tempVal, ['invalid']);
+        prevTemp.classList.add('usa-input--error');
+        validate_post();
     }
 }
 
-function valid_preview(download=false){
+function valid_preview(download = false) {
     let prevTemp = document.getElementById('templateSelect');
     document.getElementById('previousTemplateErrorMsgDownload').style.display = 'none';
     document.getElementById('previousTemplateErrorMsgPreview').style.display = 'none';
     document.getElementById('downloadTemplateSpan').classList.remove('downloadSuccess', 'downloadError');
-    
-    if(prevTemp.selectedIndex === 0){
-	prevTemp.classList.add('usa-input--error');
-	if(download){
-	    document.getElementById('previousTemplateErrorMsgDownload').style.display = 'block';
-	}
-	else{
-	    document.getElementById('previousTemplateErrorMsgPreview').style.display = 'block';
-	}
-	return false;
+
+    if (prevTemp.selectedIndex === 0) {
+        prevTemp.classList.add('usa-input--error');
+        if (download) {
+            document.getElementById('previousTemplateErrorMsgDownload').style.display = 'block';
+        }
+        else {
+            document.getElementById('previousTemplateErrorMsgPreview').style.display = 'block';
+        }
+        return false;
     }
-    else{
-	prevTemp.classList.remove('usa-input--error');
-	return true;
+    else {
+        prevTemp.classList.remove('usa-input--error');
+        return true;
     }
 }
-function validate_post(submit=false){
+function validate_post(submit = false) {
     let postVals = $('.postVal');
     let postSelect = $('#postSelect')[0];
 
     //////////////////// check for selected post ///////////////////
-    if(postSelect.selectedIndex === 0){
-	remove_classes(postVals, ['val']);
-	add_classes(postVals, ['invalBlank']);
-	var valid = false;
-	if(submit) postSelect.classList.add('usa-input--error');
+    if (postSelect.selectedIndex === 0) {
+        remove_classes(postVals, ['val']);
+        add_classes(postVals, ['invalBlank']);
+        var valid = false;
+        if (submit) postSelect.classList.add('usa-input--error');
     }
-    else{
-	remove_classes(postVals, ['invalBlank']);
-	add_classes(postVals, ['val']);
-	postSelect.classList.remove('usa-input--error');
-	
-	var valid = true;
+    else {
+        remove_classes(postVals, ['invalBlank']);
+        add_classes(postVals, ['val']);
+        postSelect.classList.remove('usa-input--error');
+
+        var valid = true;
     }
     return valid;
 }
-function validate_subscription(submit=false){
+function validate_subscription(submit = false) {
     let valid = false;
     let tempVals = $('.templateVal');
     let upTemp = $('#uploadTemplate')[0];
     let prevTemp = $('#templateSelect')[0];
-    
+
     const reg = /(\.doc|\.docx)$/i;
     valid = validate_post(submit);
 
     ////////////////// check for template - ensure doc/docx ending ///////
-    if(!upTemp.value && prevTemp.selectedIndex === 0){
-	remove_classes(tempVals, ['val', 'invalid']);
-	add_classes(tempVals, ['invalBlank']);
+    if (!upTemp.value && prevTemp.selectedIndex === 0) {
+        remove_classes(tempVals, ['val', 'invalid']);
+        add_classes(tempVals, ['invalBlank']);
 
-	if(submit){
-	    upTemp.classList.add('usa-input--error');
-	    prevTemp.classList.add('usa-input--error');
-	}
-	valid = false;
+        if (submit) {
+            upTemp.classList.add('usa-input--error');
+            prevTemp.classList.add('usa-input--error');
+        }
+        valid = false;
     }
-    else if(!reg.exec(upTemp.value)
-	    && !reg.exec(prevTemp[prevTemp.selectedIndex].value)){
-	//ending of file is not .doc or .doc
-	remove_classes(tempVals, ['val', 'invalBlank']);
-	add_classes(tempVals, ['invalid']);
+    else if (!reg.exec(upTemp.value)
+        && !reg.exec(prevTemp[prevTemp.selectedIndex].value)) {
+        //ending of file is not .doc or .doc
+        remove_classes(tempVals, ['val', 'invalBlank']);
+        add_classes(tempVals, ['invalid']);
 
-	if(submit){
-	    $('#infoContainer')[0].style.display = 'none';
-	    $('#warningContainer')[0].style.display = 'block';
-	}
+        if (submit) {
+            $('#infoContainer')[0].style.display = 'none';
+            $('#warningContainer')[0].style.display = 'block';
+        }
 
-	if(upTemp.value){
-	    upTemp.classList.add('usa-input--error');
-	}
-	else if(prevTemp.value){
-	    prevTemp.classList.add('usa-input--error');
-	}
-	valid = false;
+        if (upTemp.value) {
+            upTemp.classList.add('usa-input--error');
+        }
+        else if (prevTemp.value) {
+            prevTemp.classList.add('usa-input--error');
+        }
+        valid = false;
     }
-    else{ //everything looks okay
-	remove_classes(tempVals, ['invalBlank', 'invalid']);
-	add_classes(tempVals, ['val']);
+    else { //everything looks okay
+        remove_classes(tempVals, ['invalBlank', 'invalid']);
+        add_classes(tempVals, ['val']);
 
-	upTemp.classList.remove('usa-input--error');
-	prevTemp.classList.remove('usa-input--error');
-	valid = valid && true;
-	document.getElementById('uploadTemplateErrorMsg').style.display = 'none';
-	document.getElementById('previousTemplateErrorMsg').style.display = 'none';
-	document.getElementById('previousTemplateErrorMsgPreview').style.display = 'none';
-	document.getElementById('previousTemplateErrorMsgDownload').style.display = 'none';
+        upTemp.classList.remove('usa-input--error');
+        prevTemp.classList.remove('usa-input--error');
+        valid = valid && true;
+        document.getElementById('uploadTemplateErrorMsg').style.display = 'none';
+        document.getElementById('previousTemplateErrorMsg').style.display = 'none';
+        document.getElementById('previousTemplateErrorMsgPreview').style.display = 'none';
+        document.getElementById('previousTemplateErrorMsgDownload').style.display = 'none';
     }
-    
-    
+
+
     return valid;
 }
 
-function display_unsubscribe_alert(element, post, country, tok, subscriptionId){
+function display_unsubscribe_alert(element, post, country, tok, subscriptionId) {
     element.getElementsByClassName('unsubscribeMsgSpan')[0].innerText = `${country} (${post})`;
     element.style.display = 'block';
-    
+
     $('#undoLink')[0].setAttribute('data-tok', tok);
     $('#undoLink')[0].setAttribute('data-post', post);
     $('#undoLink')[0].setAttribute('data-country', country);
     $('#undoLink')[0].setAttribute('data-subscriptionId', subscriptionId);
-    
-    $('#undoLink')[0].removeEventListener('click', restore_subscription);    
+
+    $('#undoLink')[0].removeEventListener('click', restore_subscription);
     $('#undoLink')[0].addEventListener('click', restore_subscription);
 
 }
 
-function restore_subscription(e){
+function restore_subscription(e) {
     e.preventDefault();
 
     let undoLink = $('#undoLink')[0];
-    
+
     delete_subscription(null, undoLink.getAttribute('data-tok'),
-			undoLink.getAttribute('data-post'),
-			undoLink.getAttribute('data-country'),
-			undoLink.getAttribute('data-subscriptionId'));
-    
+        undoLink.getAttribute('data-post'),
+        undoLink.getAttribute('data-country'),
+        undoLink.getAttribute('data-subscriptionId'));
+
 }
 
-function check_empty_subscriptions(){
+function check_empty_subscriptions() {
     let table = document.getElementById('subscriptionsTable');
     let tbody = document.getElementById('subscriptionTbody');
     let msgDiv = document.getElementById('noActiveSubscriptions');
@@ -300,137 +300,137 @@ function check_empty_subscriptions(){
 
     //iterate through table to check if there are any visible rows
     tbody.childNodes.forEach(row => {
-	if(row.style.display !== "none") isVisibleRow = true;
+        if (row.style.display !== "none") isVisibleRow = true;
     })
-    
-    if(!isVisibleRow){
-	table.style.display = 'none';
-	msgDiv.style.display = 'block';
+
+    if (!isVisibleRow) {
+        table.style.display = 'none';
+        msgDiv.style.display = 'block';
     }
-    else{
-	table.style.display = 'table';
-	msgDiv.style.display = 'none';
+    else {
+        table.style.display = 'table';
+        msgDiv.style.display = 'none';
     }
 }
 
-function dismiss_alert(alert){
+function dismiss_alert(alert) {
     alert.style.display = 'none';
     $('#unsubscribeAlertBlank')[0].style.display = 'block';
 }
-function populate_template_dropdown(dropdown, templates){
+function populate_template_dropdown(dropdown, templates) {
     var option = document.createElement('option');
     dropdown.appendChild(option);
-    
+
     templates.forEach(template => {
-	option = document.createElement('option');
-	option.setAttribute('data-templateId', template.id);
-	option.innerText = template.name;
-	
-	dropdown.appendChild(option);
+        option = document.createElement('option');
+        option.setAttribute('data-templateId', template.id);
+        option.innerText = template.name;
+
+        dropdown.appendChild(option);
     })
 }
 
-function add_subscription_to_table(sub){
+function add_subscription_to_table(sub) {
     let trs = document.getElementById('subscriptionTbody')
-	.getElementsByClassName('subscriptionRow');
+        .getElementsByClassName('subscriptionRow');
     let rowNum = 0, insertBefore = 0;
     let tr;
 
     // iterate through table to determine where we should add new row to keep
     // table organized in alphabetical order by country name
-    while(rowNum < trs.length){
-	tr = trs[rowNum];
-	if(sub.country.toLowerCase() >
-	   tr.getElementsByClassName('countryName')[0].innerText.toLowerCase()
-	  ){
-	    insertBefore = rowNum;
-	}
-	else if(sub.country.toLowerCase() ==
-		tr.getElementsByClassName('countryName')[0].innerText.toLowerCase() &&
-		sub.post.toLowerCase() >
-		tr.getElementsByClassName('postName')[0].innerText.toLowerCase()
-	       ){
-	    insertBefore = rowNum;
-	    
-	}
-	rowNum++;
-    } 
+    while (rowNum < trs.length) {
+        tr = trs[rowNum];
+        if (sub.country.toLowerCase() >
+            tr.getElementsByClassName('countryName')[0].innerText.toLowerCase()
+        ) {
+            insertBefore = rowNum;
+        }
+        else if (sub.country.toLowerCase() ==
+            tr.getElementsByClassName('countryName')[0].innerText.toLowerCase() &&
+            sub.post.toLowerCase() >
+            tr.getElementsByClassName('postName')[0].innerText.toLowerCase()
+        ) {
+            insertBefore = rowNum;
+
+        }
+        rowNum++;
+    }
 
 
-    var res = {subscription_list: [sub]};
-//    if(tr === null){
-//	populate_subscription_table(res);
-//    }
-//    else {
+    var res = { subscription_list: [sub] };
+    //    if(tr === null){
+    //	populate_subscription_table(res);
+    //    }
+    //    else {
     populate_subscription_table(res, insertBefore + 2);
-//    }
+    //    }
 
-	
+
 
 }
-function check_previous_allowance_99(){
+function check_previous_allowance_99() {
     let prevs = document.getElementsByClassName('prevAllowance');
-    for(let i = 0; i < prevs.length; i++){
-	if(prevs[i].innerText.match('n/a') && prevs[i].parentElement.style.display !== "none"){
-	    document.getElementById('prevAllowanceWarning').style.display = 'flow';
-	    return;
-	}
+    for (let i = 0; i < prevs.length; i++) {
+        if (prevs[i].innerText.match('n/a') && prevs[i].parentElement.style.display !== "none") {
+            document.getElementById('prevAllowanceWarning').style.display = 'flow';
+            return;
+        }
     }
-    
+
     document.getElementById('prevAllowanceWarning').style.display = 'none';
 }
-function populate_subscription_table(res, rowNum=null){
+function populate_subscription_table(res, rowNum = null) {
     let tbody = document.getElementById('subscriptionTbody');
     res.subscription_list.forEach(sub => {
-	let effectiveDate = new Date(sub.effectiveDate);
-	let effectiveMonth = new Intl.DateTimeFormat('en-US', {month: 'short'}).format(effectiveDate);
-	let tr = document.createElement('tr');
-	tr.setAttribute('data-subscriptionId', sub.subscriptionId);
-	tr.setAttribute('class', 'subscriptionRow');
+        let effectiveDate = new Date(sub.effectiveDate);
+        let effectiveMonth = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(effectiveDate);
+        let tr = document.createElement('tr');
+        tr.setAttribute('data-subscriptionId', sub.subscriptionId);
+        tr.setAttribute('class', 'subscriptionRow');
 
-	add_table_icons(tr, sub);
+        add_table_icons(tr, sub);
 
-	let td1 = document.createElement('td');
-	td1.setAttribute('class', 'td countryName');
-	td1.innerText = sub.country;
-	tr.appendChild(td1);
-	let td2 = document.createElement('td');
-	td2.setAttribute('class', 'td postName');
-	td2.innerText = sub.post;
-	tr.appendChild(td2);
-	let td3 = document.createElement('td');
-	td3.setAttribute('class', 'td prevAllowance');	    
-	td3.innerText = sub.prevAllowance + '%';
-	tr.appendChild(td3);
+        let td1 = document.createElement('td');
+        td1.setAttribute('class', 'td countryName');
+        td1.innerText = sub.country;
+        tr.appendChild(td1);
+        let td2 = document.createElement('td');
+        td2.setAttribute('class', 'td postName');
+        td2.innerText = sub.post;
+        tr.appendChild(td2);
+        let td3 = document.createElement('td');
+        td3.setAttribute('class', 'td prevAllowance');
+        td3.innerText = sub.prevAllowance + '%';
+        tr.appendChild(td3);
 
-	if(sub.prevAllowance === -99){
-	    td3.innerText = 'n/a';
-	    let sup = document.createElement('sup');
-	    sup.innerText = '*';
-	    td3.appendChild(sup);
-	}
+        if (sub.prevAllowance === -99) {
+            td3.innerText = 'n/a';
+            let sup = document.createElement('sup');
+            sup.innerText = '*';
+            td3.appendChild(sup);
+        }
 
-	
-	let td4 = document.createElement('td');
-	td4.setAttribute('class', 'td');
-	td4.innerText = sub.allowance + '%';
-	tr.appendChild(td4);
-	
-	let td5 = document.createElement('td');
-	td5.setAttribute('class', 'td');
-	td5.innerText = effectiveDate.getDate() + ' '
-	    + effectiveMonth + ' '
-	    + effectiveDate.getFullYear();	    
-	tr.appendChild(td5);
 
-	if(rowNum === null){
-	    tbody.appendChild(tr);
-	}
-	else{
-	    tbody.insertBefore(tr, tbody.childNodes[rowNum - 1]);
-	}
+        let td4 = document.createElement('td');
+        td4.setAttribute('class', 'td');
+        td4.innerText = sub.allowance + '%';
+        tr.appendChild(td4);
+
+        let td5 = document.createElement('td');
+        td5.setAttribute('class', 'td');
+        td5.innerText = effectiveDate.getDate() + ' '
+            + effectiveMonth + ' '
+            + effectiveDate.getFullYear();
+        tr.appendChild(td5);
+
+        if (rowNum === null) {
+            tbody.appendChild(tr);
+        }
+        else {
+            tbody.insertBefore(tr, tbody.childNodes[rowNum - 1]);
+        }
     })
-    
+
     check_previous_allowance_99();
 }
 
@@ -439,7 +439,7 @@ function populate_subscription_table(res, rowNum=null){
                 this table tr row. Attach event listeners and necessary tokens and other
 		values for event handles.
  */
-function add_table_icons(tr, sub){
+function add_table_icons(tr, sub) {
     //we are adding 2 tr inside tdMain, then two td inside each tr
     let tdMain = document.createElement('td');
 
@@ -451,16 +451,16 @@ function add_table_icons(tr, sub){
     let td4 = document.createElement('td');
 
     tdMain.setAttribute('class', 'td tdButtons');
-    
-    
+
+
     //preview doc button
     let prevBtn = document.createElement('button');
     prevBtn.setAttribute('class', 'btn-clear');
-    prevBtn.setAttribute('data-subscriptionId', sub.subscriptionId); 
+    prevBtn.setAttribute('data-subscriptionId', sub.subscriptionId);
     prevBtn.setAttribute('title', `Preview ${sub.country} (${sub.post}) document`);
     prevBtn.addEventListener('click', e => {
-	e.preventDefault();
-	template_preview(null, sub.tok);
+        e.preventDefault();
+        template_preview(null, sub.tok);
     });
     let iPrev = document.createElement('i');
     iPrev.setAttribute('class', 'preview');
@@ -476,25 +476,25 @@ function add_table_icons(tr, sub){
     iDl.setAttribute('class', 'downloadSubscription');
     downloadBtn.appendChild(iDl);
     downloadBtn.addEventListener('click', e => {
-	e.preventDefault();
-	download_subscription(iDl, sub.tok, sub.post, sub.country);
+        e.preventDefault();
+        download_subscription(iDl, sub.tok, sub.post, sub.country);
     });
     td2.appendChild(downloadBtn);
-    
+
     //delete button
     let delBtn = document.createElement('button');
     delBtn.setAttribute('class', 'btn-clear');
-    delBtn.setAttribute('data-subscriptionId', sub.subscriptionId); 
+    delBtn.setAttribute('data-subscriptionId', sub.subscriptionId);
     delBtn.setAttribute('title', `Delete ${sub.country} (${sub.post}) subscription`);
     let iDel = document.createElement('i');
     iDel.setAttribute('class', 'trashCan');
     delBtn.appendChild(iDel);
     delBtn.addEventListener('click', e => {
-	e.preventDefault();
-	delete_subscription(iDel, sub.tok, sub.post, sub.country, sub.subscriptionId);
+        e.preventDefault();
+        delete_subscription(iDel, sub.tok, sub.post, sub.country, sub.subscriptionId);
     });
     td3.appendChild(delBtn);
-    
+
     //fire off email button
     let emailBtn = document.createElement('button');
     emailBtn.setAttribute('class', 'btn-clear');
@@ -504,8 +504,8 @@ function add_table_icons(tr, sub){
     iEmail.setAttribute('class', 'email');
     emailBtn.appendChild(iEmail);
     emailBtn.addEventListener('click', e => {
-	e.preventDefault();
-	fire_subscription_email(iEmail, sub.tok, sub.post, sub.country);
+        e.preventDefault();
+        fire_subscription_email(iEmail, sub.tok, sub.post, sub.country);
     });
     td4.appendChild(emailBtn);
 
@@ -517,7 +517,7 @@ function add_table_icons(tr, sub){
     tdMain.appendChild(tr2);
     tr2.appendChild(td3);
     tr2.appendChild(td4);
-    
+
     tr.appendChild(tdMain);
 }
 
@@ -527,18 +527,18 @@ function add_table_icons(tr, sub){
    postconditions: table has been search for subscription id and tr corresponding to
                    subscriptionId has been either hidden or deleted depending on del.
 */
-function update_table(subscriptionId, del){
+function update_table(subscriptionId, del) {
     let tbody = document.getElementById('subscriptionTbody');
     let trs = tbody.getElementsByTagName('tr');
 
-    for(let i = 0; i < trs.length; i++){
-	if(trs[i].getAttribute('data-subscriptionId') == subscriptionId){
-	    if(del){
-		trs[i].style.display = 'none';
-	    }
-	    else{
-		trs[i].style.display = 'table-row';
-	    }
-	}
+    for (let i = 0; i < trs.length; i++) {
+        if (trs[i].getAttribute('data-subscriptionId') == subscriptionId) {
+            if (del) {
+                trs[i].style.display = 'none';
+            }
+            else {
+                trs[i].style.display = 'table-row';
+            }
+        }
     }
 }
