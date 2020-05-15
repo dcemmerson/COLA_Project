@@ -1,0 +1,4 @@
+/node_modules
+/email
+/public
+.env
