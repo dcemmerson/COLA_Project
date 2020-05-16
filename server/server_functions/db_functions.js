@@ -2,9 +2,7 @@ var passport = require('passport');
 var bcrypt = require('bcrypt');
 var LocalStrategy = require('passport-local').Strategy;
 
-//require('../server.js'); //seems like this is a bit of a circular reference?
 const saltRounds = 10;
-//var jwt = require('jwt-simple');
 var mysql = require('../dbcon.js');
 const DEFAULT_TEMPLATE_ID = process.env.DEFAULT_TEMPLATE_ID || 1;
 
@@ -20,7 +18,6 @@ function queryDB(sql, values, mysql) {
     return new Promise((resolve, reject) => {
         mysql.pool.query(sql, values, (err, results, fields) => {
             if (err) {
-                console.log('db query rejecting');
                 reject(err);
             } else resolve(results);
         });
@@ -37,7 +34,7 @@ module.exports = {
        postconditions: new user added to db with hashed password 
                        promise resolves, else reject if error along the way
     */
-    add_user: function (email, hashedPwd, context) {
+    addUser: function (email, hashedPwd, context) {
         return new Promise((resolve, reject) => {
             const sql = "INSERT INTO user (email, password, isVerified) VALUES (?, ?, ?)"
             const values = [email, hashedPwd, false];
@@ -56,13 +53,13 @@ module.exports = {
         });
     },
 
-    /* name: check_if_user_exists
+    /* name: checkIfUserExists
        preconditions: email is provided by client
                       context is reference to object
        postconditions: promise resolves if email does not exist in db, else rejects
                        flags set in context if promise rejects
      */
-    check_if_user_exists: function (email, context) {
+    checkIfUserExists: function (email, context) {
         return new Promise((resolve, reject) => {
             const sql = "SELECT * FROM user WHERE email=?";
             const values = [email];
@@ -82,7 +79,7 @@ module.exports = {
         });
     },
 
-    insert_user: function (email, pwd, now, res, req) {
+    insertUser: function (email, pwd, now, res, req) {
         return new Promise((resolve, reject) => {
             bcrypt.hash(pwd, saltRounds, function (err, hash) {
                 const sql = "INSERT INTO user (`email`, `password`, `created`, `modified`) VALUES (?, ?, ?, ?)"
@@ -101,7 +98,7 @@ module.exports = {
         })
     },
 
-    /* name: check_email
+    /* name: checkEmail
        preconditions: email is user supplied email
                       context is object we will fill with response information
        postconditions: context has been filled with user informtation found by
@@ -110,7 +107,7 @@ module.exports = {
                     object with user information and resolve. Else, if no email found
 		    set context.error to true, and reject. 
      */
-    check_email: function (email, context) {
+    checkEmail: function (email, context) {
         var sql = "SELECT id, password, modified FROM user WHERE email=?"
         var values = [email];
         return new Promise((resolve, reject) => {
@@ -134,7 +131,7 @@ module.exports = {
                 });
         })
     },
-    /* name: verify_email
+    /* name: verifyEmail
        preconditions: email is user supplied email during successful create account process.
                       userId is user.id selected from db when creating account.
 		      context is object where we will set flag indicating success for failure
@@ -143,7 +140,7 @@ module.exports = {
                     never actually be used in this method, but should be supplied in case
 		    an unexpected error occurs, we can log the error more verbosely.
      */
-    verify_email: function (userId, email, context) {
+    verifyEmail: function (userId, email, context) {
         var sql = "UPDATE user SET isVerified=? WHERE id=?"
         var values = [true, userId];
         return new Promise((resolve, reject) => {
@@ -166,7 +163,7 @@ module.exports = {
         })
     },
 
-    /* name: get_user_by_id
+    /* name: getUserById
        preconditions: userId to search for in db
                       context is object we will fill with response information
        postconditions: context has been filled with user informtation found by
@@ -175,7 +172,7 @@ module.exports = {
                     object with user information and resolve. Else, if no user found
 		    set context.error to true, and reject. 
      */
-    get_user_by_id: function (userId, context) {
+    getUserById: function (userId, context) {
         var sql = "SELECT id, email, password, isVerified, modified FROM user WHERE id=?"
         var values = [userId];
 
@@ -204,7 +201,15 @@ module.exports = {
         })
     },
 
-    get_user_by_email: function (email, context) {
+    /* name: getUserByEmail
+       preconditions: email string to search for in db
+                      context is object we will fill with response information
+       postconditions: context has been filled with user informtation found by
+                       seraching db, if user exists
+       description: Search db for email. If user exists, fill context
+                    object with user information and resolve. Else, reject. 
+    */
+    getUserByEmail: function (email, context) {
         var sql = "SELECT id, email, password, isVerified, modified FROM user WHERE email=?"
         var values = [email];
         return new Promise((resolve, reject) => {
@@ -231,45 +236,11 @@ module.exports = {
         })
     },
 
-    /* i dont think this is being used? There are several issues with get_user as written
-       - try/catch inside a promise, not returning the promise, rendering inside db file...
-    get_user: function (req, res, id, token) {
-	var sql = "SELECT password, created FROM user WHERE id= ?"
-	var values = [id];
-	queryDB(sql, values, mysql).then((message) => {
-	    if (message.length==0) 
-	    {
-		console.log("error");
-		res.redirect('/login');
-	    }
-	    else 
-	    {
-		const user_pwd=(message[0].password);
-		const user_created=(message[0].created);
-		var secret = user_pwd +user_created;
-
-		//whys there a try/catch here?
-		try{
-		    const decoded = jwt.decode(token, secret);
-		    let context = {};
-			context.style = ['styles.css', 'font_size.css', 'account.css'];
-			context.script = ['recover.js', 'recover_ajax.js', 'utility.js'];
-		//    context.id = id;
-		    res.render('recover',/* {
-			id: id,
-			//	token: token
-		     context)
-		}catch(err) {if(err) res.redirect('/login');
-			     
-			    };
-		
-	    }
-	    
-
-	})
-    },
- */
-    update_user: function (id, pwd) {
+    /* name: updateUser
+       preconditions: id matches userId in db
+       postconditions: user.password is updated to hash(pwd) in db
+     */
+    updateUser: function (id, pwd) {
         return new Promise((resolve, reject) => {
             bcrypt.hash(pwd, saltRounds, function (err, hash) {
                 const now = new Date().toISOString().replace(/\..+/, '')
@@ -282,19 +253,17 @@ module.exports = {
         });
     },
 
-
-
-
     authenticationMiddleware: function () {
         return (req, res, next) => {
             if (req.isAuthenticated()) return next();
             res.redirect('/login');
         }
     },
+
     /*******************************************************************/
     /********************* COLA RATE SCRIPT QUERIES ********************/
     /*******************************************************************/
-    /* name: add_cola_rates
+    /* name: addColaRates
        preconditions: scraped contains array of objects of the form 
        postconditions: returns Promise that doesnt resolve until all
        have been successfully added to db. 
@@ -303,7 +272,7 @@ module.exports = {
        are inserted into db. If any inserts fail, error 
        message printed and function returns immediately.
     */
-    add_cola_rates: function (scraped) {
+    addColaRates: function (scraped) {
         return new Promise((resolve, reject) => {
             let queries = [];
             const sql = `INSERT INTO COLARates (country, post, allowance, last_modified) VALUES (?, ?, ?, now())`
@@ -319,7 +288,7 @@ module.exports = {
                 })
         })
     },
-    /* name: add_cola_rate
+    /* name: addColaRate
        preconditions: scraped contains array of objects of the form 
        postconditions: returns Promise that doesnt resolve until all
        have been successfully added to db. 
@@ -328,7 +297,7 @@ module.exports = {
        are inserted into db. If any inserts fail, error 
        message printed and function returns immediately.
     */
-    add_cola_rate: function (country, post, allowance, effectiveDate) {
+    addColaRate: function (country, post, allowance, effectiveDate) {
         return new Promise((resolve, reject) => {
             const sql = `INSERT INTO COLARates (country, post, allowance, effectiveDate, last_modified) VALUES (?, ?, ?, ?, now())`
             let values = [country, post, allowance, effectiveDate];
@@ -342,14 +311,13 @@ module.exports = {
                 })
         })
     },
-    /* name: get_cola_rate
+    /* name: getColaRate
        preconditions: country is string name of country which we need cola rate
        post is string name of post which we need cola rate
        postconditions: returns promise, which when resolved returns object with 
        id, country, post, and allowance as data members
-       description:
     */
-    get_cola_rate: function (country, post) {
+    getColaRate: function (country, post) {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * FROM COLARates WHERE country=? AND post=?`;
             const values = [country, post];
@@ -359,28 +327,27 @@ module.exports = {
         })
 
     },
-    /* name: update_cola_rate
-       preconditions: COLARate_id is is of corresponding post/country needing update
-       new_allowance is new allowance obtained by scraping webpage
-       postconditions: COLARate.id has been updated with new_allowance
-       description:
+    /* name: updateColaRate
+       preconditions: COLARateId is is of corresponding post/country needing update
+                      newAllowance is new allowance obtained by scraping webpage
+       postconditions: COLARate.id has been updated with newAllowance
     */
-    update_cola_rate: function (COLARate_id, new_allowance, prev_allowance, effectiveDate) {
+    updateColaRate: function (COLARateId, newAllowance, prevAllowance, effectiveDate) {
         return new Promise((resolve, reject) => {
             const sql = `UPDATE COLARates SET allowance=?, prevAllowance=?, effectiveDate=?, last_modified=NOW() WHERE id=?`
-            const values = [new_allowance, prev_allowance, effectiveDate, COLARate_id];
+            const values = [newAllowance, prevAllowance, effectiveDate, COLARateId];
             queryDB(sql, values, mysql)
                 .then(res => resolve(res))
                 .catch(reject)
         });
     },
-    /* name: update_cola_rate_effective_date
+    /* name: updateColaRateEffectiveDate
        preconditions: COLARateId is is of corresponding post/country needing update
-                      effectiveDate is just that - we will update COLARate.effective_date
+                      effectiveDate is just that - we will update COLARate.effectiveDate
 		        with effectiveDate
        postconditions: COLARate.id has been updated with effectiveDate
     */
-    update_cola_rate_effective_date: function (COLARateId, effectiveDate) {
+    updateColaRateEffectiveDate: function (COLARateId, effectiveDate) {
         return new Promise((resolve, reject) => {
             const sql = `UPDATE COLARates SET effectiveDate=? WHERE id=?`
             const values = [effectiveDate, COLARateId];
@@ -389,13 +356,13 @@ module.exports = {
                 .catch(reject)
         });
     },
-    /* name: get_users_subscribed_to_post
+    /* name: getUsersSubscribedToPost
        preconditions: post is name of post in db
        country is name of country that corresponds to post
        postconditions: return list of users subscribed to post, along with
        the template file for each user.
     */
-    get_users_subscribed_to_post: function (postId) {
+    getUsersSubscribedToPost: function (postId) {
         return new Promise((resolve, reject) => {
             const sql = `SELECT s.id AS subscriptionId, u.email AS username,`
                 + ` u.id AS userId, t.file, t.name AS filename`
@@ -408,9 +375,10 @@ module.exports = {
             const values = [postId];
             queryDB(sql, values, mysql)
                 .then(res => resolve(res))
-                .catch(err => console.log(err))
+                .catch(reject)
         });
     },
+
     /*******************************************************************/
     /******************* END  COLA RATE SCRIPT QUERIES *****************/
     /*******************************************************************/
@@ -419,27 +387,28 @@ module.exports = {
     /*******************************************************************/
     /********************* SUBSCRIPTION PAGE QUERIES *******************/
     /*******************************************************************/
-    /* name: get_list_of_posts
+    /* name: getListOfPosts
        preconditions: None 
        postconditions:  return Promise that returns list of posts when
        fulfilled
     */
-    get_list_of_posts: function () {
+    getListOfPosts: function () {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * FROM COLARates ORDER BY country ASC, post ASC`;
             const values = [];
             queryDB(sql, values, mysql)
                 .then(res => resolve(res))
-                .catch(err => console.log(err))
+                .catch(reject)
         });
     },
-    /* name: get_user_subscription_list
-       preconditions: user_id is current logged in user, which should be
+
+    /* name: getUserSubscriptionList
+       preconditions: userId is current logged in user, which should be
        obtained from open sesssion.
        postconditions:  return Promise that returns list of user's 
        subscription when fulfilled
     */
-    get_user_subscription_list: function (user_id) {
+    getUserSubscriptionList: function (userId) {
         return new Promise((resolve, reject) => {
             const sql = `SELECT cr.post, cr.country, cr.allowance, cr.prevAllowance, cr.effectiveDate,`
                 + ` s.id AS subscriptionId, s.name, s.comment, t.id AS templateId`
@@ -450,18 +419,19 @@ module.exports = {
                 + ` INNER JOIN COLARates cr ON crs.COLARatesId=cr.id`
                 + ` WHERE u.id=? AND s.active=1`
                 + ` ORDER BY cr.country ASC, cr.post ASC`;
-            const values = [user_id];
+            const values = [userId];
             queryDB(sql, values, mysql)
                 .then(res => resolve(res))
                 .catch(reject)
         });
     },
-    /* name: get_user_subscription_by_id
+
+    /* name: getUserSubscriptionById
        preconditions: subscriptionId matches subscription we are querying
        postconditions:  return Promise that returns subscription match subscriptionId 
        subscription when fulfilled
     */
-    get_user_subscription_by_id: function (subscriptionId) {
+    getUserSubscriptionById: function (subscriptionId) {
         return new Promise((resolve, reject) => {
             const sql = `SELECT cr.post, cr.country, cr.allowance,`
                 + ` cr.prevAllowance, cr.effectiveDate, cr.last_modified,`
@@ -480,13 +450,14 @@ module.exports = {
                 .catch(reject)
         });
     },
-    /* name: get_user_template_names
+
+    /* name: getUserTemplateNames
        preconditions: userId is current logged in user, which should be
        obtained from open sesssion.
        postconditions:  return Promise that returns names and ids of all user's
        uploaded templates, plus the default system template.
     */
-    get_user_template_names: function (userId) {
+    getUserTemplateNames: function (userId) {
         return new Promise((resolve, reject) => {
             const sql = `SELECT t.id, t.name, t.comment`
                 + ` FROM user u`
@@ -496,49 +467,50 @@ module.exports = {
             const values = [userId, DEFAULT_TEMPLATE_ID];
             queryDB(sql, values, mysql)
                 .then(res => resolve(res))
-                .catch(err => reject(err))
+                .catch(reject)
         });
     },
-    /* name: get_user_email
-       preconditions: user_id is current logged in user, which should be
+
+    /* name: getUserEmail
+       preconditions: userId is current logged in user, which should be
        obtained from open sesssion.
        postconditions:  return Promise that returns email that corresponds
-       to user_id in user table.
+       to user.id in user table.
     */
-    get_user_email: function (user_id) {
+    getUserEmail: function (userId) {
         return new Promise((resolve, reject) => {
             const sql = `SELECT email FROM user WHERE id=?`;
-            const values = [user_id];
+            const values = [userId];
             queryDB(sql, values, mysql)
                 .then(res => resolve(res))
-                .catch(err => console.log(err))
+                .catch(reject)
         });
     },
 
 
-    /* name: insert_new_subscription_with_template_file
+    /* name: insertNewSubscriptionWithTemplateFile
        preconditions: userId should be id of logged in user.
-       name will be stored in name field - should match name of file
-       file is validated docx file template uploaded by user
-       comment is any comment the user added when uploading file.
+                      name will be stored in name field - should match name of file
+		      file is validated docx file template uploaded by user
+		      comment is any comment the user added when uploading file.
        postconditions:  return Promise that fulfills after new subscription added
     */
-    insert_new_subscription_with_template_file: function (user_id, post_id, filename, file, comment = "", context) {
+    insertNewSubscriptionWithTemplateFile: function (userId, postId, filename, file, comment = "", context) {
         return new Promise((resolve, reject) => {
             let sql = `INSERT INTO template (name, file, comment, userId) VALUES (?, ?, ?, ?);`
 
-            let values = [filename, file, comment, user_id]
+            let values = [filename, file, comment, userId]
 
             queryDB(sql, values, mysql)
                 .then(res => {
                     sql = `INSERT INTO subscription (name, comment, userId, templateId, active) VALUES (?, ?, ?, ?, ?);`
-                    values = ["", "", user_id, res.insertId, 1];
+                    values = ["", "", userId, res.insertId, 1];
                     context.templateId = res.insertId;
                     return queryDB(sql, values, mysql);
                 })
                 .then(res => {
                     sql = ` INSERT INTO COLARates_subscription (subscriptionId, COLARatesId) VALUES (?, ?);`
-                    values = [res.insertId, post_id];
+                    values = [res.insertId, postId];
                     context.subscriptionId = res.insertId;
                     return queryDB(sql, values, mysql);
                 })
@@ -546,21 +518,22 @@ module.exports = {
                 .catch(reject)
         });
     },
-    /* name: insert_new_subscription_with_prev_template
-       preconditions: user_id should be id of logged in user.
-       comment is any comment the user added when uploading file.
-       template_id is id corresponding to primary key in template table
+
+    /* name: insertNewSubscriptionWithPrevTemplate
+       preconditions: userId should be id of logged in user.
+                      comment is any comment the user added when uploading file.
+		      templateId is id corresponding to primary key in template table
        postconditions:  return Promise that fulfills after new subscription added
     */
-    insert_new_subscription_with_prev_template: function (user_id, post_id, template_id, comment = "", context) {
+    insertNewSubscriptionWithPrevTemplate: function (userId, postId, templateId, comment = "", context) {
         return new Promise((resolve, reject) => {
             let sql = `INSERT INTO subscription (name, comment, userId, templateId, active) VALUES (?, ?, ?, ?, ?);`
-            let values = ["", "", user_id, template_id, 1];
-            context.templateId = template_id;
+            let values = ["", "", userId, templateId, 1];
+            context.templateId = templateId;
             queryDB(sql, values, mysql)
                 .then(res => {
                     sql = ` INSERT INTO COLARates_subscription (subscriptionId, COLARatesId) VALUES (?, ?);`
-                    values = [res.insertId, post_id];
+                    values = [res.insertId, postId];
                     context.subscriptionId = res.insertId;
                     return queryDB(sql, values, mysql);
                 })
@@ -568,15 +541,16 @@ module.exports = {
                 .catch(reject)
         });
     },
-    /* name: update_user_subscription
-       preconditions: user_id should be id of logged in user.
-       subscription_id is id corresponding to primary key in subscription table
-       that user wishes to delete
-       active should be set to 1 or true if we want to reactive a subscription, 0 or false if
-       we need to deactive/delete subscription
+
+    /* name: updateUserSubscription
+       preconditions: userId should be id of logged in user.
+                      subscriptionId is id corresponding to primary key in subscription table
+		      that user wishes to delete
+		      active should be set to 1 or true if we want to reactive a subscription, 0 or false if
+		      we need to deactive/delete subscription
        postconditions:  return Promise that fulfills after subscription active field updated
     */
-    update_user_subscription: function (subscriptionId, userId, active = true) {
+    updateUserSubscription: function (subscriptionId, userId, active = true) {
         return new Promise((resolve, reject) => {
             let sql = `UPDATE subscription SET active=? WHERE id=? AND userId=?;`
             let values = [active, subscriptionId, userId];
@@ -590,16 +564,17 @@ module.exports = {
                 .catch(err => console.log(err))
         });
     },
-    /* name: get_user_template
-       preconditions: userId is valid logged in user id
+    
+    /* name: getUserTemplate
+       preconditions: userId is valid logged in userId
                       templateId is valid template id, which probably came from 
 		        subscription page when user selected from template dropdown
        postconditions:  return Promise that returns user template when fulfilled.
-                        Additoinally, method performs join user to get username, in
+                        Additionally, method performs join user to get username, in
 			case error thrown when manip template, we can log more info
 			about what went wrong.
     */
-    get_user_template: function (userId, templateId) {
+    getUserTemplate: function (userId, templateId) {
         return new Promise((resolve, reject) => {
             const sql = `SELECT u.email, t.name, t.file, t.uploaded FROM template t`
                 + ` INNER JOIN user u on t.userId=u.id`
@@ -610,6 +585,7 @@ module.exports = {
                 .catch(reject)
         });
     },
+    
     /*******************************************************************/
     /****************** END SUBSCRIPTION PAGE QUERIES ******************/
     /*******************************************************************/
@@ -617,7 +593,16 @@ module.exports = {
     /*******************************************************************/
     /******************** UNSUBSCRIBETOK PAGE QUERIES ******************/
     /*******************************************************************/
-    get_number_user_redundant_subscriptions: function (userId, postId, post, country) {
+
+    /* name: getNumberUserRedundantSubscriptions
+       preconditions: userId corresponds to user.id in db
+                      postId, post, country all correspond to post which we are querying
+       postconditions: count number of subscriptions userId has to post
+       description: Method performs table joins to determine how many subscriptions
+                      userId has to given post. We will match posts/country OR
+		      postId and count the results.
+     */    
+    getNumberUserRedundantSubscriptions: function (userId, postId, post, country) {
         return new Promise((resolve, reject) => {
             const sql = `SELECT COUNT(u.id) AS numberSubscriptions`
                 + ` FROM user u`
@@ -628,9 +613,10 @@ module.exports = {
             const values = [userId, postId, userId, post, country];
             queryDB(sql, values, mysql)
                 .then(res => resolve(res[0]))
-                .catch(err => console.log(err))
+                .catch(reject)
         });
     },
+    
     /*******************************************************************/
     /****************** END UNSUBSCRIBETOK PAGE QUERIES ****************/
     /*******************************************************************/
@@ -638,29 +624,43 @@ module.exports = {
     /*******************************************************************/
     /*********************** ACCOUNT PAGE QUERIES **********************/
     /*******************************************************************/
-    get_user_from_id: function (userId) {
+   /* name: getUserFromId
+       preconditions: userId corresponds to user.id in db
+       postconditions: resolve with user corresponding to userId
+   */
+    getUserFromId: function (userId) {
         return new Promise((resolve, reject) => {
             const sql = `SELECT email, password, created, modified`
                 + ` FROM user WHERE id=?`;
             const values = [userId];
             queryDB(sql, values, mysql)
                 .then(res => resolve(res[0]))
-                .catch(err => console.log(err))
+                .catch(reject)
         });
     },
 
-    get_user_from_email: function (email) {
+    /* name: getUserFromEmail
+       preconditions: userId corresponds to user.id in db
+       postconditions: resolve with user corresponding to email
+   */
+    getUserFromEmail: function (email) {
         return new Promise((resolve, reject) => {
             const sql = `SELECT id`
                 + ` FROM user WHERE email=?`;
             const values = [email];
             queryDB(sql, values, mysql)
                 .then(res => resolve(res[0]))
-                .catch(err => console.log(err))
+                .catch(reject)
         });
     },
 
-    update_user_password: function (userId, hashedPwd) {
+    /* name: updateUserPassword
+       preconditions: userId corresponds to user.id in db
+                      hashedPwd is hashed password entered by user
+		        which we will update for user.id row.
+       postconditions: resolve once user password updated.
+   */
+    updateUserPassword: function (userId, hashedPwd) {
         return new Promise((resolve, reject) => {
             const sql = `UPDATE user SET password=? WHERE id=?`;
             const values = [hashedPwd, userId];
@@ -670,7 +670,7 @@ module.exports = {
                     if (res.affectedRows == 1) resolve();
                     else reject();
                 })
-                .catch(err => reject(err));
+                .catch(reject);
 
         })
     },
@@ -682,6 +682,7 @@ module.exports = {
     /*******************************************************************/
     /********************** SET PREV ALLOWANCE QUERIES *****************/
     /*******************************************************************/
+/*
     get_prev_allowances_99: function () {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * FROM COLARates WHERE prevAllowance=?`;
@@ -719,20 +720,20 @@ module.exports = {
 
         })
     }
-
+*/
     /*******************************************************************/
     /********************** END PREV ALLOWANCE QUERIES *******************/
     /*******************************************************************/
 
 }
 
-passport.serializeUser(function (user_id, done) {
-    done(null, user_id);
+passport.serializeUser(function (userId, done) {
+    done(null, userId);
 });
 
 
-passport.deserializeUser(function (user_id, done) {
-    done(null, user_id);
+passport.deserializeUser(function (userId, done) {
+    done(null, userId);
 });
 
 
@@ -754,7 +755,7 @@ passport.use(new LocalStrategy(function (username, password, done) {
             const hash = message[0].password.toString();
             bcrypt.compare(password, hash, function (err, response) {
                 if (response == true) {
-                    return done(null, { user_id: message[0].id });
+                    return done(null, { userId: message[0].id });
                 }
                 else {
                     return done(null, false);

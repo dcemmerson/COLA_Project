@@ -14,7 +14,18 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 module.exports = {
 
-    password_reset_email: function (userId, email, token) {
+    /* name: passwordResetEmail
+       preconditions: userId corresponds to user.id in db for user requestin
+                        password reset. userId is necessary solely to decrypt
+			the token when user clicks link in email, to select
+			the lastModified field in user, and combine that
+			with our JWT_SECRET to create 1 time use link
+		      email is requesting user email
+		      token is encrypted jwt containing userId and email, and
+		        is signed with 1 time secret, user.lastModified + JWT_SECRET
+       postconditions: password reset email sent to user
+    */
+    passwordResetEmail: function (userId, email, token) {
 
         const em = new Email({
             view: {
@@ -65,7 +76,14 @@ module.exports = {
             })
 
     },
-    send_verification_email: function (email, token) {
+
+    /* name: sendVerificationEmail
+       preconditions: email corresponds to user email who is attempting to create account
+		      token is encrypted jwt containing userId, email, and boolean field
+		        verify, which should be set to true here, signed with JWT_SECRET
+       postconditions: account verification email sent to user
+    */
+    sendVerificationEmail: function (email, token) {
 
         const em = new Email({
             view: {
@@ -114,28 +132,28 @@ module.exports = {
             })
 
     },
-    /* name: send_emails
-       preconditions: changed_rates contains array of objects that contains each
-       post that has changed cola rate, including information db id,
-       country, post, previous_allowance, and allowance (new allowance)
+    
+    /* name: sendEmails
+       preconditions: changedRates contains array of objects that contains each
+                        post that has changed cola rate, including information db id,
+		        country, post, previousAllowance, and allowance (new allowance)
        postconditions: emails have been sent to all users subscribed to posts
-       whose rates have changed
-       description:
+                         whose rates have changed
     */
-    start_sending_emails: function (changed_rates) {
+    startSendingEmails: function (changedRates) {
 
-        changed_rates.forEach(changed => {
-            db.get_users_subscribed_to_post(changed.postId)
+        changedRates.forEach(changed => {
+            db.getUsersSubscribedToPost(changed.postId)
                 .then(users => users.forEach(user => {
-                    const file = tm.manip_template(user, changed);
+                    const file = tm.manipTemplate(user, changed);
 
                     //ugly but necessary to then chain this rather than return it
-                    send_email(user, changed, file)
+                    sendEmail(user, changed, file)
                         .then(resMsg => {
                             console.log(`Email sent to ${user.username} with '${user.filename}'`
                                 + ` attached. ${changed.post}, ${changed.country}: `
-                                + `prev_rate: ${changed.previous_allowance}, `
-                                + `new_rate: ${changed.allowance}`);
+                                + `prevrate: ${changed.previousAllowance}, `
+                                + `newrate: ${changed.allowance}`);
                         })
                         .catch(err => { //error related to manip template/sending email
                             console.log(err);
@@ -151,13 +169,13 @@ module.exports = {
                 })
         });
     },
-    send_email: function (user, changed, file) {
-        return send_email(user, changed, file);
+    sendEmail: function (user, changed, file) {
+        return sendEmail(user, changed, file);
     }
 }
 
 /*
-  name: send_email
+  name: sendEmail
   preconditions: user contains object with filename, user id pk from db,
                    subscription id pk from db
 		 changed contains object with post id pk from db, post name,
@@ -171,12 +189,12 @@ module.exports = {
 	       web tokens are used in html anchor link inside email to allow
 	       user easy one-click unsubscribe.
 */
-function send_email(user, changed, file) {
+function sendEmail(user, changed, file) {
 
-    const month_long = new Intl.DateTimeFormat('en-US', { month: 'long' })
+    const monthLong = new Intl.DateTimeFormat('en-US', { month: 'long' })
         .format(changed.effectiveDate);
 
-    return misc.jwt_sign({
+    return misc.jwtSign({
         username: user.username,
         subscriptionId: user.subscriptionId,
         userId: user.userId,
@@ -211,7 +229,7 @@ function send_email(user, changed, file) {
                     username: user.username,
                     changed: changed,
                     date: changed.effectiveDate.getUTCDate(),
-                    month: month_long,
+                    month: monthLong,
                     year: changed.effectiveDate.getUTCFullYear(),
                     host: process.env.HOST,
                     jwt: token,
@@ -225,7 +243,7 @@ function send_email(user, changed, file) {
                     username: user.username,
                     changed: changed,
                     date: changed.effectiveDate.getUTCDate(),
-                    month: month_long,
+                    month: monthLong,
                     year: changed.effectiveDate.getUTCFullYear(),
                     host: process.env.HOST,
                     jwt: token,

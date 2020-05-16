@@ -12,20 +12,15 @@ const BYTES_PER_MEGABYTE = 1000000;
 const SALT_ROUNDS = 10;
 
 module.exports = {
-    add_user: function (email, pwd, now, res) {
-        var sql = "INSERT INTO users (`email`, `password`, `created`, `modified`) VALUES (?, ?, ?, ?)"
-        //const now = new Date().toISOString().replace(/\..+/, '');
-        var inserts = [email, pwd, now, now];
-        mysql.pool.query(sql, inserts, function (error, result) {
-            if (error) {
-                console.log("error");
-                throw error;
-                return;
-            }
 
-        });
-    },
-    jwt_verify: function (tok, jwtSecret = JWT_SECRET) {
+    /* name: jwtVerify
+       preconditions: tok is signed using jwtSign
+                      jwtSecret must be same jwtSecret that was used to
+		        sign this tok
+       postconditions: If decoding tok was successful, resolve with
+                         decoded object, else reject with error.
+    */
+    jwtVerify: function (tok, jwtSecret = JWT_SECRET) {
         return new Promise((resolve, reject) => {
             jwt.verify(tok, jwtSecret, (err, decoded) => {
                 if (err) {
@@ -35,7 +30,17 @@ module.exports = {
             })
         });
     },
-    jwt_sign: function (payload, jwtSecret = JWT_SECRET, expiresIn) {
+
+    /* name: jwtSign
+       preconditions: tok is signed using jwtSign
+                      jwtSecret used to sign token
+		      expiresIn is not required. If present, expiresIn should
+		        be max life for this token. If not present, token 
+			never expires.
+       postconditions: If signing tok was successful, resolve with
+                         encoded token, else reject with error.
+    */
+    jwtSign: function (payload, jwtSecret = JWT_SECRET, expiresIn) {
         if (expiresIn) {
             return new Promise((resolve, reject) => {
                 jwt.sign(payload, jwtSecret,
@@ -61,15 +66,17 @@ module.exports = {
             });
         }
     },
-    /* name: validate_file
+    
+    /* name: validateFile
        preconditions: file object from multer module that contains information about
                         file that user uploaded, in addition to the actual file
 			Buffer
 		      context is object in which we will set flags to pass back to
 		        client in case that file is invalidated
-       postconditions: 
-*/
-    validate_file: function (file, context) {
+       postconditions: check if file is actually .doc or .docx using Magic module.
+                       Resolve if valid file type, else reject.
+    */
+    validateFile: function (file, context) {
         return new Promise((resolve, reject) => {
             var magic = new Magic();
 
@@ -92,7 +99,8 @@ module.exports = {
             });
         });
     },
-    /* name: validate_password
+
+    /* name: validatePassword
        preconditions: userId is user id whose credentials we are checking 
                       oldPwd will be checked against db
                       newPwd is pwd that user desires to change to
@@ -106,7 +114,7 @@ module.exports = {
        description: upon successful password validation, resolve method is called.
                       else reject method is called
     */
-    validate_password: function (userId, oldPwd, newPwd, newPwdRe, context) {
+    validatePassword: function (userId, oldPwd, newPwd, newPwdRe, context) {
         return new Promise((resolve, reject) => {
             let lowerCase = /[a-z]/g;
             let upperCase = /[A-Z]/g;
@@ -145,8 +153,8 @@ module.exports = {
             }
             else {
                 //then the new pwd is valid. now check if user entered prev password correctly
-                db.get_user_from_id(userId)
-                    .then(res => compare_password(oldPwd, res.password))
+                db.getUserFromId(userId)
+                    .then(res => comparePassword(oldPwd, res.password))
                     .then(compRes => {
                         if (compRes) {
                             if (oldPwd != newPwd)//change password
@@ -173,6 +181,7 @@ module.exports = {
             if (context.invalidNewPassword || context.invalidNewPasswordRe) reject();
         })
     },
+    
     /* name validate_password_reset
        preconditions: userId is user id whose credentials we are checking 
                       oldPwdEnc is old password will be checked to make sure
@@ -188,7 +197,7 @@ module.exports = {
        description: upon successful password validation, resolve method is called.
                       else reject method is called
      */
-    validate_password_reset: function (userId, oldPwdEnc, newPwd, newPwdRe, context) {
+    validatePasswordReset: function (userId, oldPwdEnc, newPwd, newPwdRe, context) {
         return new Promise((resolve, reject) => {
             let lowerCase = /[a-z]/g;
             let upperCase = /[A-Z]/g;
@@ -227,7 +236,7 @@ module.exports = {
             }
             else {
                 //then the new pwd is valid. now check if user entered prev password correctly
-                compare_password(newPwd, oldPwdEnc)
+                comparePassword(newPwd, oldPwdEnc)
                     .then(compRes => {
                         if (!compRes) { //new pwd entered is valid and different than old pwd
                             resolve();
@@ -249,7 +258,7 @@ module.exports = {
         })
     },
 
-    /* name: validate_password_new_account
+    /* name: validatePasswordNewAccount
        preconditions: newPwd and newPwdRe were provided by client
                       context is empty object
        postconditions: newPwd has been checked to be at least 8 char, contain 1+
@@ -259,7 +268,7 @@ module.exports = {
        description: upon successful password validation, resolve method is called.
                       else reject method is called
      */
-    validate_password_new_account: function (newPwd, newPwdRe, context) {
+    validatePasswordNewAccount: function (newPwd, newPwdRe, context) {
         return new Promise((resolve, reject) => {
             let lowerCase = /[a-z]/g;
             let upperCase = /[A-Z]/g;
@@ -300,15 +309,17 @@ module.exports = {
                 //then the new pwd is valid
                 return resolve()
             }
-            //If we get to this point, user entered invalid newPwd/newPwdRe
-            //We can just reject without an error
+	    
+            // If we get to this point, an if/elseif executve and
+	    // user entered invalid newPwd/newPwdRe
+            // We can just reject without an error
             return reject();
         })
     },
 
-    /* name: validate_email
-       precondtions: email is provided by client
-                     context is object reference where we will set any error flags
+    /* name: validateEmail
+       preconditions: email is provided by client
+                      context is object reference where we will set any error flags
        postconditions: regular expression used to determine if client provided
                        email conforms to email format.
 		       context has been set with any error flags.
@@ -316,7 +327,7 @@ module.exports = {
                     if valid email provided, else rejects and sets flags in context
 		       
     */
-    validate_email: function (email, context) {
+    validateEmail: function (email, context) {
         return new Promise((resolve, reject) => {
             var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -334,9 +345,22 @@ module.exports = {
         })
     },
 
-    preview_template: function (userId, templateId, context, fillValues) {
+    /* name: previewTemplate
+       preconditions: userId is obtained from authentication system - logged in user
+                      context is object reference where we will set any error flags
+		        and well as place the filled in template pdf.
+       postconditions: context contains file attributes and filled in pdf preview.
+       description: Method used to select subscription template from db and fill
+                      the values in doc/docx file containing {} fields. We then
+		      convert doc/docx to pdf and return to calling location.
+		      context then contains object with file attributes and
+		      filled in pdf preview of file. This would typically be
+		      sent back to client and the user would be shown a preview
+		      of the document.
+    */
+    previewTemplate: function (userId, templateId, context, fillValues) {
         return new Promise((resolve, reject) => {
-            db.get_user_template(userId, templateId)
+            db.getUserTemplate(userId, templateId)
                 .then(response => {
                     if (!response[0]) {
                         throw (new Error(`Error: template does not exist`
@@ -347,17 +371,17 @@ module.exports = {
                     context.filename = response[0].name;
                     context.uploaded = response[0].uploaded;
                     if (fillValues) {
-                        return db.get_cola_rate(fillValues.country, fillValues.post)
+                        return db.getColaRate(fillValues.country, fillValues.post)
                             .then(postInfo => {
                                 context.file = response[0].file;
                                 context.username = response[0].email;
-                                context.file = tm.manip_template(context, postInfo[0]);
+                                context.file = tm.manipTemplate(context, postInfo[0]);
 
-                                return tm.docx_to_pdf(context.file);
+                                return tm.docxToPdf(context.file);
                             })
                     }
                     else {
-                        return tm.docx_to_pdf(response[0].file);
+                        return tm.docxToPdf(response[0].file);
                     }
                 })
                 .then(pdfBuf => {
@@ -370,7 +394,12 @@ module.exports = {
                 })
         })
     },
-    hash_password: function (pwd) {
+    
+    /* name: hashPassword
+       preconditions: pwd is plain text password
+       postconditions: resolve with bcrypt hashed password
+     */
+    hashPassword: function (pwd) {
         return new Promise((resolve, reject) => {
             bcrypt.hash(pwd, SALT_ROUNDS, (err, hash) => {
                 console.log(hash);
@@ -379,19 +408,20 @@ module.exports = {
             })
         })
     },
-    /* name: set_layout
+    
+    /* name: setLayout
        preconditions: req is incoming user request
        context is object
        posconditions: set context.layout, context.loggedIn, context.email
        accordingly if user is logged in.
     */
-    set_layout: function (req, context) {
+    setLayout: function (req, context) {
         return new Promise((resolve, reject) => {
             if (req.isAuthenticated()) {
                 context.layout = 'main.hbs';
                 context.loggedIn = true;
 
-                db.get_user_email(req.session.passport.user.user_id)
+                db.getUserEmail(req.session.passport.user.userId)
                     .then(res => {
                         context.email = res[0].email;
                         resolve();
@@ -409,7 +439,19 @@ module.exports = {
         });
     },
 
-    login_helper: function (passport, req, res, next, context) {
+    /* name: loginHelper
+       preconditions: passport is passport module
+                      req is incoming client request
+		      res comes from incoming request
+		      next must be function we want called if login succeeds
+		      context is object we will fill with flags indicating outcome
+		        Potential flags include context.error, context.invalid,
+			context.success.
+       postconditions: If valid login request provided by clinet, user is logged in.
+                       context.redirect = '/subscriptions' along with context.success
+		       indicates to client to follow redirect.
+    */
+    loginHelper: function (passport, req, res, next, context) {
         return new Promise((resolve, reject) => {
             passport.authenticate('local', function (err, user, info) {
                 console.log(user);
@@ -436,11 +478,19 @@ module.exports = {
 
     }
 }
-function compare_password(pwd, hashed) {
+
+/* name: comparePassword
+   preconditions: pwd is plain text password, probably supplied by user
+                  hashed is hashed password (probably supplied by user.password
+		    field in db) for which we want to test if pwd matches the
+		    hashed version
+   postconditons: resolve if pwd and hashed are equivalent, else reject.
+*/
+function comparePassword(pwd, hashed) {
     return new Promise((resolve, reject) => {
         bcrypt.compare(pwd, hashed, (err, result) => {
-            if (err) reject(err);
-            else resolve(result);
+	    if (err) reject(err);
+	    else resolve(result);
         })
     })
 }

@@ -17,8 +17,8 @@ module.exports = function (app) {
         context.homepage = true;
 
 
-        misc.set_layout(req, context)
-            .catch(() => console.log('error in set_layout'))
+        misc.setLayout(req, context)
+            .catch(() => console.log('error in setLayout'))
             .finally(() => res.render('home', context))
     });
     app.get(`/login`, function (req, res) {
@@ -33,8 +33,8 @@ module.exports = function (app) {
             script: ['login.js', 'login_ajax.js', 'utility.js']
         }
 
-        misc.set_layout(req, context)
-            .catch(() => console.log('error in set_layout'))
+        misc.setLayout(req, context)
+            .catch(() => console.log('error in setLayout'))
             .finally(() => res.render('login', context))
     });
     app.get(`/create_account`, function (req, res) {
@@ -45,8 +45,8 @@ module.exports = function (app) {
             script: ['createAccount.js', 'createAccount_ajax.js', 'utility.js'],
             layout: 'loginLayout.hbs'
         }
-        misc.set_layout(req, context)
-            .catch(() => console.log('error in set_layout'))
+        misc.setLayout(req, context)
+            .catch(() => console.log('error in setLayout'))
             .finally(() => res.render('create', context))
     });
 
@@ -57,14 +57,14 @@ module.exports = function (app) {
             style: ['styles.css', 'font_size.css']
         };
 
-        misc.set_layout(req, context)
-            .then(() => misc.jwt_verify(req.query.tok))
+        misc.setLayout(req, context)
+            .then(() => misc.jwtVerify(req.query.tok))
             .then(dec => {
                 decrypted = dec;
                 context.tok = req.query.tok;
                 context.verificationSent = decrypted.verificationSent;
                 context.loggedInEmail = context.email;
-                return db.get_user_by_id(decrypted.userId, context);
+                return db.getUserById(decrypted.userId, context);
             })
             .then(() => {
                 context.verifyEmail = context.email;
@@ -74,7 +74,7 @@ module.exports = function (app) {
                     context.isAlreadyVerified = true;
                 }
                 else if (!context.loggedIn && decrypted.verify) {
-                    return db.verify_email(decrypted.userId, decrypted.email, context);
+                    return db.verifyEmail(decrypted.userId, decrypted.email, context);
                 }
                 else {
                     return;
@@ -100,7 +100,7 @@ module.exports = function (app) {
 
         }
 
-        misc.set_layout(req, context)
+        misc.setLayout(req, context)
             .then(() => {
                 res.render('requestVerificationCode', context);
             })
@@ -119,8 +119,8 @@ module.exports = function (app) {
             script: ['reset.js', 'reset_ajax.js', 'utility.js'],
             layout: 'loginLayout.hbs'
         }
-        misc.set_layout(req, context)
-            .catch(() => console.log('error in set_layout'))
+        misc.setLayout(req, context)
+            .catch(() => console.log('error in setLayout'))
             .finally(() => res.render('reset', context))
     });
 
@@ -132,22 +132,22 @@ module.exports = function (app) {
         context.title = 'About - COLA';
         context.about = true;
 
-        misc.set_layout(req, context)
-            .catch(() => console.log('error in set_layout'))
+        misc.setlayout(req, context)
+            .catch(() => console.log('error in setLayout'))
             .finally(() => res.render('FAQ', context))
     });
 
     app.get('/account', db.authenticationMiddleware(), function (req, res) {
         let context = {};
         let awaitPromises = [];
-        const user_id = req.session.passport.user.user_id;
+        const userId = req.session.passport.user.userId;
         context.style = ['styles.css', 'font_size.css', 'account.css'];
         context.script = ['account.js', 'account_ajax.js', 'utility.js'];
         context.title = 'My Account';
         context.account = true; //used for navivation.hbs
 
         awaitPromises.push(
-            db.get_user_email(user_id)
+            db.getUserEmail(userId)
                 .then(res => context.email = res[0].email)
                 .catch(err => console.log(err))
         );
@@ -156,23 +156,23 @@ module.exports = function (app) {
     });
 
     app.get('/subscriptions', db.authenticationMiddleware(), function (req, res) {
-        const userId = req.session.passport.user.user_id;
+        const userId = req.session.passport.user.userId;
         let awaitPromises = [];
-        let context = { post_info: [], templates: [] };
+        let context = { postInfo: [], templates: [] };
         awaitPromises.push(
-            db.get_list_of_posts()
+            db.getListOfPosts()
                 .then(posts => posts.forEach(post => {
-                    context.post_info.push(post);
+                    context.postInfo.push(post);
                 }))
                 .catch(err => console.log(err))
             ,
-            db.get_user_template_names(userId)
+            db.getUserTemplateNames(userId)
                 .then(templates => templates.forEach(template => {
                     context.templates.push(template);
                 }))
                 .catch(err => console.log(err))
             ,
-            db.get_user_email(userId)
+            db.getUserEmail(userId)
                 .then(res => context.email = res[0].email)
                 .catch(err => console.log(err))
         )
@@ -207,9 +207,9 @@ module.exports = function (app) {
         var context = {
             title: 'Reset Password - COLA'
         };
-        db.get_user_by_id(req.query.id, context)
+        db.getUserById(req.query.id, context)
             .then(encPassword => {
-                return misc.jwt_verify(
+                return misc.jwtVerify(
                     req.query.token,
                     (encPassword + context.modified));
 
@@ -223,9 +223,9 @@ module.exports = function (app) {
                 if (err) console.log(err);
                 context.invalidToken = true;
             })
-            .finally(() => misc.set_layout(req, context))
+            .finally(() => misc.setLayout(req, context))
             .catch(() => {
-                console.log('error in set_layout - get.reset_password')
+                console.log('error in setLayout - get.reset_password')
                 context.layout = 'loginLayout';
                 context.error = true;
             })

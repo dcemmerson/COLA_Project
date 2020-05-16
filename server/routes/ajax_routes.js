@@ -1,24 +1,16 @@
 const db = require('../server_functions/db_functions.js');
 const tm = require('../server_functions/template_manip.js');
 const misc = require('../server_functions/misc.js');
-const crs = require('../server_functions/cola_rates_script.js');
 const emails = require('../server_functions/emails.js');
 
 const multer = require('multer');
 const upload = multer();
 
-let after_load = require('after-load');
-
-const {
-    check,
-    validationResult
-} = require('express-validator');
-
 
 module.exports = function (app, passport) {
     app.post(['/login'], function (req, res, next) {
         var context = {};
-        misc.login_helper(passport, req, res, next, context)
+        misc.loginHelper(passport, req, res, next, context)
             .catch(err => {
                 if (err) console.log(err);
             })
@@ -31,17 +23,17 @@ module.exports = function (app, passport) {
     /******************* Subscription page ajax routes *********************/
     app.get('/get_user_subscription_list', db.authenticationMiddleware(),
         function (req, res) {
-            const userId = req.session.passport.user.user_id;
-            let await_promises = [];
-            let context = { subscription_list: [] };
-            await_promises.push(
-                db.get_user_subscription_list(userId)
+            const userId = req.session.passport.user.userId;
+            let awaitPromises = [];
+            let context = {subscriptionList: [] };
+            awaitPromises.push(
+                db.getUserSubscriptionList(userId)
                     .then(subs => {
                         //this is ugly but necessary to send to client at right time
                         return new Promise((resolve, reject) => {
-                            let await_signing = [];
+                            let awaitSigning = [];
                             subs.forEach(sub => {
-                                await_signing.push(misc.jwt_sign({
+                                awaitSigning.push(misc.jwtSign({
                                     templateId: sub.templateId,
                                     post: sub.post,
                                     country: sub.country,
@@ -49,25 +41,25 @@ module.exports = function (app, passport) {
                                 })
                                     .then(tok => {
                                         sub.tok = tok;
-                                        context.subscription_list.push(sub);
+                                        context.subscriptionList.push(sub);
                                     }))
                             })
-                            Promise.all(await_signing).then(resolve);
+V                            Promise.all(awaitSigning).then(resolve);
                         })
                     })
                     .catch(err => console.log(err))
             );
-            Promise.all(await_promises)
+            Promise.all(awaitPromises)
                 .then(() => {
                     res.send(context);
                 })
         });
     app.get('/get_user_template_list', db.authenticationMiddleware(),
         function (req, res) {
-            const userId = req.session.passport.user.user_id;
+            const userId = req.session.passport.user.userId;
             let context = {};
 
-            db.get_user_template_names(userId)
+            db.getUserTemplateNames(userId)
                 .then(results => {
                     context.templates = results;
                 })
@@ -81,20 +73,20 @@ module.exports = function (app, passport) {
 
     app.post('/add_new_subscription_with_template_file', db.authenticationMiddleware(), upload.single('upload'),
         function (req, res) {
-            const userId = req.session.passport.user.user_id;
+            const userId = req.session.passport.user.userId;
             var context = {};
 
-            misc.validate_file(req.file, context)
-                .then(() => db.insert_new_subscription_with_template_file(userId,
-                    req.body.post_id,
-                    req.file.originalname,
+            misc.validateFile(req.file, context)
+                .then(() => db.insertNewSubscriptionWithTemplateFile(userId,
+                    req.body.postId,
+                    req.file.originalName,
                     req.file.buffer, '',
                     context))
-                .then(() => db.get_user_subscription_by_id(context.subscriptionId))
+                .then(() => db.getUserSubscriptionById(context.subscriptionId))
                 .then(sub => {
                     console.log(sub);
                     context = sub;
-                    return misc.jwt_sign({
+                    return misc.jwtSign({
                         templateId: sub.templateId,
                         post: sub.post,
                         country: sub.country,
@@ -119,16 +111,16 @@ module.exports = function (app, passport) {
     app.post('/add_new_subscription_with_prev_template', db.authenticationMiddleware(),
         function (req, res) {
             var context = {};
-            const userId = req.session.passport.user.user_id;
+            const userId = req.session.passport.user.userId;
 
-            db.insert_new_subscription_with_prev_template(userId,
-                req.body.post_id,
-                req.body.template_id, '',
+            db.insertNewSubscriptionWithPrevTemplate(userId,
+                req.body.postId,
+                req.body.templateId, '',
                 context)
-                .then(() => db.get_user_subscription_by_id(context.subscriptionId))
+                .then(() => db.getUserSubscriptionById(context.subscriptionId))
                 .then(sub => {
                     context = sub;
-                    return misc.jwt_sign({
+                    return misc.jwtSign({
                         templateId: sub.templateId,
                         post: sub.post,
                         country: sub.country,
@@ -152,7 +144,7 @@ module.exports = function (app, passport) {
         });
     app.get('/preview_template', db.authenticationMiddleware(),
         function (req, res) {
-            var userId = req.session.passport.user.user_id;
+            var userId = req.session.passport.user.userId;
             var context = {};
 
             //if user is trying to preview default template, change user
@@ -161,7 +153,7 @@ module.exports = function (app, passport) {
                 userId = process.env.DEFAULT_TEMPLATE_USER_ID;
             }
 
-            misc.preview_template(userId, req.query.templateId, context)
+            misc.previewTemplate(userId, req.query.templateId, context)
                 .then(() => {
                     context.success = true;
                 })
@@ -178,7 +170,7 @@ module.exports = function (app, passport) {
 
     app.get('/download_template', db.authenticationMiddleware(),
         function (req, res) {
-            var userId = req.session.passport.user.user_id;
+            var userId = req.session.passport.user.userId;
             var context = {};
 
             //if user is trying to preview default template, change user
@@ -187,7 +179,7 @@ module.exports = function (app, passport) {
                 userId = process.env.DEFAULT_TEMPLATE_USER_ID;
             }
 
-            db.get_user_template(userId, req.query.templateId)
+            db.getUserTemplate(userId, req.query.templateId)
                 .then(response => {
                     context.filename = response[0].name;
                     context.uploaded = response[0].uploaded;
@@ -212,11 +204,11 @@ module.exports = function (app, passport) {
     // download button
     app.get('/download_subscription', db.authenticationMiddleware(),
         function (req, res) {
-            var userId = req.session.passport.user.user_id;
+            var userId = req.session.passport.user.userId;
             var context = {};
             var decrypted;
 
-            misc.jwt_verify(req.query.tok)
+            misc.jwtVerify(req.query.tok)
                 .then(dec => {
                     decrypted = dec;
 
@@ -226,17 +218,17 @@ module.exports = function (app, passport) {
                         userId = process.env.DEFAULT_TEMPLATE_USER_ID;
                     }
 
-                    return db.get_user_template(userId, decrypted.templateId);
+                    return db.getUserTemplate(userId, decrypted.templateId);
                 })
                 .then(response => {
                     context.filename = response[0].name;
                     context.uploaded = response[0].uploaded;
                     context.file = response[0].file;
                     context.success = true;
-                    return db.get_cola_rate(decrypted.country, decrypted.post);
+                    return db.getColaRate(decrypted.country, decrypted.post);
                 })
                 .then(postInfo => {
-                    context.file = tm.manip_template(context, postInfo[0]);
+                    context.file = tm.manipTemplate(context, postInfo[0]);
                     context.success = true;
                 })
                 .catch(err => {
@@ -251,15 +243,15 @@ module.exports = function (app, passport) {
     // fire email button
     app.get('/fire_subscription_email', db.authenticationMiddleware(),
         function (req, res) {
-            var userId = req.session.passport.user.user_id;
+            var userId = req.session.passport.user.userId;
             var context = {};
             var user = {};
             var decrypted;
 
-            misc.jwt_verify(req.query.tok)
+            misc.jwtVerify(req.query.tok)
                 .then(dec => {
                     decrypted = dec;
-                    return db.get_user_by_id(userId, user);
+                    return db.getUserById(userId, user);
                 })
                 .then(() => {
                     //if user is using default template, change user
@@ -268,7 +260,7 @@ module.exports = function (app, passport) {
                         userId = process.env.DEFAULT_TEMPLATE_USER_ID;
                     }
 
-                    return db.get_user_template(userId, decrypted.templateId);
+                    return db.getUserTemplate(userId, decrypted.templateId);
                 })
                 .then(response => {
                     user.filename = response[0].name;
@@ -276,13 +268,13 @@ module.exports = function (app, passport) {
                     context.filename = response[0].name;
                     context.uploaded = response[0].uploaded;
                     context.file = response[0].file;
-                    return db.get_cola_rate(decrypted.country, decrypted.post);
+                    return db.getColaRate(decrypted.country, decrypted.post);
                 })
                 .then(postInfo => {
                     context.username = user.email;
-                    context.file = tm.manip_template(context, postInfo[0]);
+                    context.file = tm.manipTemplate(context, postInfo[0]);
 
-                    return emails.send_email(user, postInfo[0], context.file);
+                    return emails.sendEmail(user, postInfo[0], context.file);
                 })
                 .then(() => {
                     context.success = true;
@@ -300,17 +292,17 @@ module.exports = function (app, passport) {
     // preview button
     app.get('/preview_subscription', db.authenticationMiddleware(),
         function (req, res) {
-            var userId = req.session.passport.user.user_id;
+            var userId = req.session.passport.user.userId;
             var context = {};
             //		var decrypted;
-            misc.jwt_verify(req.query.tok)
+            misc.jwtVerify(req.query.tok)
                 .then(dec => {
                     //if user is trying to preview default template, change user
                     //id to match the default template user id for sql query
                     if (dec.templateId == process.env.DEFAULT_TEMPLATE_ID) {
                         userId = process.env.DEFAULT_TEMPLATE_USER_ID;
                     }
-                    return misc.preview_template(userId, dec.templateId, context, dec);
+                    return misc.previewTemplate(userId, dec.templateId, context, dec);
                 })
                 .then(() => {
                     context.success = true;
@@ -327,16 +319,16 @@ module.exports = function (app, passport) {
         });
     app.get('/delete_subscription', db.authenticationMiddleware(),
         function (req, res) {
-            const userId = req.session.passport.user.user_id;
+            const userId = req.session.passport.user.userId;
             var context = {};
             var decrypted;
 
-            misc.jwt_verify(req.query.tok)
+            misc.jwtVerify(req.query.tok)
                 .then(dec => {
                     context.country = dec.country;
                     context.post = dec.post;
                     decrypted = dec;
-                    return db.update_user_subscription(dec.subscriptionId,
+                    return db.updateUserAubscription(dec.subscriptionId,
                         userId,
                         !!dec.makeActive);
                 })
@@ -353,7 +345,7 @@ module.exports = function (app, passport) {
                             + ` for userId=${userId}`);
                     }
 
-                    return misc.jwt_sign(decrypted);
+                    return misc.jwtSign(decrypted);
                 })
                 .then(tok => {
                     context.tok = tok;
@@ -368,13 +360,13 @@ module.exports = function (app, passport) {
     /****************** End subscription page ajax routes *******************/
     /*********************** Account page ajax routes ***********************/
     app.post('/update_password', db.authenticationMiddleware(), function (req, res) {
-        const userId = req.session.passport.user.user_id;
+        const userId = req.session.passport.user.userId;
         var context = {};
 
-        misc.validate_password(userId, req.body.oldPassword,
+        misc.validatePassword(userId, req.body.oldPassword,
             req.body.newPassword, req.body.newPasswordRe, context)
-            .then(() => misc.hash_password(req.body.newPassword))
-            .then(hashedPwd => db.update_user_password(userId, hashedPwd))
+            .then(() => misc.hashPassword(req.body.newPassword))
+            .then(hashedPwd => db.updateUserPassword(userId, hashedPwd))
             .then(() => {
                 context.passwordUpdated = true;
                 context.successMessage = 'Password changed';
@@ -391,20 +383,20 @@ module.exports = function (app, passport) {
 
         var context = {};
         var encryptedPassword;
-        db.get_user_by_id(req.body.userId, context)
+        db.getUserById(req.body.userId, context)
             .then(encPassword => {
                 encryptedPassword = encPassword;
-                return misc.jwt_verify(
+                return misc.jwtVerify(
                     req.body.token,
                     (encPassword + context.modified));
             })
             .then(dec => {
-                return misc.validate_password_reset(context.userId, encryptedPassword,
+                return misc.validatePasswordReset(context.userId, encryptedPassword,
                     req.body.newPassword, req.body.newPasswordRe,
                     context);
             })
-            .then(() => misc.hash_password(req.body.newPassword))
-            .then(hashedPwd => db.update_user_password(context.userId, hashedPwd))
+            .then(() => misc.hashPassword(req.body.newPassword))
+            .then(hashedPwd => db.updateUserPassword(context.userId, hashedPwd))
             .then(() => {
                 context.passwordUpdated = true;
                 context.successMessage = 'Password changed';
@@ -423,25 +415,25 @@ module.exports = function (app, passport) {
         var pwd = req.body.password;
         var pwdRe = req.body.passwordRe;
 
-        misc.validate_email(email, context)
-            .then(() => db.check_if_user_exists(email, context))
-            .then(() => misc.validate_password_new_account(pwd, pwdRe, context))
-            .then(() => misc.hash_password(pwd))
-            .then(hashedPwd => db.add_user(email, hashedPwd, context))
-            .then(dbRes => db.get_user_by_id(dbRes.insertId, context))
+        misc.validateEmail(email, context)
+            .then(() => db.checkIfUserExists(email, context))
+            .then(() => misc.validatePasswordNewAccount(pwd, pwdRe, context))
+            .then(() => misc.hashPassword(pwd))
+            .then(hashedPwd => db.addUser(email, hashedPwd, context))
+            .then(dbRes => db.getUserById(dbRes.insertId, context))
             .then(() => {
                 context.accountCreated = true;
                 // create two tokens:
                 // one that we will email the user and can be used to verify account
                 // a second that we will return to the user. Allow the user to follow redirect,
                 // then use token to decide how to render redirect page.
-                let emailToken = misc.jwt_sign({
+                let emailToken = misc.jwtSign({
                     userId: context.userId,
                     email: context.username,
                     verify: true
                 }, process.env.JWT_SECRET);
 
-                let returnToken = misc.jwt_sign({
+                let returnToken = misc.jwtSign({
                     userId: context.userId,
                     email: context.username,
                     verificationSent: true,
@@ -458,7 +450,7 @@ module.exports = function (app, passport) {
                 context.redirect = `/verify?tok=${context.returnToken}`;
 
                 //now send email
-                return emails.send_verification_email(email, emailToken);
+                return emails.sendVerificationEmail(email, emailToken);
 
             })
             .catch(err => {
@@ -477,7 +469,7 @@ module.exports = function (app, passport) {
 
         // no need to validate email. Just check if email exists in our
         // db (avoiding sql injection) and send email if it is.
-        db.get_user_by_email(email, context)
+        db.getUserByEmail(email, context)
             .then(() => {
                 if (context.isVerified) {
                     context.alreadyVerified = true;
@@ -488,13 +480,13 @@ module.exports = function (app, passport) {
                 // one that we will email the user and can be used to verify account
                 // a second that we will return to the user. Allow the user to follow redirect,
                 // then use token to decide how to render redirect page.
-                let emailToken = misc.jwt_sign({
+                let emailToken = misc.jwtSign({
                     userId: context.userId,
                     email: context.username,
                     verify: true
                 }, process.env.JWT_SECRET);
 
-                let returnToken = misc.jwt_sign({
+                let returnToken = misc.jwtSign({
                     userId: context.userId,
                     email: context.username,
                     verificationSent: true,
@@ -511,7 +503,7 @@ module.exports = function (app, passport) {
                 context.redirect = `/verify?tok=${context.returnToken}`;
 
                 //now send email
-                return emails.send_verification_email(email, emailToken);
+                return emails.sendVerificationEmail(email, emailToken);
 
             })
             .catch(err => {
@@ -530,7 +522,7 @@ module.exports = function (app, passport) {
         const defaultUserId = process.env.DEFAULT_TEMPLATE_USER_ID;
         const defaultTemplateId = process.env.DEFAULT_TEMPLATE_ID;
         var context = {};
-        misc.preview_template(defaultUserId, defaultTemplateId, context)
+        misc.previewTemplate(defaultUserId, defaultTemplateId, context)
             .then(() => {
                 context.success = true;
             })
@@ -561,13 +553,13 @@ module.exports = function (app, passport) {
             console.log(`Invalid token: ${req.query.tok}`);
             context.error = true;
             context.deleted = false;
-            misc.set_layout(req, context)
+            misc.setLayout(req, context)
                 .catch(() => console.log('error in set_layout'))
                 .finally(() => res.render('unsubscribetok', context))
             return;
         }
 
-        misc.jwt_verify(req.query.tok)
+        misc.jwtVerify(req.query.tok)
             .then(dec => {
                 console.log(dec);
                 decrypted = dec;
@@ -576,7 +568,7 @@ module.exports = function (app, passport) {
                 context.post = dec.post;
                 context.username = dec.username;
 
-                return db.update_user_subscription(dec.subscriptionId, dec.userId, dec.makeActive);
+                return db.updateUserSubscription(dec.subscriptionId, dec.userId, dec.makeActive);
             })
             .then(dbres => {
                 context.unsubscribed = !decrypted.makeActive;
@@ -586,7 +578,7 @@ module.exports = function (app, passport) {
                 else if (dbres.changedRows > 0)
                     context.updated = true;
 
-                return misc.jwt_sign({
+                return misc.jwtSign({
                     username: decrypted.username,
                     subscriptionId: decrypted.subscriptionId,
                     userId: decrypted.userId,
@@ -598,7 +590,7 @@ module.exports = function (app, passport) {
             })
             .then(tok => {
                 context.doTok = tok;
-                return db.get_number_user_redundant_subscriptions(decrypted.userId,
+                return db.getNumberUserRedundantSubscriptions(decrypted.userId,
                     decrypted.postId,
                     decrypted.post,
                     decrypted.country);
@@ -608,7 +600,7 @@ module.exports = function (app, passport) {
                     context.additionalSubs = true;
                     context.numberAdditionalSubs = dbres.numberSubscriptions;
                 }
-                return misc.set_layout(req, context);
+                return misc.setLayout(req, context);
             })
             .then(() => {
                 res.render('unsubscribetok', context);
@@ -627,14 +619,14 @@ module.exports = function (app, passport) {
         context.title = "Reset password - COLA";
         context.style = ['styles.css', 'font_size.css'];
         context.email = req.body.email;
-        db.check_email(req.body.email, context)
+        db.checkEmail(req.body.email, context)
             .then(encPassword => {
-                return misc.jwt_sign({
+                return misc.jwtSign({
                     userId: context.userId,
                     email: context.email
                 }, (encPassword + context.modified), "1h")
             })
-            .then(token => emails.password_reset_email(context.userId, context.email, token))
+            .then(token => emails.passwordResetEmail(context.userId, context.email, token))
             .then(() => {
                 console.log('success');
                 context.success = true;
@@ -647,7 +639,7 @@ module.exports = function (app, passport) {
                 }
             })
             .finally(() => {
-                return misc.set_layout(req, context);
+                return misc.setLayout(req, context);
             })
             .finally(() => {
                 res.send(context);

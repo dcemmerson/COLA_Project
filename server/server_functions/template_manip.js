@@ -1,30 +1,31 @@
-//require('dotenv').config();
 const DocxTemplater = require('docxtemplater');
 const PizZip = require('pizzip');
 const HOST = process.env.HOST;
 var toPdf = require('office-to-pdf');
-//var tpPdf = require('docx-pdf');
 
 module.exports = {
-    /* name: manip_template
-       preconditions: username is used for accessing correct user's template in separate
-                      directory to prevent name conflicts caused by multiple templates with
-		      same name.
-                      filename is name of file that user gave their template
-                      post is name of post whose rate has changed
-		      country is name of country that post belogns to
-		      prev_allowance is old allowance before change script ran
-		      new_allowance is allowance after change script ranx
-       postconditions: username's file has been manipulated.
-                       A new docx has been created, which is returned from manip_template
-       description: 
+    /* name: manipTemplate
+       preconditions: user {
+                            username is used for accessing correct user's template in separate
+			    directory to prevent name conflicts caused by multiple templates with
+			    same name.
+			    filename is name of file that user gave their template
+			   }
+	              changed {
+                               post is name of post whose rate has changed
+			       country is name of country that post belogns to
+			       prevAllowance is old allowance before change script ran
+			       newAllowance is allowance after change script ran
+			       }
+       postconditions: username's file has been manipulated and {} fields updated.
+                       A new docx has been created, which is returned from maniptemplate
     */
-    manip_template: function (user, changed) {
+    manipTemplate: function (user, changed) {
         try {
             const today = new Date();
-            const date_long = new Intl.DateTimeFormat('en-US', { month: 'short' })
+            const dateLong = new Intl.DateTimeFormat('en-US', { month: 'short' })
                 .format(changed.effectiveDate);
-            const today_date_long = new Intl.DateTimeFormat('en-US', { month: 'short' })
+            const todayDateLong = new Intl.DateTimeFormat('en-US', { month: 'short' })
                 .format(today);
 
             let content = user.file;
@@ -33,16 +34,24 @@ module.exports = {
 
             doc.loadZip(zip);
             doc.setData({
-                old_cola: changed.previous_allowance || changed.prevAllowance,
+                old_cola: changed.prevAllowance,
                 new_cola: changed.allowance,
+		oldCola: changed.prevAllowance,
+                newCola: changed.allowance,
                 date: changed.effectiveDate.getUTCDate()
-                    + ` ${date_long} `
+                    + ` ${dateLong} `
                     + changed.effectiveDate.getUTCFullYear(),
                 effective_date: changed.effectiveDate.getUTCDate()
-                    + ` ${date_long} `
+                    + ` ${dateLong} `
                     + changed.effectiveDate.getUTCFullYear(),
                 current_date: today.getUTCDate()
-                    + ` ${today_date_long} `
+                    + ` ${todayDateLong} `
+                    + today.getUTCFullYear(),
+		effectiveDate: changed.effectiveDate.getUTCDate()
+                    + ` ${dateLong} `
+                    + changed.effectiveDate.getUTCFullYear(),
+                currentDate: today.getUTCDate()
+                    + ` ${todayDateLong} `
                     + today.getUTCFullYear(),
                 post: changed.post,
                 country: changed.country,
@@ -70,7 +79,7 @@ module.exports = {
                 + ` and create a new subscription to this post with a new template file.`);
         }
     },
-    docx_to_pdf: function (docxBuffer) {
+    docxToPdf: function (docxBuffer) {
         return new Promise((resolve, reject) => {
             toPdf(docxBuffer)
                 .then(pdfBuffer => {
