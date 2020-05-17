@@ -24,7 +24,7 @@
 	    <div id="unsubscribeAlertSuccess" class="unsubscribeAlert" style="display:none">
 	      <div class="usa-alert usa-alert--warning">
 		<div class="dismiss-alert"
-		     onclick="dismiss_alert(this.parentNode.parentNode)">
+		     onclick="dismissAlert(this.parentNode.parentNode)">
 		  <span role="button" class="dismiss-alert-button"></span>
 		</div>
 		<div class="usa-alert__body">
@@ -39,7 +39,7 @@
 	    <div id="resubscribeAlertSuccess" class="unsubscribeAlert" style="display:none">
 	      <div class="usa-alert usa-alert--success">
 		<div class="dismiss-alert"
-		     onclick="dismiss_alert(this.parentNode.parentNode)">
+		     onclick="dismissAlert(this.parentNode.parentNode)">
 		  <span role="button" class="dismiss-alert-button"></span>
 		</div>
 		<div class="usa-alert__body">
@@ -52,7 +52,7 @@
 	    <div id="unsubscribeAlertError" class="unsubscribeAlert" style="display:none">
 	      <div class="usa-alert usa-alert--error">
 		<div class="dismiss-alert"
-		     onclick="dismiss_alert(this.parentNode.parentNode)">
+		     onclick="dismissAlert(this.parentNode.parentNode)">
 		  <span role="button" class="dismiss-alert-button"></span>
 		</div>
 		<div class="usa-alert__body">
@@ -64,7 +64,7 @@
 	    <div id="downloadSubscriptionAlertError" class="unsubscribeAlert" style="display:none">
 	      <div class="usa-alert usa-alert--error">
 		<div class="dismiss-alert"
-		     onclick="dismiss_alert(this.parentNode.parentNode)">
+		     onclick="dismissAlert(this.parentNode.parentNode)">
 		  <span role="button" class="dismiss-alert-button"></span>
 		</div>
 		<div class="usa-alert__body">
@@ -76,7 +76,7 @@
 	    <div id="fireSubscriptionEmailAlertError" class="unsubscribeAlert" style="display:none">
 	      <div class="usa-alert usa-alert--error">
 		<div class="dismiss-alert"
-		     onclick="dismiss_alert(this.parentNode.parentNode)">
+		     onclick="dismissAlert(this.parentNode.parentNode)">
 		  <span role="button" class="dismiss-alert-button"></span>
 		</div>
 		<div class="usa-alert__body">
@@ -183,9 +183,9 @@
 	  <div class="">
 	    <div class="">
 	      <label for="postSelect" class="usa-label mt-2 ml-2 mr-2"><strong>1. Post</strong></label>
-	      <select id="postSelect" class="usa-select input-max-width" placeholder="Search for post" onchange="validate_subscription()">
+	      <select id="postSelect" class="usa-select input-max-width" placeholder="Search for post" onchange="validateSubscription()">
 		<option></option>
-		{{#each post_info}}
+		{{#each postInfo}}
 		<option data-COLARatesId="{{this.id}}">{{this.country}} ({{this.post}})</option>
 		{{/each}}
 	      </select>
@@ -198,7 +198,7 @@
 		      style="display:none">File does not appear to be doc/docx</span>
 		<input type="file" accept=".doc, .docx" id="uploadTemplate"
 		       class="usa-input btn btn-sm input-max-width"
-		       placeholder="Upload a template" onchange="validate_subscription()">
+		       placeholder="Upload a template" onchange="validateSubscription()">
 	      </div>
 	      <!-- Or use one of my other templates... -->
 	      <div class="mt-2">
@@ -212,7 +212,7 @@
 		<span class="usa-error-message" id="previousTemplateErrorMsgDownload"
 		      role="alert" style="display:none">
 		  Must select previous template to download</span>
-		<select id="templateSelect" class="usa-select input-max-width" onchange="validate_subscription()">
+		<select id="templateSelect" class="usa-select input-max-width" onchange="validateSubscription()">
 		  <option></option>
 		  {{#each templates}}
 		  <option data-templateId="{{this.id}}">{{this.name}}</option>
