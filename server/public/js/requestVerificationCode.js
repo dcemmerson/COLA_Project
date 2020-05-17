@@ -43,7 +43,7 @@ async function processEmail() {
     }
     finally {
         if (!res || !res.success) {
-            enableElements([button, email]);
+            enableElements([button, emailInput]);
             removeSpinner(buttonContainer);
         }
     }
