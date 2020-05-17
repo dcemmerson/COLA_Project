@@ -1,12 +1,6 @@
 const db = require('../server_functions/db_functions.js');
 var misc = require('../server_functions/misc.js');
 
-//var passport = require('passport');
-const {
-    check,
-    validationResult
-} = require('express-validator');
-
 module.exports = function (app) {
     app.get('/', function (req, res) {
         let context = {};
@@ -132,7 +126,7 @@ module.exports = function (app) {
         context.title = 'About - COLA';
         context.about = true;
 
-        misc.setlayout(req, context)
+        misc.setLayout(req, context)
             .catch(() => console.log('error in setLayout'))
             .finally(() => res.render('FAQ', context))
     });

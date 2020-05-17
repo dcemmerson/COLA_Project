@@ -33,7 +33,7 @@ async function processEmail() {
         let response = await submitRequest(email);
         var res = await response.json();
 
-        processEerverResponse(res);
+        processServerResponse(res);
     }
     catch (err) {
         console.log(err);

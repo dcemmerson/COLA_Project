@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     initializeForm();
     document.getElementById('subscribeAdditional').addEventListener('click', () => {
         hideElements($('.alert'));
-        document.getElementById(' infoContainer').style.display = "block";
+        document.getElementById('infoContainer').style.display = "block";
         document.getElementById('subscriptionFormContainer').style.display = "block";
     });
 

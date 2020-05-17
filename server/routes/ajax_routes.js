@@ -44,7 +44,7 @@ module.exports = function (app, passport) {
                                         context.subscriptionList.push(sub);
                                     }))
                             })
-V                            Promise.all(awaitSigning).then(resolve);
+                            Promise.all(awaitSigning).then(resolve);
                         })
                     })
                     .catch(err => console.log(err))
@@ -79,7 +79,7 @@ V                            Promise.all(awaitSigning).then(resolve);
             misc.validateFile(req.file, context)
                 .then(() => db.insertNewSubscriptionWithTemplateFile(userId,
                     req.body.postId,
-                    req.file.originalName,
+                    req.file.originalname,
                     req.file.buffer, '',
                     context))
                 .then(() => db.getUserSubscriptionById(context.subscriptionId))
@@ -328,7 +328,7 @@ V                            Promise.all(awaitSigning).then(resolve);
                     context.country = dec.country;
                     context.post = dec.post;
                     decrypted = dec;
-                    return db.updateUserAubscription(dec.subscriptionId,
+                    return db.updateUserSubscription(dec.subscriptionId,
                         userId,
                         !!dec.makeActive);
                 })

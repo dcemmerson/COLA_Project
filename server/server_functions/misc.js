@@ -182,7 +182,7 @@ module.exports = {
         })
     },
     
-    /* name validate_password_reset
+    /* name validatePasswordReset
        preconditions: userId is user id whose credentials we are checking 
                       oldPwdEnc is old password will be checked to make sure
 		           its not same as new password

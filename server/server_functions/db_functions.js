@@ -275,7 +275,7 @@ module.exports = {
     addColaRates: function (scraped) {
         return new Promise((resolve, reject) => {
             let queries = [];
-            const sql = `INSERT INTO COLARates (country, post, allowance, last_modified) VALUES (?, ?, ?, now())`
+            const sql = `INSERT INTO COLARates (country, post, allowance, lastModified) VALUES (?, ?, ?, now())`
             scraped.forEach(entry => {
                 let values = [entry.country, entry.post, entry.allowance];
                 queries.push(queryDB(sql, values, mysql));
@@ -299,7 +299,7 @@ module.exports = {
     */
     addColaRate: function (country, post, allowance, effectiveDate) {
         return new Promise((resolve, reject) => {
-            const sql = `INSERT INTO COLARates (country, post, allowance, effectiveDate, last_modified) VALUES (?, ?, ?, ?, now())`
+            const sql = `INSERT INTO COLARates (country, post, allowance, effectiveDate, lastModified) VALUES (?, ?, ?, ?, now())`
             let values = [country, post, allowance, effectiveDate];
             queryDB(sql, values, mysql)
                 .then(res => {
@@ -334,7 +334,7 @@ module.exports = {
     */
     updateColaRate: function (COLARateId, newAllowance, prevAllowance, effectiveDate) {
         return new Promise((resolve, reject) => {
-            const sql = `UPDATE COLARates SET allowance=?, prevAllowance=?, effectiveDate=?, last_modified=NOW() WHERE id=?`
+            const sql = `UPDATE COLARates SET allowance=?, prevAllowance=?, effectiveDate=?, lastModified=NOW() WHERE id=?`
             const values = [newAllowance, prevAllowance, effectiveDate, COLARateId];
             queryDB(sql, values, mysql)
                 .then(res => resolve(res))
@@ -434,7 +434,7 @@ module.exports = {
     getUserSubscriptionById: function (subscriptionId) {
         return new Promise((resolve, reject) => {
             const sql = `SELECT cr.post, cr.country, cr.allowance,`
-                + ` cr.prevAllowance, cr.effectiveDate, cr.last_modified,`
+                + ` cr.prevAllowance, cr.effectiveDate, cr.lastModified,`
                 + ` s.id AS subscriptionId, s.name, s.comment, `
                 + ` t.id as templateId`
                 + ` FROM user u`
@@ -500,7 +500,8 @@ module.exports = {
             let sql = `INSERT INTO template (name, file, comment, userId) VALUES (?, ?, ?, ?);`
 
             let values = [filename, file, comment, userId]
-
+	    console.log(sql);
+	    console.log(values);
             queryDB(sql, values, mysql)
                 .then(res => {
                     sql = `INSERT INTO subscription (name, comment, userId, templateId, active) VALUES (?, ?, ?, ?, ?);`
@@ -709,7 +710,7 @@ module.exports = {
     },
     set_prev_allowance: function (postId, prevAllowance, modifiedDate) {
         return new Promise((resolve, reject) => {
-            const sql = `UPDATE COLARates SET prevAllowance=?, last_modified=? WHERE id=?`;
+            const sql = `UPDATE COLARates SET prevAllowance=?, lastModified=? WHERE id=?`;
             const values = [prevAllowance, modifiedDate, postId];
             queryDB(sql, values, mysql)
                 .then(res => {

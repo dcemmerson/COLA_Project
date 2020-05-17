@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('submitNewSubscription').addEventListener('click', async e => {
         e.preventDefault();
         document.getElementById('submitNewSubscription').disabled = true;
-        showSpinner(('addNewSubscriptionButtons'));
+        showSpinner(document.getElementById('addNewSubscriptionButtons'));
 
         if (validateSubscription(true))
             await submitNewSubscription();
@@ -181,6 +181,7 @@ async function addNewSubscriptionPrevTemplate(postId, prevTemp) {
     catch (err) {
         console.log(err);
         return err;
+	
     }
 }
 
@@ -362,7 +363,7 @@ function downloadSubscription(thisEl, tok, post, country) {
    postconditions: subscription has been downloaded. Error message displayed to user
                    if error occurred somewhere in process.
 */
-function fireSubscriptionSmail(thisEl, tok, post, country) {
+function fireSubscriptionEmail(thisEl, tok, post, country) {
     var spinner = document.getElementById('tableSpinner');
     spinner.style.display = 'inline-block';
 

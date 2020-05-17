@@ -209,7 +209,7 @@ function checkRateChanges(scrapedRates, changedRates, effectiveDate) {
                             allowance: element.allowance,
                             effectiveDate: new Date(effectiveDate),
                             lastModified: new Date(),
-                            previouslyLastModified: res[0].last_modified
+                            previouslyLastModified: res[0].lastModified
                         });
                     }
                     else if (!res[0]) {
@@ -382,7 +382,7 @@ function setPreviousDates(start) {
     //start i at -1 so we can start first scrape date as a future scrape date.
     //This way, if the first time we detect a change in the COLA rates on the
     //first valid scrape date that isnt the start scrape date, we can correctly
-    //update the last_modified, aka effective date, in the db
+    //update the lastModified, aka effective date, in the db
     for (let i = -1; i < 100; i++) {
         let date = new Date(start - i * 14 * 1000 * 60 * 60 * 24);
         let dateString = String(date.getFullYear());

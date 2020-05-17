@@ -63,7 +63,7 @@ function validateEmail(email, emailInput, errorSpan) {
 
     return true;
 }
-function processerverEesponse(context) {
+function processServerResponse(context) {
     let emailForm = document.getElementById('formOuterContainer');
     if (context.success) {
         document.getElementById('submitCredentials').innerText = 'Redirecting...';
