@@ -4,43 +4,38 @@ document.addEventListener('DOMContentLoaded', () => {
        a. upload a new template to use when creating new subscription
        b. select a previous template to use with new subscription
     */
-    $('#templateSelect').change(() => {
+    document.getElementById('templateSelect').addEventListener('change', e => {
         document.getElementById('uploadTemplate').value = '';
-        validate_subscription();
+        validateSubscription();
     });
-    $('#uploadTemplate').on('input', () => {
+    document.getElementById('uploadTemplate').addEventListener('input', e => {
         let select = document.getElementById('templateSelect');
         select.selectedIndex = 0;
-        validate_subscription();
+        validateSubscription();
     });
 
-    $('#submitNewSubscription').on('click', async e => {
+    document.getElementById('submitNewSubscription').addEventListener('click', async e => {
         e.preventDefault();
-        $('#submitNewSubscription')[0].disabled = true;
-        show_spinner($('#addNewSubscriptionButtons')[0]);
+        document.getElementById('submitNewSubscription').disabled = true;
+        showSpinner(('addNewSubscriptionButtons'));
 
-        /*	var scroll = scroll_save([
-                document.getElementsByTagName('body')[0],
-                document.getElementById('subscriptionsContainer')
-            ]);
-        */
-        if (validate_subscription(true))
-            await submit_new_subscription();
+        if (validateSubscription(true))
+            await submitNewSubscription();
 
-        $('#submitNewSubscription')[0].disabled = false;
-        remove_spinner($('#addNewSubscriptionButtons')[0]);
-        //	scroll_restore(scroll);
+        document.getElementById('submitNewSubscription').disabled = false;
+        removeSpinner(document.getElementById('addNewSubscriptionButtons'));
+	
     });
 
 });
 
-function template_preview(templateId, tok = null) {
+function templatePreview(templateId, tok = null) {
     var label = document.getElementById('previewTemplateLabel');
     var docContainer = document.getElementById('canvasSpinnerContainer');
 
     label.innerText = "Loading ";
-    show_spinner(docContainer, '-lg');
-    show_spinner(label);
+    showSpinner(docContainer, '-lg');
+    showSpinner(label);
     $('#previewTemplateModal').modal({ keyboard: true, focus: true });
 
     let fe;
@@ -60,10 +55,10 @@ function template_preview(templateId, tok = null) {
         .then(res => {
             if (!res.success)
                 throw new Error("Error retrieving file");
-            remove_spinner(label);
+            removeSpinner(label);
             label.innerText = res.filename;
             let uint8arr = new Uint8Array(res.file.data);
-            return pdf_to_canvas(uint8arr);
+            return pdfToCanvas(uint8arr);
         })
         .then(() => {
             document.getElementById('previewCanvas').classList.add('light-border');
@@ -73,15 +68,15 @@ function template_preview(templateId, tok = null) {
             label.innerText = err;
         })
         .finally(() => {
-            remove_spinner(docContainer, '-lg');
+            removeSpinner(docContainer, '-lg');
             docContainer.innerText = "";
         })
 }
-function template_download(templateId) {
+function templateDownload(templateId) {
     var dlts = document.getElementById('downloadTemplateSpan');
     dlts.classList.remove('downloadError', 'downloadSuccess');
 
-    show_spinner(dlts, ' md', true);
+    showSpinner(dlts, ' md', true);
     return fetch(`/download_template?templateId=${templateId}`)
         .then(response => {
             if (response.status == 200)
@@ -92,7 +87,7 @@ function template_download(templateId) {
             if (!res.success)
                 throw new Error("Error retrieving file");
 
-            client_download_file(res);
+            clientDownloadFile(res);
 
             dlts.classList.add('downloadSuccess');
         })
@@ -101,39 +96,39 @@ function template_download(templateId) {
             dlts.classList.add('downloadError');
         })
         .finally(() => {
-            remove_spinner(dlts, ' md');
+            removeSpinner(dlts, ' md');
         })
 
 }
 
-async function submit_new_subscription() {
-    let upload_temp = $('#uploadTemplate');
-    let prev_temp = $('#templateSelect');
-    let post = $('#postSelect')[0];
-    let post_id = post[post.selectedIndex].getAttribute('data-COLARatesId');
+async function submitNewSubscription() {
+    let uploadTemp = document.getElementById('uploadTemplate');
+    let prevTemp = document.getElementById('templateSelect');
+    let post = document.getElementById('postSelect');
+    let postId = post[post.selectedIndex].getAttribute('data-COLARatesId');
 
-    show_spinner($('#subscriptionsContainerSpinner')[0]);
+    showSpinner(document.getElementById('subscriptionsContainerSpinner'));
     document.getElementById('tableSpinner').display = 'inline-block';
 
     try {
-        if (upload_temp[0].value) {
+        if (uploadTemp.value) {
             var upload = true;
-            var result = await add_new_subscription_with_template_file(post_id, upload_temp);
+            var result = await addNewSubscriptionWithTemplateFile(postId, uploadTemp);
         }
-        else if (prev_temp[0].selectedIndex != 0) {
+        else if (prevTemp.selectedIndex != 0) {
             var previous = true;
-            var result = await add_new_subscription_prev_template(post_id, prev_temp[0]);
+            var result = await addNewSubscriptionPrevTemplate(postId, prevTemp);
         }
 
         if (result.success) { //reset post dropdown/files selection
             post.selectedIndex = 0;
-            prev_temp[0].selectedIndex = 0;
-            upload_temp[0].value = "";
-            new_subscription_success(post_id);
+            prevTemp.selectedIndex = 0;
+            uploadTemp.value = "";
+            newSubscriptionSuccess(postId);
 
-            let tempFetch = fetch_user_templates();
+            let tempFetch = fetchUserTemplates();
 
-            add_subscription_to_table(result);
+            addSubscriptionToTable(result);
         }
         else if (result.error)
             throw new Error(result.error); //custom error originating from server
@@ -142,37 +137,35 @@ async function submit_new_subscription() {
     }
     catch (err) {
         console.log(err);
-        hide_elements($('.alert'));
+        hideElements(document.getElementsByClassName('alert'));
         if (!result.success) {
-            $('#warningContainer')[0].style.display = 'block';
+            document.getElementById('warningContainer').style.display = 'block';
             if (upload) {
-                $('#uploadTemplateErrorMsg')[0].innerText = result.errorMessage;
-                $('#uploadTemplateErrorMsg')[0].style.display = 'block';
+                document.getElementById('uploadTemplateErrorMsg').innerText = result.errorMessage;
+                document.getElementById('uploadTemplateErrorMsg').style.display = 'block';
             }
             else {
-                $('#previousTemplateErrorMsg')[0].innerText = result.errorMessage;
-                $('#previousTemplateErrorMsg')[0].style.display = 'block';
+                document.getElementById('previousTemplateErrorMsg').innerText = result.errorMessage;
+                document.getElementById('previousTemplateErrorMsg').style.display = 'block';
             }
         }
         else {
-            $('#errorContainer')[0].style.display = 'block';
+            document.getElementById('errorContainer').style.display = 'block';
 
         }
     }
     finally {
-        //	clear_user_subscriptions();
-        //	await fetch_user_subscription_list();
         document.getElementById('tableSpinner').display = 'none';
-        remove_spinner($('#subscriptionsContainerSpinner')[0]);
-        check_empty_subscriptions();
+        removeSpinner(document.getElementById('subscriptionsContainerSpinner'));
+        checkEmptySubscriptions();
     }
 }
 
-async function add_new_subscription_prev_template(post_id, prev_temp) {
+async function addNewSubscriptionPrevTemplate(postId, prevTemp) {
     try {
         let context = {
-            post_id: post_id,
-            template_id: prev_temp[prev_temp.selectedIndex].getAttribute('data-templateId')
+            postId: postId,
+            templateId: prevTemp[prevTemp.selectedIndex].getAttribute('data-templateId')
         };
 
         var response = await fetch('/add_new_subscription_with_prev_template', {
@@ -191,7 +184,7 @@ async function add_new_subscription_prev_template(post_id, prev_temp) {
     }
 }
 
-async function add_new_subscription_with_template_file(post_id, upload_temp) {
+async function addNewSubscriptionWithTemplateFile(postId, uploadTemp) {
     if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
         console.log("File API not supported by broser");
         $('addSubscriptionMessageDiv').innerText = "Incompatible browser"
@@ -200,8 +193,8 @@ async function add_new_subscription_with_template_file(post_id, upload_temp) {
 
     try {
         let fd = new FormData();
-        fd.append('upload', upload_temp[0].files[0]);
-        fd.append('post_id', post_id);
+        fd.append('upload', uploadTemp.files[0]);
+        fd.append('postId', postId);
 
         var response = await fetch('/add_new_subscription_with_template_file', {
             method: 'POST',
@@ -218,18 +211,18 @@ async function add_new_subscription_with_template_file(post_id, upload_temp) {
 
 
 
-async function fetch_user_templates() {
+async function fetchUserTemplates() {
     try {
         var templateSelect = document.getElementById('templateSelect');
-        clear_dropdown(templateSelect);
+        clearDropdown(templateSelect);
         templateSelect.innerHTML = '<option>Loading...<i class="fa fa-spinner spinner"></i></option>';
 
         let response = await fetch('/get_user_template_list')
         let res = await response.json();
 
-        clear_dropdown(templateSelect);
+        clearDropdown(templateSelect);
 
-        populate_template_dropdown(templateSelect, res.templates);
+        populateTemplateDropdown(templateSelect, res.templates);
     }
     catch (err) {
         console.log(err);
@@ -239,26 +232,23 @@ async function fetch_user_templates() {
     }
 }
 
-async function fetch_user_subscription_list() {
+async function fetchUserSubscriptionList() {
     try {
-        clear_user_subscriptions();
+        clearUserSubscriptions();
         let response = await fetch('/get_user_subscription_list')
         let res = await response.json();
-        remove_spinner($('#subscriptionsContainerSpinner')[0]);
-        populate_subscription_table(res);
-        check_empty_subscriptions();
+        removeSpinner(document.getElementById('subscriptionsContainerSpinner'));
+        populateSubscriptionTable(res);
+        checkEmptySubscriptions();
     }
     catch (err) {
         console.log(err);
-    }
-    finally {
-        //	size_table();
     }
 }
 
 
 
-/* name: delete_subscription
+/* name: deleteSubscription
    preconditions: tok contains all necessary info needed in /delete_subscriptions route,
                     most importantly subscriptionId and makeActive (bool)
 		  post/country technically not necessary, and will only be required if an
@@ -267,7 +257,7 @@ async function fetch_user_subscription_list() {
    postconditions: subscription has been either deactivated or reactivated, depending on
                    calling context and token
 */
-async function delete_subscription(thisEl, tok, post, country, subscriptionId) {
+async function deleteSubscription(thisEl, tok, post, country, subscriptionId) {
     try {
         var context = {};
         var spinner = document.getElementById('tableSpinner');
@@ -275,7 +265,7 @@ async function delete_subscription(thisEl, tok, post, country, subscriptionId) {
 
         if (thisEl) {
             thisEl.parentNode.disabled = true;
-            class_timer(thisEl, 'trashCan', 'trashCanSecondary');
+            classTimer(thisEl, 'trashCan', 'trashCanSecondary');
         }
 
         tableCover.style.display = 'block';
@@ -285,17 +275,17 @@ async function delete_subscription(thisEl, tok, post, country, subscriptionId) {
         let res = await response.json();
 
 
-        hide_elements($('.unsubscribeAlert'));
+        hideElements(document.getElementsByClassName('unsubscribeAlert'));
         if (res.deleted) {
-            display_unsubscribe_alert($('#unsubscribeAlertSuccess')[0],
+            displayUnsubscribeAlert(document.getElementById('unsubscribeAlertSuccess'),
                 res.post, res.country, res.tok, subscriptionId);
-            update_table(subscriptionId, true);
+            updateTable(subscriptionId, true);
 
         }
         else if (res.restored) {
-            display_unsubscribe_alert($('#resubscribeAlertSuccess')[0],
+            displayUnsubscribeAlert(document.getElementById('resubscribeAlertSuccess'),
                 res.post, res.country);
-            update_table(subscriptionId, false);
+            updateTable(subscriptionId, false);
         }
         else
             throw new Error(`Error updating ${res.country} (${res.post})`);
@@ -303,24 +293,24 @@ async function delete_subscription(thisEl, tok, post, country, subscriptionId) {
     }
     catch (err) {
         if (err) console.log(err);
-        display_unsubscribe_alert($('#unsubscribeAlertError')[0], post, country);
+        displayUnsubscribeAlert(document.getElementById('unsubscribeAlertError'), post, country);
     }
     finally {
 
         if (thisEl) {
             thisEl.parentNode.disabled = false;
-            class_timer(thisEl, 'trashCanSecondary', 'trashCan');
+            classTimer(thisEl, 'trashCanSecondary', 'trashCan');
         }
         tableCover.style.display = 'block';
         //	tableCover.style.animation = 'slideCoverRemove 0.5s 1 forwards';
         spinner.style.display = 'none';
-        check_empty_subscriptions();
-        check_previous_allowance_99();
+        checkEmptySubscriptions();
+        checkPreviousAllowance99();
     }
 }
 
 
-/* name: download_subscription
+/* name: downloadSubscription
    preconditions: tok contains all necessary info needed in /download_subscription route,
                     most importantly subscriptionId. Server validates requested template 
 		    belongs to requester. 
@@ -330,12 +320,12 @@ async function delete_subscription(thisEl, tok, post, country, subscriptionId) {
    postconditions: subscription has been downloaded. Error message displayed to user
                    if error occurred somewhere in process.
 */
-function download_subscription(thisEl, tok, post, country) {
+function downloadSubscription(thisEl, tok, post, country) {
     var spinner = document.getElementById('tableSpinner');
     spinner.style.display = 'inline-block';
 
     thisEl.parentNode.disabled = true;
-    class_timer(thisEl, 'downloadSubscription', 'downloadSubscriptionSecondary');
+    classTimer(thisEl, 'downloadSubscription', 'downloadSubscriptionSecondary');
     return fetch(`/download_subscription?tok=${tok}`)
         .then(response => {
             if (response.status == 200)
@@ -346,15 +336,15 @@ function download_subscription(thisEl, tok, post, country) {
             if (!res.success)
                 throw new Error("Error retrieving file");
 
-            client_download_file(res);
-            class_timer(thisEl, 'downloadSubscriptionSecondary', 'downloadSubscriptionSuccess', 'downloadSubscription', 5000);
+            clientDownloadFile(res);
+            classTimer(thisEl, 'downloadSubscriptionSecondary', 'downloadSubscriptionSuccess', 'downloadSubscription', 5000);
         })
         .catch(err => {
             console.log(err);
-            hide_elements(document.getElementsByClassName('unsubscribeAlert'));
+            hideElements(document.getElementsByClassName('unsubscribeAlert'));
             document.getElementById('downloadSubscriptionAlertError').style.display = 'block';
             document.getElementById('downloadSubscriptionErrorMsgSpan').innerText = `${country} (${post})`;
-            class_timer(thisEl, 'downloadSubscriptionSecondary', 'downloadSubscriptionError', 'downloadSubscription', 8000);
+            classTimer(thisEl, 'downloadSubscriptionSecondary', 'downloadSubscriptionError', 'downloadSubscription', 8000);
         })
         .finally(() => {
             thisEl.parentNode.disabled = false;
@@ -362,7 +352,7 @@ function download_subscription(thisEl, tok, post, country) {
 
         })
 }
-/* name: fire_subscription_email
+/* name: fireSubscriptionEmail
    preconditions: tok contains all necessary info needed in /fire_subscription_email route,
                     most importantly subscriptionId. Server validates requested template 
 		    belongs to requester. 
@@ -372,12 +362,12 @@ function download_subscription(thisEl, tok, post, country) {
    postconditions: subscription has been downloaded. Error message displayed to user
                    if error occurred somewhere in process.
 */
-function fire_subscription_email(thisEl, tok, post, country) {
+function fireSubscriptionSmail(thisEl, tok, post, country) {
     var spinner = document.getElementById('tableSpinner');
     spinner.style.display = 'inline-block';
 
     thisEl.parentNode.disabled = true;
-    class_timer(thisEl, 'email', 'emailSecondary');
+    classTimer(thisEl, 'email', 'emailSecondary');
 
     return fetch(`/fire_subscription_email?tok=${tok}`)
         .then(response => {
@@ -389,17 +379,15 @@ function fire_subscription_email(thisEl, tok, post, country) {
             if (!res.success)
                 throw new Error("Error retrieving file");
 
-            console.log(res);
-            //	    client_download_file(res);
-            class_timer(thisEl, 'emailSecondary', 'emailSuccess', 'email', 5000);
+            classTimer(thisEl, 'emailSecondary', 'emailSuccess', 'email', 5000);
         })
         .catch(err => {
             console.log(err);
-            hide_elements(document.getElementsByClassName('unsubscribeAlert'));
+            hideElements(document.getElementsByClassName('unsubscribeAlert'));
             document.getElementById('fireSubscriptionEmailAlertError').style.display = 'block';
             document.getElementById('fireSubscriptionEmailErrorMsgSpan').innerText = `${country} (${post})`;
             document.getElementById('fireSubscriptionEmailErrorToSpan').innerText = document.getElementById('userEmail').value;
-            class_timer(thisEl, 'emailSecondary', 'emailError', 'email', 8000);
+            classTimer(thisEl, 'emailSecondary', 'emailError', 'email', 8000);
         })
         .finally(() => {
             thisEl.parentNode.disabled = false;

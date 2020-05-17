@@ -1,4 +1,4 @@
-async function submit_credentials() {
+async function submitCredentials() {
     var context = {};
     context.email = document.getElementById('email').value.trim();
     context.password = document.getElementById('password').value;

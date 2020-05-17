@@ -1,4 +1,4 @@
-function submit_request(email, password) {
+function submitRequest(email, password) {
     return fetch('/login', {
         method: 'POST',
         headers: {

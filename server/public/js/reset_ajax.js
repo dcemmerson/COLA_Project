@@ -1,4 +1,4 @@
-function submit_request(email) {
+function submitRequest(email) {
     return fetch('/reset', {
         method: 'POST',
         headers: {

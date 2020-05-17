@@ -1,12 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
-    display_return_to_top();
+    displayReturnToTop();
 })
-function hidden_timer(element, time = 5000) {
+function hiddenTimer(element, time = 5000) {
     setTimeout(() => {
         element.hidden = true;
     }, time);
 }
-function class_timer(element, from, to, fin, time = null) {
+function classTimer(element, from, to, fin, time = null) {
     element.classList.remove(from);
     element.classList.add(to);
 
@@ -17,7 +17,7 @@ function class_timer(element, from, to, fin, time = null) {
         }, time)
     }
 }
-function show_spinner(element, lg = '', insertFirst = false) {
+function showSpinner(element, lg = '', insertFirst = false) {
     let i = document.createElement('i');
     i.setAttribute('class', `fa fa-spinner fa-spin spinner${lg}`);
     if (insertFirst && element.firstChild) {
@@ -27,7 +27,7 @@ function show_spinner(element, lg = '', insertFirst = false) {
         element.appendChild(i);
     }
 }
-function remove_spinner(element, lg = '') {
+function removeSpinner(element, lg = '') {
     try {
         let spinners = element.getElementsByClassName(`fa fa-spinner fa-spin spinner${lg}`);
 
@@ -41,11 +41,11 @@ function remove_spinner(element, lg = '') {
     }
 }
 
-/* name: show_popover
+/* name: showPopover
    preconditions: el is a jquery object containing the element on which to show popover
    postconditions: popover with borderColor shown for time milliseconds
 */
-function show_popover(el, time = 5000, borderColor = 'rgba(0, 0, 0, 0.2') {
+function showPopover(el, time = 5000, borderColor = 'rgba(0, 0, 0, 0.2') {
     $('.popover').css('border-color', borderColor);
     el.popover('show');
     setTimeout((popel) => {
@@ -53,19 +53,19 @@ function show_popover(el, time = 5000, borderColor = 'rgba(0, 0, 0, 0.2') {
     }, time, el);
 }
 
-function set_error_border(el, time = 5000) {
+function setErrorBorder(el, time = 5000) {
     el.classList.add('errorBorder');
     setTimeout(el => {
         el.classList.remove('errorBorder');
     }, time, el)
 }
 
-/* name: scroll_save
+/* name: scrollSave
    preconditions: arr is an array of elements for which we want to save the scroll x/y values
    postconditions: return an array of objects that contains references to each element along
                    with the saved scroll x/y values.
 */
-function scroll_save(arr) {
+function scrollSave(arr) {
     var context = []
     arr.forEach(el => {
         context.push({
@@ -77,27 +77,27 @@ function scroll_save(arr) {
     return context;
 }
 
-/* name: scroll_restore
+/* name: scrollRestore
    preconditions: arr is array of objects. Each object should be of format:
                     {element: element, scrollY: scrollY, scrollX: scrollX}. Best when
-		    used in combination wiht scroll_save
+		    used in combination wiht scrollSave
    postconditions: scroll x/y values updated for all elements in arr
 */
-function scroll_restore(arr) {
+function scrollRestore(arr) {
     document.getElementsByTagName('html')[0].style.scrollBehavior = "auto";
     arr.forEach(el => {
         el.element.scrollTo(el.scrollX, el.scrollY);
     })
     document.getElementsByTagName('html')[0].style.scrollBehavior = "smooth";
 }
-function add_classes(elements, classes) {
+function addClasses(elements, classes) {
     for (let i = 0; i < elements.length; i++) {
         classes.forEach(cl => {
             elements[i].classList.add(cl);
         })
     }
 }
-function remove_classes(elements, classes) {
+function removeClasses(elements, classes) {
     for (let i = 0; i < elements.length; i++) {
         classes.forEach(cl => {
             elements[i].classList.remove(cl);
@@ -105,23 +105,23 @@ function remove_classes(elements, classes) {
     }
 }
 
-function hide_elements(elements) {
+function hideElements(elements) {
     for (let i = 0; i < elements.length; i++) {
         elements[i].style.display = 'none';
     }
 }
-function clear_inner_text(elements) {
+function clearInnerText(elements) {
     for (let i = 0; i < elements.length; i++) {
         elements[i].innerText = '';
     }
 }
-function clear_canvas(canvas) {
+function clearCanvas(canvas) {
     var context = canvas.getContext('2d');
     context.clearRect(0, 0, canvas.width, canvas.height);
     canvas.classList.remove('light-border');
     canvas.height = '1rem';
 }
-function display_return_to_top() {
+function displayReturnToTop() {
     let html = document.getElementsByTagName('html')[0];
     let body = document.getElementsByTagName('body')[0];
 
@@ -130,30 +130,30 @@ function display_return_to_top() {
         rtt.style.display = 'block';
     }
 }
-function disable_elements(elements) {
+function disableElements(elements) {
     for (let i = 0; i < elements.length; i++) {
         elements[i].disabled = true;
     }
 }
-function enable_elements(elements) {
+function enableElements(elements) {
     for (let i = 0; i < elements.length; i++) {
         elements[i].disabled = false;
     }
 }
-function disable_form(form) {
+function disableForm(form) {
     var elements = form.elements;
     for (var i = 0; i < elements.length; i++) {
         elements[i].disabled = true;
     }
 }
-function enable_form(form) {
+function enableForm(form) {
     var elements = form.elements;
     for (var i = 0; i < elements.length; i++) {
         elements[i].disabled = false;
     }
 }
 
-function client_download_file(res) {
+function clientDownloadFile(res) {
     var a = document.createElement('a');
 
     //    var data = new File(new Uint8Array(res.file.data), res.filename);

@@ -23,28 +23,28 @@ async function processEmail() {
         var email = emailInput.value.trim();
         var emailErrorSpan = document.getElementById('emailError');
 
-        disable_elements([button, emailInput]);
-        show_spinner(buttonContainer);
+        disableElements([button, emailInput]);
+        showSpinner(buttonContainer);
 
         if (!validateEmail(email, emailInput, emailErrorSpan)) return;
 
-        hide_elements(document.getElementsByClassName('usa-alert'));
+        hideElements(document.getElementsByClassName('usa-alert'));
 
         let response = await submitRequest(email);
         var res = await response.json();
 
-        process_server_response(res);
+        processEerverResponse(res);
     }
     catch (err) {
         console.log(err);
 
-        process_server_response({ error: true })
+        processServerResponse({ error: true })
 
     }
     finally {
         if (!res || !res.success) {
-            enable_elements([button, email]);
-            remove_spinner(buttonContainer);
+            enableElements([button, email]);
+            removeSpinner(buttonContainer);
         }
     }
 }
@@ -83,7 +83,7 @@ function validateEmail(email, emailInput, errorSpan, showErrors = true) {
     // this statement doesn't ever execute    
     return true;
 }
-function process_server_response(context) {
+function processServerResponse(context) {
     let emailForm = document.getElementById('loginFormOuterContainer');
     let invalidSpan = document.getElementById('invalid');
     invalidSpan.style.display = 'none';

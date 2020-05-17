@@ -1,4 +1,4 @@
-async function submit_password() {
+async function submitPassword() {
     var context = {};
     context.oldPassword = document.getElementById('oldPassword').value;
     context.newPassword = document.getElementById('newPassword').value;

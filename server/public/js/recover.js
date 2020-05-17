@@ -2,11 +2,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('submitNewPassword').addEventListener('click', e => {
         e.preventDefault();
-        if (valid_password(true)) reset_password();
+        if (validPassword(true)) resetPassword();
     });
 })
 
-function show_password_form() {
+function showPasswordForm() {
     let passwordBtn = document.getElementById('changePasswordBtnDiv');
     let passwordForm = document.getElementById('passwordFormContainer');
 
@@ -17,7 +17,7 @@ function show_password_form() {
     passwordForm.classList.add('shown');
 }
 
-function hide_password_form() {
+function hidePasswordForm() {
     let passwordBtn = document.getElementById('changePasswordBtnDiv');
     let passwordForm = document.getElementById('passwordFormContainer');
 
@@ -28,26 +28,26 @@ function hide_password_form() {
 
 }
 
-async function reset_password() {
+async function resetPassword() {
     try {
         $('#submitNewPassword')[0].disabled = true;
-        show_spinner($('#submitBtnDiv')[0]);
-        let context = await submit_password_reset();
+        showSpinner($('#submitBtnDiv')[0]);
+        let context = await submitPasswordReset();
 
-        hide_elements($('.changePasswordAlert'));
+        hideElements($('.changePasswordAlert'));
         //check if server found any issues with password
-        invalid_password_server(context);
+        invalidPasswordServer(context);
     }
     catch (err) {
         console.log(err);
-        hide_elements($('.changePasswordAlert'));
+        hideElements($('.changePasswordAlert'));
         $('#alertError')[0].display = 'block';
     }
-    remove_spinner($('#submitBtnDiv')[0]);
+    removeSpinner($('#submitBtnDiv')[0]);
     $('#submitNewPassword')[0].disabled = false;
 }
 
-function update_regex_validation_marks(field, arr, submit) {
+function updateRegexValidationMarks(field, arr, submit) {
     let validPassword = true;
     arr.forEach(val => {
         if (field.value.match(val.regex) === null) {
@@ -77,9 +77,9 @@ function update_regex_validation_marks(field, arr, submit) {
     return validPassword;
 }
 
-function update_length_validation_mark(field, req, submit) {
+function updateLengthValidationMark(field, req, submit) {
     let validPassword = true;
-    if (submit) clear_inner_text($('.passwordError'));
+    if (submit) clearInnerText($('.passwordError'));
 
     if (field.value.length < req.minLength) {
         for (let i = 0; i < req.elements.length; i++)
@@ -102,13 +102,13 @@ function update_length_validation_mark(field, req, submit) {
 
     return validPassword;
 }
-/* name: valid_password
+/* name: validPassword
    preconditions: user has clicked submit on change password form, or just entered input
                   into New password field   
    postconditions: determine if user has entered valid new password
    description:
 */
-function valid_password(submit = false) {
+function validPassword(submit = false) {
     var newPassword = $('#newPassword')[0];
     var newPasswordRe = $('#newPasswordRe')[0];
 
@@ -118,14 +118,14 @@ function valid_password(submit = false) {
     let special = /\W|_/g;
     let minLength = 8;
 
-    let validPassword = update_regex_validation_marks(newPassword, [
+    let validPassword = updateRegexValidationMarks(newPassword, [
         { regex: lowerCase, elements: $('.lowercaseReq') },
         { regex: upperCase, elements: $('.uppercaseReq') },
         { regex: numbers, elements: $('.numberReq') },
         { regex: special, elements: $('.specialReq') }
     ], submit);
 
-    validPassword = update_length_validation_mark(newPassword, {
+    validPassword = updateLengthValidationMark(newPassword, {
         minLength: minLength,
         elements: $('.minCharReq')
     }, submit) && validPassword;
@@ -145,7 +145,7 @@ function valid_password(submit = false) {
     return validPassword;
 }
 
-/* name: invalid_password_server
+/* name: invalidPasswordServer
    preconditions: ajax req was made to server. Server either changes user
                   password or notifies user if there was an issue
    postconditions: user is notified of reason server rejected, or password change
@@ -157,7 +157,7 @@ function valid_password(submit = false) {
 		recover.js (this file). Server runs additional validation
 		to catch this, in which case this method will run.
 */
-function invalid_password_server(context) {
+function invalidPasswordServer(context) {
     if (context.passwordUpdated) { //pword updated in db
         document.getElementById('alertSuccess').style.display = 'block';
         document.getElementById('passwordFormContainer').style.display = 'none';

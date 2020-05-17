@@ -19,41 +19,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('submitNewAccount').addEventListener('click', e => {
         e.preventDefault();
-        if (valid_email_add_marks() && valid_password(true)) {
-            create_account();
+        if (validEmailAddMarks() && validPassword(true)) {
+            createAccount();
         }
     });
 });
 
-async function create_account() {
+async function createAccount() {
     try {
         //disable everything on form so user doesn't keep submitting or try
         //to make changes if RTT from server is slow				
-        disable_form(document.getElementById('changePasswordForm'));
-        remove_server_errors();
+        disableForm(document.getElementById('changePasswordForm'));
+        removeServerErrors();
 
-        show_spinner(document.getElementById('submitBtnDiv'));
-        var context = await submit_credentials();
+        showSpinner(document.getElementById('submitBtnDiv'));
+        var context = await submitCredentials();
 
         //check if server found any issues with email/password
-        process_server_response(context);
+        processServerResponse(context);
     }
     catch (err) {
         console.log(err);
-        //	hide_elements(document.getElementsByClassName('changePasswordAlert'));
+        //	hideElements(document.getElementsByClassName('changePasswordAlert'));
         document.getElementById('alertError').style.display = 'block';
         document.getElementById('formInnerContainer').styl.display = 'none';
     }
     finally {
         if (!context || !context.success) {
-            remove_spinner(document.getElementById('submitBtnDiv'));
-            enable_form(document.getElementById('changePasswordForm'));
+            removeSpinner(document.getElementById('submitBtnDiv'));
+            enableForm(document.getElementById('changePasswordForm'));
         }
     }
 }
 
 
-function update_regex_validation_marks(field, arr, submit) {
+function updateRegexValidationMarks(field, arr, submit) {
     let validPassword = true;
     arr.forEach(val => {
         if (field.value.match(val.regex) === null) {
@@ -85,9 +85,9 @@ function update_regex_validation_marks(field, arr, submit) {
     return validPassword;
 }
 
-function update_length_validation_mark(field, req, submit) {
+function updateLengthValidationMark(field, req, submit) {
     let validPassword = true;
-    if (submit) clear_inner_text(document.getElementsByClassName('passwordError'));
+    if (submit) clearInnerText(document.getElementsByClassName('passwordError'));
 
     if (field.value.length < req.minLength) {
         for (let i = 0; i < req.elements.length; i++)
@@ -111,15 +111,15 @@ function update_length_validation_mark(field, req, submit) {
     return validPassword;
 }
 
-/* name: valid_email
+/* name: validEmail
    preconditions: user has clicked submit on create account form 
    postconditions: determine if user has entered valid email address format
-   description: calls valid_email_add_marks calls valid_email to check if email
+   description: calls validEmailAddMarks calls validEmail to check if email
                 provided is valid, and adds markup/styling if not valid, else
 		any markup/styling from previous calls is removed.
 */
 //regex: https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
-function valid_email_add_marks() {
+function validEmailAddMarks() {
     var emailInput = document.getElementById('email');
     var email = emailInput.value;
     var emailErrorSpan = document.getElementById('emailError');
@@ -128,7 +128,7 @@ function valid_email_add_marks() {
     emailInput.classList.remove('usa-input--error');
 
 
-    if (!valid_email(emailInput)) {
+    if (!validEmail(emailInput)) {
         emailInput.classList.add('usa-input--error');
         emailErrorSpan.innerText = "Please enter valid email";
         emailErrorSpan.style.display = 'block';
@@ -139,7 +139,7 @@ function valid_email_add_marks() {
 
     return true;
 }
-/* name: valid_email
+/* name: validEmail
    preconditions: emailInput is user email input field.
    postconditions: regular epxression used to check if email address fits valid format.
                    returns true if valid, else false. Removes markup/styling if
@@ -147,7 +147,7 @@ function valid_email_add_marks() {
   description: this method can be called from the "oninput" field in the html doc,
                or upon user submitting new account information.
 */
-function valid_email(emailInput = document.getElementById('email')) {
+function validEmail(emailInput = document.getElementById('email')) {
     let email = emailInput.value;
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -162,13 +162,13 @@ function valid_email(emailInput = document.getElementById('email')) {
     return true;
 }
 
-/* name: valid_password
+/* name: validPassword
    preconditions: user has clicked submit on create account form, or just entered input
                   into New password field   
    postconditions: determine if user has entered valid new password
    description:
 */
-function valid_password(submit = false) {
+function validPassword(submit = false) {
     var password = document.getElementById('password');
     var passwordRe = document.getElementById('passwordRe');
 
@@ -178,14 +178,14 @@ function valid_password(submit = false) {
     let special = /\W|_/g;
     let minLength = 8;
 
-    let validPassword = update_regex_validation_marks(password, [
+    let validPassword = updateRegexValidationMarks(password, [
         { regex: lowerCase, elements: document.getElementsByClassName('lowercaseReq') },
         { regex: upperCase, elements: document.getElementsByClassName('uppercaseReq') },
         { regex: numbers, elements: document.getElementsByClassName('numberReq') },
         { regex: special, elements: document.getElementsByClassName('specialReq') }
     ], submit);
 
-    validPassword = update_length_validation_mark(password, {
+    validPassword = updateLengthValidationMark(password, {
         minLength: minLength,
         elements: document.getElementsByClassName('minCharReq')
     }, submit) && validPassword;
@@ -205,7 +205,7 @@ function valid_password(submit = false) {
     return validPassword;
 }
 
-/* name: invalid_credentials_server
+/* name: processServerResponse
    preconditions: ajax req was made to server. Server either changes user
                   password or notifies user if there was an issue
    postconditions: user is notified of reason server rejected, or password change
@@ -218,7 +218,7 @@ function valid_password(submit = false) {
 		recover.js (this file). Server runs additional validation
 		to catch this, in which case this method will run and show issue.
 */
-function process_server_response(context) {
+function processServerResponse(context) {
     if (context.accountCreated) {
         document.getElementById('submitNewAccount').innerText = 'Redirecting...';
         window.location = context.redirect;
@@ -251,7 +251,7 @@ function process_server_response(context) {
     }
 }
 
-function remove_server_errors() {
+function removeServerErrors() {
     document.getElementById('emailError').innerText = '';
     document.getElementById('emailError').style.display = 'none';
     document.getElementById('passwordError').innerText = '';

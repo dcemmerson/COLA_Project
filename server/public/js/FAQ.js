@@ -11,16 +11,16 @@ document.addEventListener('DOMContentLoaded', () => {
     //when user exits modal, reset modal to be ready to user to preview
     //another template
     $('#previewTemplateModal').on('hidden.bs.modal', () => {
-        clear_canvas(document.getElementById('previewCanvas'));
+        clearCanvas(document.getElementById('previewCanvas'));
         document.getElementById('previewTemplateLabel').innerText = "";
     });
     //when user enters modal, fire fetch req for default template file
     $('#previewTemplateModal').on('show.bs.modal', () => {
-        default_template_preview();
+        defaultTemplatePreview();
     });
 });
 
-function pdf_to_canvas(uint8arr) {
+function pdfToCanvas(uint8arr) {
     return new Promise((resolve, reject) => {
         var loadingTask = pdfjsLib.getDocument(uint8arr);
         loadingTask.promise.then(function (pdf) {
@@ -51,17 +51,17 @@ function pdf_to_canvas(uint8arr) {
 }
 
 
-async function default_template_preview() {
+async function defaultTemplatePreview() {
     var label = document.getElementById('previewTemplateLabel');
     var docContainer = document.getElementById('canvasSpinnerContainer');
 
     label.innerText = "Loading ";
-    show_spinner(docContainer, '-lg');
-    show_spinner(label);
+    showSpinner(docContainer, '-lg');
+    showSpinner(label);
     $('#previewTemplateModal').modal({ keyboard: true, focus: true });
 
 
-    fetch(`preview_default_template`)
+    fetch(`/preview_default_template`)
         .then(response => {
             if (response.status == 200)
                 return response.json();
@@ -70,10 +70,10 @@ async function default_template_preview() {
         .then(res => {
             if (!res.success)
                 throw new Error("Error retrieving file");
-            remove_spinner(label);
+            removeSpinner(label);
             label.innerText = res.filename;
             let uint8arr = new Uint8Array(res.file.data);
-            return pdf_to_canvas(uint8arr);
+            return pdfToCanvas(uint8arr);
         })
         .then(() => {
             document.getElementById('previewCanvas').classList.add('light-border');
@@ -83,7 +83,7 @@ async function default_template_preview() {
             label.innerText = err;
         })
         .finally(() => {
-            remove_spinner(docContainer, '-lg');
+            removeSpinner(docContainer, '-lg');
             docContainer.innerText = "";
         })
 

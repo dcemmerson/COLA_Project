@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault()
         processCredentials();
     })
-    display_return_to_top();
+    displayReturnToTop();
 
 })
 async function processCredentials() {
@@ -20,34 +20,34 @@ async function processCredentials() {
 
         var password = document.getElementById('pwd').value;
 
-        disable_elements([button, email]);
-        show_spinner(buttonContainer);
+        disableElements([button, email]);
+        showSpinner(buttonContainer);
 
-        if (!validate_email(email, emailInput, emailErrorSpan)) return;
+        if (!validateEmail(email, emailInput, emailErrorSpan)) return;
 
-        hide_elements(document.getElementsByClassName('usa-alert'));
+        hideElements(document.getElementsByClassName('usa-alert'));
 
-        let response = await submit_request(email, password);
+        let response = await submitRequest(email, password);
         var res = await response.json();
 
-        process_server_response(res);
+        processServerResponse(res);
     }
     catch (err) {
         console.log(err);
 
-        process_server_response({ error: true })
+        processServerResponse({ error: true })
 
     }
     finally {
         if (!res || !res.success) {
-            enable_elements([button, email]);
-            remove_spinner(buttonContainer);
+            enableElements([button, email]);
+            removeSpinner(buttonContainer);
         }
     }
 }
 
 //regex: https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
-function validate_email(email, emailInput, errorSpan) {
+function validateEmail(email, emailInput, errorSpan) {
     //remove errors caused by previous submission attempts
     errorSpan.style.display = 'none';
     emailInput.classList.remove('usa-input--error');
@@ -63,7 +63,7 @@ function validate_email(email, emailInput, errorSpan) {
 
     return true;
 }
-function process_server_response(context) {
+function processerverEesponse(context) {
     let emailForm = document.getElementById('formOuterContainer');
     if (context.success) {
         document.getElementById('submitCredentials').innerText = 'Redirecting...';

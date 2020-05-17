@@ -1,13 +1,12 @@
 const LINESPACING = 10;
 document.addEventListener('DOMContentLoaded', async () => {
-    let subscription_list = await fetch_user_subscription_list();
+    let subscriptionList = await fetchUserSubscriptionList();
 
-    //    set_window_prefs();
-    initialize_form();
+    initializeForm();
     document.getElementById('subscribeAdditional').addEventListener('click', () => {
-        hide_elements($('.alert'));
-        $('#infoContainer')[0].style.display = "block";
-        $('#subscriptionFormContainer')[0].style.display = "block";
+        hideElements($('.alert'));
+        document.getElementById(' infoContainer').style.display = "block";
+        document.getElementById('subscriptionFormContainer').style.display = "block";
     });
 
     document.getElementById('previewPrevTemplate').addEventListener('click', e => {
@@ -15,8 +14,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         let tempSelect = document.getElementById('templateSelect');
         let templateId = tempSelect[tempSelect.selectedIndex].getAttribute('data-templateId');
 
-        if (valid_preview()) {
-            template_preview(templateId);
+        if (validPreview()) {
+            templatePreview(templateId);
         }
     });
 
@@ -25,9 +24,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         let tempSelect = document.getElementById('templateSelect');
         let templateId = tempSelect[tempSelect.selectedIndex].getAttribute('data-templateId');
 
-        if (valid_preview(true)) {
+        if (validPreview(true)) {
             this.disabled = true;
-            await template_download(templateId);
+            await templateDownload(templateId);
             this.disabled = false;
 
         }
@@ -36,12 +35,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     //when user exits modal, reset modal to be ready to user to preview
     //another template
     $('#previewTemplateModal').on('hidden.bs.modal', () => {
-        clear_canvas(document.getElementById('previewCanvas'));
+        clearCanvas(document.getElementById('previewCanvas'));
         document.getElementById('previewTemplateLabel').innerText = "";
     });
 
 });
-function pdf_to_canvas(uint8arr) {
+
+function pdfToCanvas(uint8arr) {
     return new Promise((resolve, reject) => {
         var loadingTask = pdfjsLib.getDocument(uint8arr);
         loadingTask.promise.then(function (pdf) {
@@ -70,70 +70,39 @@ function pdf_to_canvas(uint8arr) {
         });
     })
 }
-/*
-function set_window_prefs(){
-    size_table();
-    let in_progress = false;
-    window.addEventListener('resize', () => {
-	if(!in_progress){
-	    in_progress = true;
-	    setTimeout(() => {
-		size_table();
-		in_progress = false;
-	    }, 100);	    
-	}	
-    })
-}
-function size_table(){
-    let size = document.getElementById('subscriptionsTable').clientHeight;
 
-    if(size > (0.6 * window.innerHeight)) size = 0.6 * window.innerHeight;
-    if(size < 200) size = 200;
-    
-    document.getElementById('subscriptionsContainer')
-	.setAttribute('style', `max-height:${size}px`);
-}
-*/
-function clear_user_subscriptions() {
+function clearUserSubscriptions() {
     let tbody = document.getElementById('subscriptionTbody');
     while (tbody.firstChild)
         tbody.removeChild(tbody.firstChild);
 
-    $('#subscriptionsTable')[0].style.display = 'none';
-    $('#noActiveSubscriptions')[0].style.display = 'none';
+    document.getElementById('subscriptionsTable').style.display = 'none';
+    document.getElementById('noActiveSubscriptions').style.display = 'none';
 
 }
 
-function clear_dropdown(dropdown) {
+function clearDropdown(dropdown) {
     while (dropdown.firstChild) {
         dropdown.removeChild(dropdown.firstChild);
     }
 }
 
-function new_subscription_success(postId) {
-    hide_elements($('.alert'));
-    hide_elements($('#subscriptionFormContainer'));
-    let successContainer = $('#successContainer')[0];
+function newSubscriptionSuccess(postId) {
+    hideElements(document.getElementsByClassName('alert'));
+    hideElements([document.getElementById('subscriptionFormContainer')]);
+    let successContainer = document.getElementById('successContainer');
     successContainer.style.display = 'block';
 
     /////////////// find which post this postId corresponds to ////////////////
     for (let [num, option] of Object.entries($('#postSelect option'))) {
         if (option.getAttribute('data-COLARatesId') == postId) {
-            $('#successSpan')[0].innerText = option.innerText;
+            document.getElementById('successSpan').innerText = option.innerText;
             return;
         }
     }
 }
-function new_subscription_fail(cont, postId) {
-    let valAlert = $('#infoCont')[0];
-    let postVal = $('#postVal')[0];
-    let tempVal = $('#templateVal')[0];
-    let postSelect = $('#postSelect')[0];
-    let upTemp = $('#uploadTemplate')[0];
-    let prevTemp = $('#templateSelect')[0];
-}
 
-/* name: initialize_form
+/* name: initializeForm
    preconditions: subscription html DOM content has loaded
    postcondition: if user refreshed page and has a template still selected,
    check if that template is of type doc/docx. If not, then
@@ -143,10 +112,10 @@ function new_subscription_fail(cont, postId) {
    validation check could cause user confusion if they
    refresh page.
 */
-function initialize_form() {
-    let tempVal = $('.templateVal');
-    let upTemp = $('#uploadTemplate')[0];
-    let prevTemp = $('#templateSelect')[0];
+function initializeForm() {
+    let tempVal = document.getElementsByClassName('templateVal');
+    let upTemp = document.getElementById('uploadTemplate');
+    let prevTemp = document.getElementById('templateSelect');
 
     const reg = /(\.doc|\.docx)$/i;
     // check if there is a template selected, if so, run
@@ -154,22 +123,22 @@ function initialize_form() {
     // on alert validation to help user understand the alert is responsive
     if (upTemp.value && !reg.exec(upTemp.value)) {
         //ending of file is not .doc or .doc
-        remove_classes(tempVal, ['val', 'invalBlank']);
-        add_classes(tempVal, ['invalid']);
+        removeClasses(tempVal, ['val', 'invalBlank']);
+        addClasses(tempVal, ['invalid']);
         upTemp.classList.add('usa-input--error');
-        validate_post();
+        validatePost();
     }
     else if (prevTemp.selectedIndex !== 0
         && !reg.exec(prevTemp[prevTemp.selectedIndex].value)) {
         //ending of file is not .doc or .doc
-        remove_classes(tempVal, ['val', 'invalBlank']);
-        add_classes(tempVal, ['invalid']);
+        removeClasses(tempVal, ['val', 'invalBlank']);
+        addClasses(tempVal, ['invalid']);
         prevTemp.classList.add('usa-input--error');
-        validate_post();
+        validatePost();
     }
 }
 
-function valid_preview(download = false) {
+function validPreview(download = false) {
     let prevTemp = document.getElementById('templateSelect');
     document.getElementById('previousTemplateErrorMsgDownload').style.display = 'none';
     document.getElementById('previousTemplateErrorMsgPreview').style.display = 'none';
@@ -190,39 +159,39 @@ function valid_preview(download = false) {
         return true;
     }
 }
-function validate_post(submit = false) {
-    let postVals = $('.postVal');
-    let postSelect = $('#postSelect')[0];
+function validatePost(submit = false) {
+    let postVals = document.getElementsByClassName('postVal');
+    let postSelect = document.getElementById('postSelect');
 
     //////////////////// check for selected post ///////////////////
     if (postSelect.selectedIndex === 0) {
-        remove_classes(postVals, ['val']);
-        add_classes(postVals, ['invalBlank']);
+        removeClasses(postVals, ['val']);
+        addClasses(postVals, ['invalBlank']);
         var valid = false;
         if (submit) postSelect.classList.add('usa-input--error');
     }
     else {
-        remove_classes(postVals, ['invalBlank']);
-        add_classes(postVals, ['val']);
+        removeClasses(postVals, ['invalBlank']);
+        addClasses(postVals, ['val']);
         postSelect.classList.remove('usa-input--error');
 
         var valid = true;
     }
     return valid;
 }
-function validate_subscription(submit = false) {
+function validateSubscription(submit = false) {
     let valid = false;
-    let tempVals = $('.templateVal');
-    let upTemp = $('#uploadTemplate')[0];
-    let prevTemp = $('#templateSelect')[0];
+    let tempVals = document.getElementsByClassName('templateVal');
+    let upTemp = document.getElementById('uploadTemplate');
+    let prevTemp = document.getElementById('templateSelect');
 
     const reg = /(\.doc|\.docx)$/i;
-    valid = validate_post(submit);
+    valid = validatePost(submit);
 
     ////////////////// check for template - ensure doc/docx ending ///////
     if (!upTemp.value && prevTemp.selectedIndex === 0) {
-        remove_classes(tempVals, ['val', 'invalid']);
-        add_classes(tempVals, ['invalBlank']);
+        removeClasses(tempVals, ['val', 'invalid']);
+        addClasses(tempVals, ['invalBlank']);
 
         if (submit) {
             upTemp.classList.add('usa-input--error');
@@ -233,12 +202,12 @@ function validate_subscription(submit = false) {
     else if (!reg.exec(upTemp.value)
         && !reg.exec(prevTemp[prevTemp.selectedIndex].value)) {
         //ending of file is not .doc or .doc
-        remove_classes(tempVals, ['val', 'invalBlank']);
-        add_classes(tempVals, ['invalid']);
+        removeClasses(tempVals, ['val', 'invalBlank']);
+        addClasses(tempVals, ['invalid']);
 
         if (submit) {
-            $('#infoContainer')[0].style.display = 'none';
-            $('#warningContainer')[0].style.display = 'block';
+            document.getElementById('infoContainer').style.display = 'none';
+            document.getElementById('warningContainer').style.display = 'block';
         }
 
         if (upTemp.value) {
@@ -250,8 +219,8 @@ function validate_subscription(submit = false) {
         valid = false;
     }
     else { //everything looks okay
-        remove_classes(tempVals, ['invalBlank', 'invalid']);
-        add_classes(tempVals, ['val']);
+        removeClasses(tempVals, ['invalBlank', 'invalid']);
+        addClasses(tempVals, ['val']);
 
         upTemp.classList.remove('usa-input--error');
         prevTemp.classList.remove('usa-input--error');
@@ -266,7 +235,7 @@ function validate_subscription(submit = false) {
     return valid;
 }
 
-function display_unsubscribe_alert(element, post, country, tok, subscriptionId) {
+function displayUnsubscribeAlert(element, post, country, tok, subscriptionId) {
     element.getElementsByClassName('unsubscribeMsgSpan')[0].innerText = `${country} (${post})`;
     element.style.display = 'block';
 
@@ -275,24 +244,24 @@ function display_unsubscribe_alert(element, post, country, tok, subscriptionId) 
     $('#undoLink')[0].setAttribute('data-country', country);
     $('#undoLink')[0].setAttribute('data-subscriptionId', subscriptionId);
 
-    $('#undoLink')[0].removeEventListener('click', restore_subscription);
-    $('#undoLink')[0].addEventListener('click', restore_subscription);
+    $('#undoLink')[0].removeEventListener('click', restoreSubscription);
+    $('#undoLink')[0].addEventListener('click', restoreSubscription);
 
 }
 
-function restore_subscription(e) {
+function restoreSubscription(e) {
     e.preventDefault();
 
-    let undoLink = $('#undoLink')[0];
+    let undoLink = document.getElementById('undoLink');
 
-    delete_subscription(null, undoLink.getAttribute('data-tok'),
+    deleteSubscription(null, undoLink.getAttribute('data-tok'),
         undoLink.getAttribute('data-post'),
         undoLink.getAttribute('data-country'),
         undoLink.getAttribute('data-subscriptionId'));
 
 }
 
-function check_empty_subscriptions() {
+function checkEmptySubscriptions() {
     let table = document.getElementById('subscriptionsTable');
     let tbody = document.getElementById('subscriptionTbody');
     let msgDiv = document.getElementById('noActiveSubscriptions');
@@ -313,11 +282,11 @@ function check_empty_subscriptions() {
     }
 }
 
-function dismiss_alert(alert) {
+function dismissAlert(alert) {
     alert.style.display = 'none';
-    $('#unsubscribeAlertBlank')[0].style.display = 'block';
+    document.getElementById('unsubscribeAlertBlank').style.display = 'block';
 }
-function populate_template_dropdown(dropdown, templates) {
+function populateTemplateDropdown(dropdown, templates) {
     var option = document.createElement('option');
     dropdown.appendChild(option);
 
@@ -330,7 +299,7 @@ function populate_template_dropdown(dropdown, templates) {
     })
 }
 
-function add_subscription_to_table(sub) {
+function addSubscriptionToTable(sub) {
     let trs = document.getElementById('subscriptionTbody')
         .getElementsByClassName('subscriptionRow');
     let rowNum = 0, insertBefore = 0;
@@ -357,18 +326,11 @@ function add_subscription_to_table(sub) {
     }
 
 
-    var res = { subscription_list: [sub] };
-    //    if(tr === null){
-    //	populate_subscription_table(res);
-    //    }
-    //    else {
-    populate_subscription_table(res, insertBefore + 2);
-    //    }
-
-
+    var res = { subscriptionList: [sub] };
+    populateSubscriptionTable(res, insertBefore + 2);
 
 }
-function check_previous_allowance_99() {
+function checkPreviousAllowance99() {
     let prevs = document.getElementsByClassName('prevAllowance');
     for (let i = 0; i < prevs.length; i++) {
         if (prevs[i].innerText.match('n/a') && prevs[i].parentElement.style.display !== "none") {
@@ -379,16 +341,16 @@ function check_previous_allowance_99() {
 
     document.getElementById('prevAllowanceWarning').style.display = 'none';
 }
-function populate_subscription_table(res, rowNum = null) {
+function populateSubscriptionTable(res, rowNum = null) {
     let tbody = document.getElementById('subscriptionTbody');
-    res.subscription_list.forEach(sub => {
+    res.subscriptionList.forEach(sub => {
         let effectiveDate = new Date(sub.effectiveDate);
         let effectiveMonth = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(effectiveDate);
         let tr = document.createElement('tr');
         tr.setAttribute('data-subscriptionId', sub.subscriptionId);
         tr.setAttribute('class', 'subscriptionRow');
 
-        add_table_icons(tr, sub);
+        addTableIcons(tr, sub);
 
         let td1 = document.createElement('td');
         td1.setAttribute('class', 'td countryName');
@@ -431,15 +393,15 @@ function populate_subscription_table(res, rowNum = null) {
         }
     })
 
-    check_previous_allowance_99();
+    checkPreviousAllowance99();
 }
 
-/* name: add_table_icons
+/* name: addTableIcons
    description: place email, download, preview, and delete font awesome icons in
                 this table tr row. Attach event listeners and necessary tokens and other
 		values for event handles.
- */
-function add_table_icons(tr, sub) {
+*/
+function addTableIcons(tr, sub) {
     //we are adding 2 tr inside tdMain, then two td inside each tr
     let tdMain = document.createElement('td');
 
@@ -460,7 +422,7 @@ function add_table_icons(tr, sub) {
     prevBtn.setAttribute('title', `Preview ${sub.country} (${sub.post}) document`);
     prevBtn.addEventListener('click', e => {
         e.preventDefault();
-        template_preview(null, sub.tok);
+        templatePreview(null, sub.tok);
     });
     let iPrev = document.createElement('i');
     iPrev.setAttribute('class', 'preview');
@@ -477,7 +439,7 @@ function add_table_icons(tr, sub) {
     downloadBtn.appendChild(iDl);
     downloadBtn.addEventListener('click', e => {
         e.preventDefault();
-        download_subscription(iDl, sub.tok, sub.post, sub.country);
+        downloadSubscription(iDl, sub.tok, sub.post, sub.country);
     });
     td2.appendChild(downloadBtn);
 
@@ -491,7 +453,7 @@ function add_table_icons(tr, sub) {
     delBtn.appendChild(iDel);
     delBtn.addEventListener('click', e => {
         e.preventDefault();
-        delete_subscription(iDel, sub.tok, sub.post, sub.country, sub.subscriptionId);
+        deleteSubscription(iDel, sub.tok, sub.post, sub.country, sub.subscriptionId);
     });
     td3.appendChild(delBtn);
 
@@ -505,7 +467,7 @@ function add_table_icons(tr, sub) {
     emailBtn.appendChild(iEmail);
     emailBtn.addEventListener('click', e => {
         e.preventDefault();
-        fire_subscription_email(iEmail, sub.tok, sub.post, sub.country);
+        fireSubscriptionEmail(iEmail, sub.tok, sub.post, sub.country);
     });
     td4.appendChild(emailBtn);
 
@@ -521,13 +483,13 @@ function add_table_icons(tr, sub) {
     tr.appendChild(tdMain);
 }
 
-/* name: update_table
+/* name: updateTable
    precondition: subscriptionId must is id of valid subscription in db
                  del is boolean. true means we will hide this elemnet from table, else display.
    postconditions: table has been search for subscription id and tr corresponding to
                    subscriptionId has been either hidden or deleted depending on del.
 */
-function update_table(subscriptionId, del) {
+function updateTable(subscriptionId, del) {
     let tbody = document.getElementById('subscriptionTbody');
     let trs = tbody.getElementsByTagName('tr');
 
