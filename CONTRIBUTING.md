@@ -81,7 +81,7 @@ To run the site locally:
 1) Clone this repository
 2) Run `npm install` from within the server folder to install dependenices
 3) Import the test database file /sql/cola_testdb_dump.sql into MariaDB
-4) Create a .env file inside the server directory. .env file should look something along the lines of:
+4) Create a .env file inside the server directory. .env file should look something along the lines of:  
    DB_PASSWORD = yourDbPassword  
    DB_HOST = localhost  
    DB_USER = yourDbUsername  
