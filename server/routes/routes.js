@@ -133,20 +133,15 @@ module.exports = function (app) {
 
     app.get('/account', db.authenticationMiddleware(), function (req, res) {
         let context = {};
-        let awaitPromises = [];
         const userId = req.session.passport.user.userId;
         context.style = ['styles.css', 'font_size.css', 'account.css'];
         context.script = ['account.js', 'account_ajax.js', 'utility.js'];
         context.title = 'My Account';
         context.account = true; //used for navivation.hbs
 
-        awaitPromises.push(
-            db.getUserEmail(userId)
-                .then(res => context.email = res[0].email)
-                .catch(err => console.log(err))
-        );
-        Promise.all(awaitPromises)
-            .then(() => res.render('account', context))
+	misc.setLayout(req, context)
+	    .catch(() => console.log('error in setLayout'))
+	    .finally(() => res.render('account', context))
     });
 
     app.get('/subscriptions', db.authenticationMiddleware(), function (req, res) {
@@ -166,10 +161,10 @@ module.exports = function (app) {
                 }))
                 .catch(err => console.log(err))
             ,
-            db.getUserEmail(userId)
-                .then(res => context.email = res[0].email)
+	    misc.setLayout(req, context)
                 .catch(err => console.log(err))
         )
+	
         context.style = ['styles.css', 'font_size.css', 'subscriptions.css'];
         context.title = 'My Subscriptions';
         context.subscriptions = true; //used for navivation.hbs
@@ -177,8 +172,10 @@ module.exports = function (app) {
             'subscriptions_ajax.js',
             'utility.js'];
         context.deferScript = ['../pdfjs/pdf.js'];
+	
         Promise.all(awaitPromises)
-            .then(() => res.render('subscriptions', context))
+	    .catch(err => console.log(err))
+	    .finally(() => res.render('subscriptions', context))
     });
 
     app.get(`/logout`, function (req, res) {

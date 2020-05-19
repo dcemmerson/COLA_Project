@@ -3,6 +3,7 @@ Description: Server config file for COLA rate change project. This file contains
              locations of routes, public content, and templating content.
 ************************************************************************************/
 require('dotenv').config();
+
 var express = require('express');
 var app = express();
 
@@ -59,13 +60,12 @@ require('./routes/routes.js')(app);
 require('./routes/ajax_routes.js')(app, passport);
 app.use(express.static('public'));
 
-
-
 app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
 app.set('views', (__dirname) + '/views')
 app.set('port', 10000);
 
+var misc = require('./server_functions/misc.js');
 const crcs = require('./server_functions/cola_rates_script.js')
 crcs.scheduleCrcs();
 
@@ -106,7 +106,10 @@ app.use(function (req, res) {
     context.title = "Page not found...";
 
     res.status(404);
-    res.render('404', context);
+
+    misc.setLayout(req, context)
+        .catch(() => console.log('error in setLayout'))
+        .finally(() => res.render('404', context))
 });
 
 app.use(function (err, req, res, next) {
@@ -121,8 +124,10 @@ app.use(function (err, req, res, next) {
     context.title = "Server error";
 
     res.status(500);
-
-    res.render('500', context);
+    
+    misc.setLayout(req, context)
+        .catch(() => console.log('error in setLayout'))
+        .finally(() => res.render('404', context))
 });
 
 app.listen(app.get('port'), function () {
