@@ -479,7 +479,7 @@ module.exports = {
     */
     getUserEmail: function (userId) {
         return new Promise((resolve, reject) => {
-            const sql = `SELECT email FROM user WHERE id=?`;
+            const sql = `SELECT email, isAdmin FROM user WHERE id=?`;
             const values = [userId];
             queryDB(sql, values, mysql)
                 .then(res => resolve(res))

@@ -424,6 +424,7 @@ module.exports = {
                 db.getUserEmail(req.session.passport.user.userId)
                     .then(res => {
                         context.email = res[0].email;
+			context.isAdmin = res[0].isAdmin;
                         resolve();
                     })
                     .catch(err => {
