@@ -14,7 +14,10 @@
           <div class="mobile-lg:grid-col-auto">
             <h3 class="usa-footer__logo-heading"><strong>COLA Notifications</strong></h3>
 	    <p>Created by: <a title="Email Dane Emmerson" href="mailto:dcemmerson@gmail.com">Dane Emmerson</a> and <a title="Email Shifra Schectman" href="mailto:shif.shectman@gmail.com">Shifra Schectman</a></p>
-	    <p>Page last updated: May 11, 2020</p>
+	    <p>Page last updated: May 19, 2020</p>
+	    {{#if isAdmin}}
+	    <p>Admin: See all <a href="/userinfo">user info</a></p>
+	    {{/if}}
           </div>
 	</div>
 	<div class="usa-footer__contact-links mobile-lg:grid-col-6">
