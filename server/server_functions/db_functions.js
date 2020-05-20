@@ -380,10 +380,67 @@ module.exports = {
     },
 
     /*******************************************************************/
-    /******************* END  COLA RATE SCRIPT QUERIES *****************/
+    /******************* END COLA RATE SCRIPT QUERIES *****************/
     /*******************************************************************/
 
+    /*******************************************************************/
+    /********************* USER INFO PAGE QUERIES **********************/
+    /*******************************************************************/
+    /* name: getAllUsersSubscriptions
+       preconditions: None, per se. This method should only be used/
+                      called by logged in users with admin privileges,
+		      granted in user.isAdmin.
+       postconditions:  return list of every user in db. Subscription
+                          lists are selected for each user after rather
+			  rather than joining table for simplicity
+			  of constructing context object as follows:
 
+			  context = [
+			    {
+			      email: email,
+			      created: created,
+			      subscriptions: [
+			        {country: country, post: post}
+			        ]
+			      }
+			  ]
+			If db gets sufficiently large, this may need
+			to change.
+    */
+    getAllUsersSubscriptions: function (context) {
+        return new Promise((resolve, reject) => {
+            const sql = 'SELECT id, email, created, isAdmin, isVerified FROM user ORDER BY email ASC';
+	    const sql2 = 'SELECT u.email, u.isAdmin, u.isVerified, s.created, cr.country, cr.post'
+		  + ' FROM user u'
+		  + ' INNER JOIN subscription s ON u.id=s.userId'
+		  + ' INNER JOIN COLARates_subscription crs ON s.id=crs.subscriptionId'
+		  + ' INNER JOIN COLARates cr ON crs.COLARatesId=cr.id'
+		  + ' WHERE s.userId=? AND s.active=true ORDER BY cr.country ASC, cr.post ASC'
+	    
+            queryDB(sql, [], mysql)
+		.then(users => {
+		    let awaitPromises = [];
+		    users.forEach((user, ind) => {
+			context.push(user);
+			awaitPromises.push(
+			    queryDB(sql2, [user.id], mysql)
+				.then(sub => {
+				    context[ind].subscription = sub;
+				    context[ind].numberSubscriptions = sub.length;
+				})
+			);
+			
+		    })
+		    return Promise.all(awaitPromises);
+		})
+                .then(resolve)
+                .catch(reject)
+        });
+    },
+    /*******************************************************************/
+    /******************* END USER INFO PAGE QUERIES ********************/
+    /*******************************************************************/
+    
     /*******************************************************************/
     /********************* SUBSCRIPTION PAGE QUERIES *******************/
     /*******************************************************************/

@@ -1,0 +1,209 @@
+.buttonRight:hover {
+    background-image: url(/img/arrow-right-alt.png);
+}
+.buttonLeft:hover {
+    background-image: url(/img/arrow-left-alt.png);
+}
+.buttonRight {
+    background-image: url(/img/arrow-right.svg);
+    background-repeat: no-repeat;
+    background-size: 95% auto;
+    display: inline-block;
+    content: "";
+    height: 2.2rem;
+    width: 2.2rem;
+
+    position: relative;
+    left: 90%;
+}
+/*
+.buttonRight:active {
+    animation-duration: 1s;
+    animation-name: slideRight;
+    animation-iteration-count: 1;
+    
+}
+.buttonLeft:active {
+    animation-duration: 1s;
+    animation-name: slideLeft;
+    animation-iteration-count: 1;   
+}
+*/
+.buttonLeft {
+    background-image: url(/img/arrow-left.svg);
+    background-repeat: no-repeat;
+    background-size: 95% auto;
+    display: inline-block;
+    content: "";
+    height: 2.2rem;
+    width: 2.2rem;
+
+    position: relative;
+    left: 0px;
+
+}
+.btn-clear {
+    background-color: rgba(255,255,255,0);
+    border: none;
+}
+.slideRight {
+    animation: slideRight 1s 1 forwards;
+}
+.slideLeft {
+    animation: slideLeft 1s 1 forwards;
+}
+#topLevelContainer {
+    overflow: hidden;
+}
+#mainContainer {
+    width: 200vw;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: minmax(100px, auto);
+}
+.mainOne {
+  grid-column: 1 / 2;
+  grid-row: 1;
+  width: 100vw;
+}
+.mainTwo {
+  grid-column: 2 / 2;
+  grid-row: 1;
+  width: 100vw;
+}
+
+#subscriptionsContainer {
+    max-height: 85vh;
+    overflow: auto;
+}
+
+.accordionCell .subscriptionInfo {
+    background-color: #f0f0f0;
+    color: #1b1b1b;   
+}
+.accordionCell .subscriptionInfo:hover {
+    background-color: #f0f0f0;
+    color: #1b1b1b;
+    
+}
+
+
+.userGroup[aria-expanded="false"] .userRow::before {
+    background-image: url(/uswds/img/plus-alt.svg);
+    background-repeat: no-repeat;
+    background-size: 100% auto;
+    display: inline-block;
+    content: "";
+    margin-left: 1rem;
+    margin-top: 0.85rem;
+    height: 1rem;
+    width: 1rem;
+}
+.userGroup[aria-expanded="true"] .userRow::before {
+    background-image: url(/uswds/img/minus-alt.svg);
+    background-repeat: no-repeat;
+    background-size: 100% auto;
+    display: inline-block;
+    content: "";
+    margin-left: 1rem;
+    margin-top: 1.3rem;
+    height: 1rem;
+    width: 1rem;
+}
+
+.userRowHeader::before {
+    background-repeat: no-repeat;
+    background-size: 100% auto;
+    display: inline-block;
+    content: "";
+    margin-left: 1rem;
+    margin-top: 1.3rem;
+    height: 1rem;
+    width: 1rem;
+}
+.userRow:hover {
+    cursor: pointer;
+}
+.userGroup[aria-expanded="false"]+.userSubscriptions {
+    display: none;
+}
+.userGroup[aria-expanded="true"]+.userSubscriptions {
+    display: table-row-group;
+}
+.userRow td {
+    width: 31.7%;
+}
+
+.table tbody .userSubscriptionsInfo {
+    border-top: none !important;
+}
+.table tbody .userSubscriptionsInfo td {
+    border-top: none !important;
+    text-align: right;
+    padding-right: 2rem;
+    padding-top: 0rem;
+    padding-bottom: 0rem;
+    vertical-align: center;
+    background-color: #ffffff !important;
+}
+.table tbody .userSubscriptionsInfo th {
+    border-top: none !important;
+    text-align: right;
+    padding-right: 2rem;
+    padding-top: 0rem;
+    padding-bottom: 0rem;
+    vertical-align: center;
+    background-color: #ffffff !important;
+}
+.table th {
+    border-top: none !important;
+}
+.table tbody + tbody {
+    border-top: none !important;
+}
+
+#tableContainer {
+    position: relative;
+    border: 1px solid #dfe1e2;
+    box-shadow: 5px 5px 5px #dfe1e2;
+    background-color: #fdfdfd;
+}
+.thead th {
+    position: sticky;
+    top: 0;
+    border-bottom: none !important;
+    border-top: none !important;
+    background: linear-gradient(rgba(222, 226, 230, 0.97) 0%,
+				rgba(222, 226, 230, 0.97) 2%,
+				rgba(253, 253, 253, 0.97) 3%,
+				rgba(253, 253, 253, 0.97) 97%,
+				rgba(222, 226, 230, 0.97) 97%,
+				rgba(222, 226, 230, 0.97) 100%);
+
+}
+
+.red {
+    color: red;
+}
+
+@keyframes slideRight {
+    from {
+	position: relative;
+	left: 0vw;
+    }
+    to {
+    	position: relative;
+	left: -100vw;
+    }
+}
+@keyframes slideLeft {
+    from {
+	position: relative;
+	left: -100vw;
+    }
+    to {
+    	position: relative;
+	left: 0vw;
+    }
+}

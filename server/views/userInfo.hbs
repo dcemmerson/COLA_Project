@@ -1,0 +1,156 @@
+<div id="topLevelContainer">
+  <div class="container">
+    <div class="d-flex">
+      <h1 class="h2 border-bottom px-2 pt-4 pb-2"><strong>User Info </strong></h1>
+    </div>
+  </div>
+
+  <section id="mainContainer" class="">
+
+    <div class="mainOne">
+      
+      <!-- first table show to user -->
+      <div class="container">
+	<div class="row justify-content-around">
+	  <div class="width-100" id="subscriptionsOuterContainer">
+	    <div class="mx-3">
+	      <div id="newUsersAlertInfo" class="unsubscribeAlert" style="display:none">
+		<div class="usa-alert usa-alert--info">
+		  <div class="dismiss-alert"
+		       onclick="dismissAlert(this.parentNode.parentNode)">
+		    <span role="button" class="dismiss-alert-button"></span>
+		  </div>
+		  <div class="usa-alert__body">
+		    <h3 class="usa-alert__heading">New user info</h3>
+		    
+		    <p class="usa-alert__text">You have unsubscribed from <span class="unsubscribeMsgSpan">{error}</span></p>
+		  </div>
+		</div>
+	      </div>
+	      
+	    </div>
+	    <button id="buttonRight" class="buttonRight btn-clear"></button>
+
+	    <div class="mt-2" id="tableContainer">
+	      <div id="tableCover"></div>
+	      
+	      <div id="subscriptionsContainer" class="">
+
+		<table class="table" id="subscriptionsTable">
+		  <thead class="thead">
+		    <tr class="">
+		      <th></th>
+		      <th scope="col">Email</th>
+		      <th scope="col">Created</th>
+		      <th scope="col">No. Subscr</th>
+		    </tr>
+		  </thead>
+		  {{#each userInfo}}
+		  <tbody class="subscriptions userGroup" id="subscriptionTbody"
+			 aria-expanded="false" onclick="expand(this)">
+		    <tr class="userRow">
+		      <td>{{email}}{{#if isAdmin}}<sup class="md">*</sup>{{/if}}{{#if isVerified}}{{else}}<sup class="md red">u</sup>{{/if}}</td>
+		      <td>{{toHumanDate created}}</td>
+		      <td>{{numberSubscriptions}}</td>
+		    </tr>
+		  </tbody>
+		  <tbody class="userSubscriptions">
+		    <tr class="userSubscriptionsInfo">
+		      <th></th>
+		      <th scope="col">Country</th>
+		      <th scope="col">Post</th>
+		      <th scope="col">Created</th>
+		    </tr>
+		    {{#each subscription}}
+		    <tr class="userSubscriptionsInfo">
+		      <td></td>
+		      <td scope="col">{{country}}</td>
+		      <td scope="col">{{post}}</td>
+		      <td scope="col">{{toHumanDate created}}</td>
+		    </tr>
+		    {{/each}}
+		  </tbody>
+		  {{/each}}
+		  
+		</table>
+	      </div>
+	      <div class="ml-2 sm" style="">
+		<sup class="md">*</sup>
+		Admin
+	      </div>
+	      <div class="ml-2 sm" style="">
+		<sup class="md red">u</sup>
+		Unverified account
+	      </div>
+	    </div>
+	  </div>
+	</div>
+      </div>
+    </div>
+    <!-- next table show to user after selecting right arrow -->
+
+    <div class="mainTwo">
+      <div class="container">
+	<div class="row justify-content-around">
+	  <div class="width-100" id="subscriptionsOuterContainer">
+	    <div class="mx-3">
+	      
+	      <div id="newUsersAlertInfo" class="unsubscribeAlert" style="display:none">
+		<div class="usa-alert usa-alert--info">
+		  <div class="dismiss-alert"
+		       onclick="dismissAlert(this.parentNode.parentNode)">
+		    <span role="button" class="dismiss-alert-button"></span>
+		  </div>
+		  <div class="usa-alert__body">
+		    <h3 class="usa-alert__heading">New user info</h3>
+		    
+		    <p class="usa-alert__text">You have unsubscribed from <span class="unsubscribeMsgSpan">{error}</span></p>
+		  </div>
+		</div>
+	      </div>
+	      
+	    </div>
+	    <button id="buttonLeft" class="buttonLeft btn-clear"></button>
+	    <div class="mt-2" id="tableContainer">
+	      <div id="tableCover"></div>
+	      
+	      <div id="subscriptionsContainer" class="">
+
+		<table class="table" id="subscriptionsTable">
+		  <thead class="thead">
+		    <tr class="">
+		      <th scope="col">Email</th>
+		      <th scope="col">Country</th>
+		      <th scope="col">Post</th>
+		      <th scope="col">Created</th>
+		    </tr>
+		  </thead>
+		  {{#each userInfo}}
+		  {{#each subscription}}
+		  <tr class="">
+		    
+		    <td>{{email}}{{#if isAdmin}}<sup class="md">*</sup>{{/if}}{{#if isVerified}}{{else}}<sup class="md red">u</sup>{{/if}}</td>
+		    <td>{{country}}</td>
+		    <td>{{post}}</td>
+		    <td>{{toHumanDate created}}</td>
+		  </tr>
+		  
+		  {{/each}}
+		  {{/each}}
+		  
+		</table>
+	      </div>
+	      <div class="ml-2 sm" style="">
+		<sup class="md">*</sup>
+		Admin
+	      </div>
+	    </div>
+	  </div>
+	</div>
+      </div>	
+      <br><br><br><br>
+    </div>
+  </section>
+</div>
+
+

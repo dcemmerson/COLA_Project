@@ -196,8 +196,6 @@ module.exports = function (app, passport) {
                 })
         });
 
-
-
     /***************************************************/
     /* functionallity for current subscription buttons */
     /***************************************************/
@@ -317,6 +315,7 @@ module.exports = function (app, passport) {
                     res.send(context);
                 })
         });
+
     app.get('/delete_subscription', db.authenticationMiddleware(),
         function (req, res) {
             const userId = req.session.passport.user.userId;
@@ -646,6 +645,16 @@ module.exports = function (app, passport) {
             })
 
     });
-    /**************** End AJAX routes coming from reset password page ****************/
+    
+    /***************************************************/
+    /* functionallity for get all user info page here  */
+    /***************************************************/
+        app.get('/delete_subscription', db.authenticationMiddleware(),
+        function (req, res) {
+            const userId = req.session.passport.user.userId;
+            var context = {};
+            
+
+	})
 }
 

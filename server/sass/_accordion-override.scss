@@ -2,7 +2,7 @@
 
 // override accordion properties
 
-.usa-accordion{
+.usa-accordion {
     .usa-accordion__heading {
 	.usa-accordion__button {
 	    
@@ -26,6 +26,34 @@
 	    }
 	}
 	
+    }
+}
+td {
+    .usa-accordion {
+	.usa-accordion__heading {
+	    .usa-accordion__button {
+		
+		@include add-background-svg("minus");
+		
+		background-color: color("base-lightest");
+		color: color("ink");
+		
+		&:hover {
+		    background-color: color("base-light");
+		    color: color("ink");
+		}
+	    }
+	    .usa-accordion__button[aria-expanded="false"] {
+		@include add-background-svg("plus");
+		background-color: color("base-lightest");
+		color: color("ink");
+		&:hover {
+		    background-color: color("base-lighter");
+		    color: color("ink");
+		}
+	    }
+	    
+	}
     }
 }
 .usa-banner{

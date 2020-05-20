@@ -226,5 +226,33 @@ module.exports = function (app) {
                 res.render('recover', context);
             })
     });
+    
+    app.get('/userinfo', db.authenticationMiddleware(), function (req, res) {
+
+        let context = {
+            style: ['styles.css', 'font_size.css', 'userInfo.css'],
+            script: ['userInfo.js', 'utility.js'],
+            title: 'User Info',
+            account: true, //used for navivation.hbs
+	    userInfo: []
+	};
+
+        const userId = req.session.passport.user.userId;
+
+	misc.setLayout(req, context)
+	    .then(() => {
+		if(!context.isAdmin) {
+		    throw new Error(`user id:${userId} trying to access /userinfo page`);
+		}
+		else {
+		    return db.getAllUsersSubscriptions(context.userInfo);
+		}
+	    })
+	    .then(() => res.render('userInfo', context))
+	    .catch(err => {
+		console.log(err);
+		return res.redirect('/')
+	    })
+    });
 
 };
