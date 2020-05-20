@@ -20,8 +20,10 @@ let hbs = require('express-handlebars').create({
     defaultLayout: 'main',
     extname: 'hbs',
     layoutDir: `${__dirname}/views/layouts`,
-    partialsDir: `${__dirname}/views/partials`
+    partialsDir: `${__dirname}/views/partials`,
+    helpers: require('./views/helpers.js').helpers
 });
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
