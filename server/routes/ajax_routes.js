@@ -15,6 +15,7 @@ module.exports = function (app, passport) {
                 if (err) console.log(err);
             })
             .finally(() => {
+		console.log(context);
                 res.send(context);
             })
 

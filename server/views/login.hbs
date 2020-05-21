@@ -22,6 +22,8 @@
 	    <form class="" method="POST" action="/login">
 	      <span class="usa-error-message" id="invalid" role="alert"
 		    style="display:none">Invalid email or password</span>
+	      <span class="usa-error-message" id="unverified" role="alert"
+		    style="display:none"><span id="unverifiedEmail"></span> needs to be verified<br><a class="sm usa-link" href="/requestverificationcode">Re-request verification email</a></span>
 	      <div class="form-group">
 		<label for="email" class="usa-label"><strong>Email</strong></label>
 		<span class="usa-error-message" id="emailError" role="alert"

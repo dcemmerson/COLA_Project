@@ -10,6 +10,7 @@ async function processCredentials() {
     try {
         //hide any error messages
         document.getElementById('invalid').style.display = 'none';
+	document.getElementById('unverified').style.display = 'none';
 
         var button = document.getElementById('submitCredentials');
         var buttonContainer = document.getElementById('submitButtonContainer');
@@ -70,11 +71,16 @@ function processServerResponse(context) {
         window.location = context.redirect;
     }
     else if (context.invalid) {
-        document.getElementById('invalid').style.display = 'block';
+	if(!context.isVerified){
+	    document.getElementById('unverifiedEmail').innerText = context.unverifiedEmail;
+	    document.getElementById('unverified').style.display = 'block';
+	}
+	else{
+            document.getElementById('invalid').style.display = 'block';
+	}
     }
     else {
         document.getElementById('errorAlert').style.display = 'block';
         document.getElementById('loginFormOuterContainer').style.display = 'none';
-        emailForm.style.display = 'none';
     }
 }

@@ -314,7 +314,7 @@ module.exports = {
         })
     },
     /* name: getColaRate
-       preconditions: country is string name of country which we need cola rate
+v       preconditions: country is string name of country which we need cola rate
        post is string name of post which we need cola rate
        postconditions: returns promise, which when resolved returns object with 
        id, country, post, and allowance as data members
@@ -870,6 +870,7 @@ module.exports = {
 }
 
 passport.serializeUser(function (userId, done) {
+    console.log('serializing');
     done(null, userId);
 });
 
@@ -884,29 +885,36 @@ passport.use(new LocalStrategy(function (username, password, done) {
     values = [username];
 
     queryDB(sql, values, mysql)
-        .then(message => {
-            if (message.length == 0) {
+        .then(dbRes => {
+            if (dbRes.length == 0) {
                 console.log("wrong keyword entry");
-                return done(null, false)
+                return done(null, false, {
+		    invalidUsername: true,
+		    isVerified: true
+		})
             }
-            else if (!message[0].isVerified) {
+            else if (!dbRes[0].isVerified) {
                 console.log(`${username} needs to be verified`);
-                return done(null, false);
+                return done(null, false, {isVerified: false});
             }
 
-            const hash = message[0].password.toString();
+            const hash = dbRes[0].password.toString();
             bcrypt.compare(password, hash, function (err, response) {
                 if (response == true) {
-                    return done(null, { userId: message[0].id });
+                    return done(null, {userId: dbRes[0].id});
                 }
                 else {
-                    return done(null, false);
+                    return done(null, false, {
+			invalidPassword: true,
+			isVerified: true
+		    });
                 }
             });
         })
         .catch(err => {
             console.log(err);
+	    return done(null, false);
         })
 
-
+    console.log('end of passport use');
 }));
