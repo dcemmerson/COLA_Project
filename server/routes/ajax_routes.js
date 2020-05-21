@@ -22,40 +22,41 @@ module.exports = function (app, passport) {
 
     /******************* Subscription page ajax routes *********************/
     app.get('/get_user_subscription_list', db.authenticationMiddleware(),
-        function (req, res) {
-            const userId = req.session.passport.user.userId;
-            let awaitPromises = [];
-            let context = {subscriptionList: [] };
-            awaitPromises.push(
-                db.getUserSubscriptionList(userId)
-                    .then(subs => {
-                        //this is ugly but necessary to send to client at right time
-                        return new Promise((resolve, reject) => {
-                            let awaitSigning = [];
-                            subs.forEach(sub => {
-                                awaitSigning.push(misc.jwtSign({
-                                    templateId: sub.templateId,
-                                    post: sub.post,
-                                    country: sub.country,
-                                    subscriptionId: sub.subscriptionId
-                                })
-                                    .then(tok => {
-                                        sub.tok = tok;
-                                        context.subscriptionList.push(sub);
-                                    }))
+            function (req, res) {
+		const userId = req.session.passport.user.userId;
+		let awaitPromises = [];
+		let context = {subscriptionList: [] };
+		awaitPromises.push(
+                    db.getUserSubscriptionList(userId)
+			.then(subs => {
+                            //this is ugly but necessary to send to client at right time
+                            return new Promise((resolve, reject) => {
+				let awaitSigning = [];
+				subs.forEach(sub => {
+                                    awaitSigning.push(misc.jwtSign({
+					templateId: sub.templateId,
+					post: sub.post,
+					country: sub.country,
+					subscriptionId: sub.subscriptionId
+                                    })
+						      .then(tok => {
+							  sub.tok = tok;
+							  sub.effectiveDate = misc.toHumanDate(sub.effectiveDate);
+							  context.subscriptionList.push(sub);
+						      }))
+				})
+				Promise.all(awaitSigning).then(resolve);
                             })
-                            Promise.all(awaitSigning).then(resolve);
-                        })
+			})
+			.catch(err => console.log(err))
+		);
+		Promise.all(awaitPromises)
+                    .then(() => {
+			res.send(context);
                     })
-                    .catch(err => console.log(err))
-            );
-            Promise.all(awaitPromises)
-                .then(() => {
-                    res.send(context);
-                })
-        });
+            });
     app.get('/get_user_template_list', db.authenticationMiddleware(),
-        function (req, res) {
+            function (req, res) {
             const userId = req.session.passport.user.userId;
             let context = {};
 

@@ -344,8 +344,7 @@ function checkPreviousAllowance99() {
 function populateSubscriptionTable(res, rowNum = null) {
     let tbody = document.getElementById('subscriptionTbody');
     res.subscriptionList.forEach(sub => {
-        let effectiveDate = new Date(sub.effectiveDate);
-        let effectiveMonth = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(effectiveDate);
+	
         let tr = document.createElement('tr');
         tr.setAttribute('data-subscriptionId', sub.subscriptionId);
         tr.setAttribute('class', 'subscriptionRow');
@@ -380,9 +379,8 @@ function populateSubscriptionTable(res, rowNum = null) {
 
         let td5 = document.createElement('td');
         td5.setAttribute('class', 'td');
-        td5.innerText = effectiveDate.getDate() + ' '
-            + effectiveMonth + ' '
-            + effectiveDate.getFullYear();
+        td5.innerText = sub.effectiveDate;
+
         tr.appendChild(td5);
 
         if (rowNum === null) {

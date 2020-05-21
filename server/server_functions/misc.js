@@ -477,6 +477,16 @@ module.exports = {
             })(req, res, next)
         })
 
+    },
+
+    /* name: toHumanDate
+       preconditions: date is an instance of datetime
+       postconditions: return date in string format "Day Month Year" 
+     */
+    toHumanDate: function(date) {
+	let month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(date);
+
+	return date.getDate() + ' '+ month + ' ' + date.getFullYear();
     }
 }
 
