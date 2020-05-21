@@ -31,12 +31,12 @@ module.exports = {
             let content = user.file;
             let zip = new PizZip(content);
             let doc = new DocxTemplater();
-
+	    
             doc.loadZip(zip);
             doc.setData({
-                old_cola: changed.prevAllowance,
+                old_cola: changed.prevAllowance || changed.previousAllowance,
                 new_cola: changed.allowance,
-		oldCola: changed.prevAllowance,
+		oldCola: changed.prevAllowance || changed.previousAllownace,
                 newCola: changed.allowance,
                 date: changed.effectiveDate.getUTCDate()
                     + ` ${dateLong} `
@@ -63,6 +63,8 @@ module.exports = {
             return doc.getZip().generate({ type: 'nodebuffer' });
         }
         catch (err) {
+	    if(err) console.log(err);
+	    
             user.fileError = true;
 
             user.errorFilename = user.filename;

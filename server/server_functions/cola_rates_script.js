@@ -151,7 +151,7 @@ function startColaRateChangeScript() {
                 })
         });
     },
-        //		       6000, 'updateColaRates');
+//		      6000, 'updateColaRates');
         24 * 60 * 60 * 1000, 'updateColaRates');
 }
 /* name: updateChangedRates
@@ -200,7 +200,7 @@ function checkRateChanges(scrapedRates, changedRates, effectiveDate) {
             .then(res => {
                 try {
                     if (res[0] && res[0].allowance != element.allowance) {
-                        changedrates.push({
+                        changedRates.push({
                             //			    id: res[0].id,
                             postId: res[0].id,
                             country: res[0].country,
