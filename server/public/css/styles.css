@@ -168,3 +168,64 @@ input:invalid {
 .usa-footer__secondary-section a:hover {
     color: #f0f0f0 !important;
 }
+
+.sort::after {
+    background-image: url(/img/sort.svg);
+    background-repeat: no-repeat;
+    background-size: 95% auto;
+    display: inline-block;
+    content: "";
+    height: 1.4rem;
+    width: 0.7rem;
+    position: relative;
+    top: 0.5rem;
+    margin-left: 0.5rem;
+}
+.sort:hover::after, .sortedUp:hover::after, .sortedDown:hover::after {
+    background-image: url(/img/sort-alt.png);
+    background-repeat: no-repeat;
+    background-size: 95% auto;
+    display: inline-block;
+    content: "";
+    height: 1.4rem;
+    width: 0.7rem;
+    position: relative;
+    top: 0.5rem;
+    margin-left: 0.5rem;
+}
+
+.sortedUp::after {
+    background-image: url(/img/sorted-up.png);
+    background-repeat: no-repeat;
+    background-size: 95% auto;
+    display: inline-block;
+    content: "";
+    height: 1.4rem;
+    width: 0.7rem;
+    position: relative;
+    top: 0.5rem;
+    margin-left: 0.5rem;
+}
+
+.sortedDown::after {
+    background-image: url(/img/sorted-down.png);
+    background-repeat: no-repeat;
+    background-size: 95% auto;
+    display: inline-block;
+    content: "";
+    height: 1.4rem;
+    width: 0.7rem;
+    position: relative;
+    top: 0.5rem;
+    margin-left: 0.5rem;
+}
+
+.sort:hover::after {
+    cursor: pointer;
+}
+.sortedUp:hover::after {
+    cursor: pointer;
+}
+.sortedDown:hover::after {
+    cursor: pointer;
+}
