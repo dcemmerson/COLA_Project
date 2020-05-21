@@ -915,6 +915,4 @@ passport.use(new LocalStrategy(function (username, password, done) {
             console.log(err);
 	    return done(null, false);
         })
-
-    console.log('end of passport use');
 }));
