@@ -29,7 +29,7 @@ module.exports = function (app, passport) {
 		awaitPromises.push(
                     db.getUserSubscriptionList(userId)
 			.then(subs => {
-                            //this is ugly but necessary to send to client at right time
+                            //this is ugly but necessary to send to client at right times
                             return new Promise((resolve, reject) => {
 				let awaitSigning = [];
 				subs.forEach(sub => {
@@ -85,8 +85,10 @@ module.exports = function (app, passport) {
                     context))
                 .then(() => db.getUserSubscriptionById(context.subscriptionId))
                 .then(sub => {
-                    console.log(sub);
+
                     context = sub;
+		    context.effectiveDate = misc.toHumanDate(sub.effectiveDate);
+		    
                     return misc.jwtSign({
                         templateId: sub.templateId,
                         post: sub.post,
@@ -121,6 +123,8 @@ module.exports = function (app, passport) {
                 .then(() => db.getUserSubscriptionById(context.subscriptionId))
                 .then(sub => {
                     context = sub;
+		    context.effectiveDate = misc.toHumanDate(sub.effectiveDate);
+		    
                     return misc.jwtSign({
                         templateId: sub.templateId,
                         post: sub.post,

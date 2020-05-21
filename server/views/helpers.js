@@ -6,6 +6,9 @@ var register = function(Handlebars) {
 		  .format(date);
             return date.getUTCDate() + ' ' + monthShort + ' ' + date.getFullYear();
 	},
+	sortDate: function(date) {
+	    return Date.parse(date);
+	},
     };
 
     if (Handlebars && typeof Handlebars.registerHelper === "function") {

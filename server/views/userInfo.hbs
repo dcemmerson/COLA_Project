@@ -45,22 +45,22 @@
 	      
 	      <div id="subscriptionsContainer" class="">
 
-		<table class="table" id="subscriptionsTable">
+		<table class="table userGroupTable" id="subscriptionsTable">
 		  <thead class="thead">
 		    <tr class="">
 		      <th></th>
-		      <th scope="col">Email</th>
-		      <th scope="col">Created</th>
-		      <th scope="col">No. Subscr</th>
+		      <th scope="col">Email<span class="sort" onclick="sortGroups(this.parentNode.parentNode.parentNode.parentNode, this, 0)"></span></th>
+		      <th scope="col">Created<span class="sort" onclick="sortGroups(this.parentNode.parentNode.parentNode.parentNode, this, 1)"></span></th>
+		      <th scope="col">No. Subscr<span class="sort" onclick="sortGroups(this.parentNode.parentNode.parentNode.parentNode, this, 2)"></span></th>
 		    </tr>
 		  </thead>
 		  {{#each userInfo}}
 		  <tbody class="subscriptions userGroup" id="subscriptionTbody"
 			 aria-expanded="false" onclick="expand(this)">
 		    <tr class="userRow">
-		      <td>{{email}}{{#if isAdmin}}<sup class="md">*</sup>{{/if}}{{#if isVerified}}{{else}}<sup class="md red">u</sup>{{/if}}</td>
-		      <td>{{toHumanDate created}}</td>
-		      <td>{{numberSubscriptions}}</td>
+		      <td data-value="{{email}}">{{email}}{{#if isAdmin}}<sup class="md">*</sup>{{/if}}{{#if isVerified}}{{else}}<sup class="md red">u</sup>{{/if}}</td>
+		      <td data-value="{{sortDate created}}">{{toHumanDate created}}</td>
+		      <td data-value="{{numberSubscriptions}}">{{numberSubscriptions}}</td>
 		    </tr>
 		  </tbody>
 		  <tbody class="userSubscriptions">
@@ -125,23 +125,22 @@
 	      
 	      <div id="subscriptionsContainer" class="">
 
-		<table class="table" id="subscriptionsTable">
+		<table class="table userRowTable" id="subscriptionsTable">
 		  <thead class="thead">
 		    <tr class="">
-		      <th scope="col">Email</th>
-		      <th scope="col">Country</th>
-		      <th scope="col">Post</th>
-		      <th scope="col">Created</th>
+		      <th scope="col"><span class="sort" onclick="sortRows(this.parentNode.parentNode.parentNode.parentNode, this, 0)">Email</th>
+		      <th scope="col"><span class="sort" onclick="sortRows(this.parentNode.parentNode.parentNode.parentNode, this, 1)">Country</th>
+		      <th scope="col"><span class="sort" onclick="sortRows(this.parentNode.parentNode.parentNode.parentNode, this, 2)">Post</th>
+		      <th scope="col"><span class="sort" onclick="sortRows(this.parentNode.parentNode.parentNode.parentNode, this, 3)">Created</th>
 		    </tr>
 		  </thead>
 		  {{#each userInfo}}
 		  {{#each subscription}}
-		  <tr class="">
-		    
-		    <td>{{email}}{{#if isAdmin}}<sup class="md">*</sup>{{/if}}{{#if isVerified}}{{else}}<sup class="md red">u</sup>{{/if}}</td>
-		    <td>{{country}}</td>
-		    <td>{{post}}</td>
-		    <td>{{toHumanDate created}}</td>
+		  <tr class="userRow">
+		    <td data-value="{{email}}">{{email}}{{#if isAdmin}}<sup class="md">*</sup>{{/if}}{{#if isVerified}}{{else}}<sup class="md red">u</sup>{{/if}}</td>
+		    <td data-value="{{country}}">{{country}}</td>
+		    <td data-value="{{post}}">{{post}}</td>
+		    <td data-value="{{sortDate created}}">{{toHumanDate created}}</td>
 		  </tr>
 		  
 		  {{/each}}
