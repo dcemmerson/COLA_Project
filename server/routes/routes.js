@@ -248,7 +248,24 @@ module.exports = function (app) {
 		    return db.getAllUsersSubscriptions(context.userInfo);
 		}
 	    })
-	    .then(() => res.render('userInfo', context))
+	    .then(() => {
+		context.newUsers = {
+		    past30: 30,
+		    past180: 180
+		};
+		return db.getNewUsers(context.newUsers);
+	    })
+	    .then (() => {
+		context.newSubscriptions = {
+		    past30: 30,
+		    past180: 180
+		};
+		return db.getNewSubscriptions(context.newSubscriptions);
+	    })
+	    .then(() => {
+		console.log(context.newUsers);
+		res.render('userInfo', context)
+	    })
 	    .catch(err => {
 		console.log(err);
 		return res.redirect('/')

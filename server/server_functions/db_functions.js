@@ -6,6 +6,8 @@ const saltRounds = 10;
 var mysql = require('../dbcon.js');
 const DEFAULT_TEMPLATE_ID = process.env.DEFAULT_TEMPLATE_ID || 1;
 
+const DAY_TO_MS = 60 * 60 * 24 * 1000;
+
 /* name: queryDB
    preconditions: sql contains string sql query
                   values is array of arguments for sql statement
@@ -436,6 +438,88 @@ module.exports = {
                 .then(resolve)
                 .catch(reject)
         });
+    },
+
+    /* name: getNewUsers
+       preconditions: pass in object days of how many days previous to
+                        today to retrieve new users. Days should look
+			something like this: days = {
+			  past30: 30,
+			  past180: 180,
+			  ...
+			}
+       postconditions: Days object is filled with number of new accounts
+                         created in passed in number of days.
+    */
+    getNewUsers: function (days) {
+	const today = new Date();
+	const sql = 'SELECT count(*) FROM user u WHERE u.created >= ? AND u.created <= ?';
+	
+	return new Promise((resolve, reject) => {
+	    let keys = Object.keys(days);
+	    
+	    let awaitPromises = [];
+	    keys.forEach(key => {
+		let prevDate = new Date(today - days[key] * DAY_TO_MS);
+
+		let values = [prevDate, today];
+		let query = queryDB(sql, values, mysql)
+		    .then(result => {
+			days[key] = result[0]['count(*)'];
+		    })
+		    .catch(reject)
+		
+		awaitPromises.push(query);
+	    })
+
+	    Promise.all(awaitPromises)
+		.then(resolve)
+		.catch(err => {
+		    console.log(err);
+		    reject();
+		})
+	})
+    },
+    
+    /* name: getNewSubscriptions
+       preconditions: pass in object days of how many days previous to
+                        today to retrieve new subscriptions. Days should look
+			something like this: days = {
+			  past30: 30,
+			  past180: 180,
+			  ...
+			}
+       postconditions: Days object is filled with number of new accounts
+                         created in passed in number of days.
+    */
+    getNewSubscriptions: function (days) {
+	const today = new Date();
+	const sql = 'SELECT count(*) FROM subscription s WHERE s.created >= ? AND s.created <= ? AND s.active=true';
+	
+	return new Promise((resolve, reject) => {
+	    let keys = Object.keys(days);
+	    
+	    let awaitPromises = [];
+	    keys.forEach(key => {
+		let prevDate = new Date(today - days[key] * DAY_TO_MS);
+
+		let values = [prevDate, today];
+		let query = queryDB(sql, values, mysql)
+		    .then(result => {
+			days[key] = result[0]['count(*)'];
+		    })
+		    .catch(reject)
+		
+		awaitPromises.push(query);
+	    })
+
+	    Promise.all(awaitPromises)
+		.then(resolve)
+		.catch(err => {
+		    console.log(err);
+		    reject();
+		})
+	})
     },
     /*******************************************************************/
     /******************* END USER INFO PAGE QUERIES ********************/
