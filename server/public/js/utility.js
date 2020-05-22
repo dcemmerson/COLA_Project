@@ -172,3 +172,70 @@ function clientDownloadFile(res) {
         window.URL.revokeObjectURL(url);
     }, 0)
 }
+/********************* table sorting methods *************************/
+function clearTableGroups(table){
+    let tbody = table.getElementsByTagName('tbody');
+    while(tbody.length > 0){
+	tbody[0].remove();
+    }
+}
+
+function clearTableRows(table){
+    let tbody = table.getElementsByTagName('tbody')[0];
+    while(tbody.childNodes.length > 0){
+	tbody.childNodes[0].remove();
+    }
+}
+
+function displayTableGroups(table, list){
+    list.forEach(l => {
+	table.appendChild(l.element);
+	if(l.nextElement){
+	    table.appendChild(l.nextElement);
+	}
+    })
+}
+function displayTableRows(table, list){
+    let tbody = table.getElementsByTagName('tbody')[0];
+    list.forEach(l => {
+	tbody.appendChild(l.element);
+	if(l.nextElement){
+	    tbody.appendChild(l.nextElement);
+	}
+    })
+}
+
+function removeSortClasses(elements){
+    for(let i = 0; i < elements.length; i++){
+	elements[i].classList.remove('sort', 'sortedUp', 'sortedDown');
+	elements[i].classList.add('sort');
+    }
+}
+
+function insertionSort(list, asc=true){
+    
+    let element;
+    let key;
+    let j;
+    let temp;
+    
+    for(let i = 1; i < list.length; i++){
+	key = list[i].value;
+	j = i;
+
+	if(asc){
+	    while(j > 0 && key < list[j - 1].value){
+		j--;
+	    }
+	}
+	else{
+	    while(j > 0 && key > list[j - 1].value){
+		j--;
+	    }
+	}
+	element = list[i];
+	list.splice(i, 1);
+	list.splice(j, 0, element);
+	
+    }
+}

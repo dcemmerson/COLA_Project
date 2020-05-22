@@ -95,16 +95,47 @@
 	    <div id="subscriptionsContainer" class="">
 	      <input id="userEmail" style="display:none" value="{{email}}">
 	      <table class="table" id="subscriptionsTable">
-		<thead>
+		<thead class="thead">
 		  <tr>
 		    <th scope="col">
 		      <i id="tableSpinner" class="fa fa-spinner fa-spin" style="display:none"></i>
 		    </th>
-		    <th scope="col">Country</th>
-		    <th scope="col">Post</th>
-		    <th scope="col">Previous Allowance</th>
-		    <th scope="col">Allowance</th>
-		    <th scope="col">Effective Date</th>
+		    <th scope="col">
+		      <span class="nowrap">
+			  Country
+			  <span class="sortIcon sort" onclick="sortRows(this.parentNode.parentNode.parentNode.parentNode.parentNode, this, 0)">
+			  </span>
+			</span>
+		    </th>
+		    <th scope="col">
+		      <span class="nowrap">
+			Post
+			<span class="sortIcon sort" onclick="sortRows(this.parentNode.parentNode.parentNode.parentNode.parentNode, this, 1)">
+			</span>
+		      </span>
+		    </th>
+		    <th scope="col">
+		      Previous
+		      <span class="nowrap">
+			Allowance
+			<span class="sortIcon sort" onclick="sortRows(this.parentNode.parentNode.parentNode.parentNode.parentNode, this, 2)">
+			</span>
+		      </span>
+		    </th>
+		    <th scope="col">
+		      <span class="nowrap">
+			Allowance
+			<span class="sortIcon sort" onclick="sortRows(this.parentNode.parentNode.parentNode.parentNode.parentNode, this, 3)">
+			</span>
+		      </span>
+		    </th>
+		    <th scope="col">Effective
+		      <span class="nowrap">
+			Date
+			<span class="sortIcon sort" onclick="sortRows(this.parentNode.parentNode.parentNode.parentNode.parentNode, this, 4)">
+			</span>
+		      </span>
+		    </th>
 		  </tr>
 		</thead>
 		

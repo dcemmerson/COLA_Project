@@ -301,7 +301,9 @@ function populateTemplateDropdown(dropdown, templates) {
 
 function addSubscriptionToTable(sub) {
     let trs = document.getElementById('subscriptionTbody')
-        .getElementsByClassName('subscriptionRow');
+	.getElementsByClassName('subscriptionRow');
+
+    /*
     let rowNum = 0, insertBefore = 0;
     let tr;
 
@@ -315,7 +317,7 @@ function addSubscriptionToTable(sub) {
             insertBefore = rowNum;
         }
         else if (sub.country.toLowerCase() ==
-            tr.getElementsByClassName('countryName')[0].innerText.toLowerCase() &&
+		 tr.getElementsByClassName('countryName')[0].innerText.toLowerCase() &&
             sub.post.toLowerCase() >
             tr.getElementsByClassName('postName')[0].innerText.toLowerCase()
         ) {
@@ -324,12 +326,12 @@ function addSubscriptionToTable(sub) {
         }
         rowNum++;
     }
+*/
 
-
-    var res = { subscriptionList: [sub] };
-    populateSubscriptionTable(res, insertBefore + 2);
-
+    populateSubscriptionTable({subscriptionList: [sub]});
+    sortRows(document.getElementById('subscriptionsTable'));
 }
+
 function checkPreviousAllowance99() {
     let prevs = document.getElementsByClassName('prevAllowance');
     for (let i = 0; i < prevs.length; i++) {
@@ -352,15 +354,18 @@ function populateSubscriptionTable(res, rowNum = null) {
         addTableIcons(tr, sub);
 
         let td1 = document.createElement('td');
-        td1.setAttribute('class', 'td countryName');
+        td1.setAttribute('class', 'td countryName tdCell');
+	td1.setAttribute('data-value', sub.country);
         td1.innerText = sub.country;
         tr.appendChild(td1);
         let td2 = document.createElement('td');
-        td2.setAttribute('class', 'td postName');
+        td2.setAttribute('class', 'td postName tdCell');
+	td2.setAttribute('data-value', sub.post);
         td2.innerText = sub.post;
         tr.appendChild(td2);
         let td3 = document.createElement('td');
-        td3.setAttribute('class', 'td prevAllowance');
+        td3.setAttribute('class', 'td prevAllowance tdCell');
+	td3.setAttribute('data-value', sub.prevAllowance);
         td3.innerText = sub.prevAllowance + '%';
         tr.appendChild(td3);
 
@@ -373,12 +378,14 @@ function populateSubscriptionTable(res, rowNum = null) {
 
 
         let td4 = document.createElement('td');
-        td4.setAttribute('class', 'td');
+        td4.setAttribute('class', 'td tdCell');
+	td4.setAttribute('data-value', sub.allowance);
         td4.innerText = sub.allowance + '%';
         tr.appendChild(td4);
 
         let td5 = document.createElement('td');
-        td5.setAttribute('class', 'td');
+        td5.setAttribute('class', 'td tdCell');
+	td5.setAttribute('data-value', Date.parse(new Date(sub.effectiveDate)));
         td5.innerText = sub.effectiveDate;
 
         tr.appendChild(td5);
@@ -502,3 +509,84 @@ function updateTable(subscriptionId, del) {
         }
     }
 }
+
+function sortRows(table, element=null, sortCol=null){
+    // Use static class to keep track of sortCol and direction.
+    // Necessary to sort table correctly when user adds new subscription.
+    if(sortCol !== null){ // sort request is coming from user
+	Sort.setCol(sortCol);
+    }
+
+    let userRows = table.getElementsByClassName('subscriptionRow');
+    let list = constructRowObjects(userRows, Sort.getCol());
+
+    if(sortCol !== null && element !== null && element.classList.contains('sortedDown')){
+	insertionSort(list, true);
+	removeSortClasses(table.getElementsByClassName('thead')[0].getElementsByClassName('sortIcon'));
+	element.classList.remove('sort');
+	element.classList.add('sortedUp');
+	Sort.setAsc(true);
+    }
+    else if(sortCol !== null && element !== null && element.classList.contains('sortedUp')){
+	insertionSort(list, false);
+	removeSortClasses(table.getElementsByClassName('thead')[0].getElementsByClassName('sortIcon'));
+	element.classList.remove('sort');
+	element.classList.add('sortedDown');
+	Sort.setAsc(false);
+    }
+    else if(sortCol !== null && element !== null){
+	// Then we need to sort ascending - user did not just re-sort by this column.
+	insertionSort(list, true);
+	removeSortClasses(table.getElementsByClassName('thead')[0].getElementsByClassName('sortIcon'));
+	element.classList.remove('sort');
+	element.classList.add('sortedUp');
+	Sort.setAsc(false);
+    }
+    else{
+	// This method was triggered by user creating new subscription and we
+	// just need to resort the list in the same order it's already sorted
+	insertionSort(list, Sort.getAsc());
+    }
+
+    clearTableRows(table);
+    displayTableRows(table, list);
+}
+
+function constructRowObjects(trs, sortCol){
+    let list = [];
+    let val;
+
+    for(let i = 0; i < trs.length; i++){
+	val = trs[i].getElementsByClassName('tdCell')[sortCol].getAttribute('data-value');
+	list.push({
+	    element: trs[i],
+	    value: parseInt(val) ? parseInt(val) : val.toLowerCase()
+	    // val could be a string or number and need to sort accordingly
+	});
+    }
+    return list;
+}
+
+// use a static class here mainly to circument using global variables,
+// as well as protect the sort column variable
+class Sort {
+    static _col = 0;
+    static _asc = true;
+    
+    static getCol(){
+	return this._col;
+    }
+
+    static setCol(sc){
+	this._col = sc;
+    }
+
+    static getAsc(){
+	return this._asc;
+    }
+
+    static setAsc(asc){
+	this._asc = asc;
+    }
+}
+

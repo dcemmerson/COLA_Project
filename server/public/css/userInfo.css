@@ -122,7 +122,7 @@
     height: 1rem;
     width: 1rem;
 }
-.userRow:hover {
+.userGroup .userRow:hover {
     cursor: pointer;
 }
 .userGroup[aria-expanded="false"]+.userSubscriptions {
@@ -131,6 +131,7 @@
 .userGroup[aria-expanded="true"]+.userSubscriptions {
     display: table-row-group;
 }
+/*
 .userGroupTable .userRow td {
     width: 31.7%;
 }
@@ -138,7 +139,7 @@
 .userRowTable .userRow td {
     min-width: 17%;
 }
-
+*/
 .table tbody .userSubscriptionsInfo {
     border-top: none !important;
 }

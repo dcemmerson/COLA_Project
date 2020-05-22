@@ -169,6 +169,9 @@ input:invalid {
     color: #f0f0f0 !important;
 }
 
+.nowrap {
+    white-space: nowrap;
+}
 .sort::after {
     background-image: url(/img/sort.svg);
     background-repeat: no-repeat;
