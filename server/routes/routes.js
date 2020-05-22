@@ -233,7 +233,7 @@ module.exports = function (app) {
             style: ['styles.css', 'font_size.css', 'userInfo.css'],
             script: ['userInfo.js', 'utility.js'],
             title: 'User Info',
-            account: true, //used for navivation.hbs
+            userInfo: true, //used for navivation.hbs
 	    userInfo: []
 	};
 
