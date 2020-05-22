@@ -60,6 +60,7 @@ app.use(passport.session());
 
 require('./routes/routes.js')(app);
 require('./routes/ajax_routes.js')(app, passport);
+require('./routes/redirects.js')(app);
 app.use(express.static('public'));
 
 app.engine('hbs', hbs.engine);
