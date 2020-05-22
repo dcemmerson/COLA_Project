@@ -9,9 +9,10 @@ body {
 
 input:invalid {
     box-shadow: none;
-    border-width: 0.25rem;
+/*    border-width: 0.25rem;
     border-color: #b50909;
     borer-style: solid;
+*/
 }
 
 .usa-logo .usa-logo__text::before{
