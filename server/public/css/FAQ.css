@@ -32,3 +32,40 @@
     color: #f0f0f0 !important;
 }
 */
+.downloadTemplate {
+    content: url(/img/download.png);
+    width: 1.25rem;
+    height: 1.25rem;
+    repeat: no-repeat;
+    position: center;
+}
+.downloadTemplateError {
+    content: url(/img/download--danger.png);
+    width: 1.25rem;
+    height: 1.25rem;
+    repeat: no-repeat;
+    position: center;
+}
+.downloadTemplateSuccess {
+    content: url(/img/download--success.png);
+    width: 1.25rem;
+    height: 1.25rem;
+    repeat: no-repeat;
+    position: center;
+}
+.downloadTemplateSecondary {
+    content: url(/img/download--secondary.png);
+    width: 1.25rem;
+    height: 1.25rem;
+    repeat: no-repeat;
+    position: center;
+}
+.downloadTemplate:hover {
+    cursor: pointer;
+    position: relative;
+    content: url(/img/download--primary.png);
+    width: 1.25rem;
+    height: 1.25rem;
+    repeat: no-repeat;
+    position: center;
+}

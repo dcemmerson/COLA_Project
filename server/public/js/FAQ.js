@@ -71,7 +71,7 @@ async function defaultTemplatePreview() {
             if (!res.success)
                 throw new Error("Error retrieving file");
             removeSpinner(label);
-            label.innerText = res.filename;
+            label.innerHTML = `<i id="downloadTemplateSpan" class="mr-3 downloadTemplate" onClick="defaultTemplateDownload()"></i> ${res.filename}`;
             let uint8arr = new Uint8Array(res.file.data);
             return pdfToCanvas(uint8arr);
         })
@@ -85,6 +85,40 @@ async function defaultTemplatePreview() {
         .finally(() => {
             removeSpinner(docContainer, '-lg');
             docContainer.innerText = "";
+        })
+
+}
+
+function defaultTemplateDownload(templateId=1) {
+    var dlts = document.getElementById('downloadTemplateSpan');
+    dlts.classList.remove('downloadTemplate', 'downloadTemplateError', 'downloadTemplateSuccess');
+    dlts.classList.add('fa', 'fa-spinner', 'fa-spin');
+    
+    return fetch(`/download_template?templateId=${templateId}`)
+        .then(response => {
+            if (response.status == 200)
+                return response.json();
+            throw new Error("Error retrieving file");
+        })
+        .then(res => {
+            if (!res.success)
+                throw new Error("Error retrieving file");
+
+            clientDownloadFile(res);
+
+            dlts.classList.add('downloadTemplateSuccess');
+        })
+        .catch(err => {
+            console.log(err);
+            dlts.classList.add('downloadTemplateError');
+        })
+        .finally(() => {
+	    dlts.classList.remove('fa', 'fa-spinner', 'fa-spin');
+
+	    setTimeout(() => {
+		dlts.classList.remove('downloadTemplateSuccess', 'downloadTemplateError');
+		dlts.classList.add('downloadTemplate');
+	    }, 5000);
         })
 
 }

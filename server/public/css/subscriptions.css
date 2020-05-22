@@ -239,6 +239,43 @@ table {
     repeat: no-repeat;
     position: center;
 }
+.downloadSubscriptionLg {
+    content: url(/img/download.png);
+    width: 1.25rem;
+    height: 1.25rem;
+    repeat: no-repeat;
+    position: center;
+}
+.downloadSubscriptionErrorLg {
+    content: url(/img/download--danger.png);
+    width: 1.25rem;
+    height: 1.25rem;
+    repeat: no-repeat;
+    position: center;
+}
+.downloadSubscriptionSuccessLg {
+    content: url(/img/download--success.png);
+    width: 1.25rem;
+    height: 1.25rem;
+    repeat: no-repeat;
+    position: center;
+}
+.downloadSubscriptionSecondaryLg {
+    content: url(/img/download--secondary.png);
+    width: 1.25rem;
+    height: 1.25rem;
+    repeat: no-repeat;
+    position: center;
+}
+.downloadSubscriptionLg:hover {
+    cursor: pointer;
+    position: relative;
+    content: url(/img/download--primary.png);
+    width: 1.25rem;
+    height: 1.25rem;
+    repeat: no-repeat;
+    position: center;
+}
 .email {
     content: url(/img/envelope.png);
     width: 0.85rem;

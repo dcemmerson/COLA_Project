@@ -293,6 +293,7 @@ module.exports = function (app, passport) {
                     res.send(context);
                 })
         });
+    
     // preview button
     app.get('/preview_subscription', db.authenticationMiddleware(),
         function (req, res) {

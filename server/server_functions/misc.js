@@ -373,6 +373,8 @@ module.exports = {
                     if (fillValues) {
                         return db.getColaRate(fillValues.country, fillValues.post)
                             .then(postInfo => {
+				context.country = fillValues.country;
+				context.post = fillValues.post;
                                 context.file = response[0].file;
                                 context.username = response[0].email;
                                 context.file = tm.manipTemplate(context, postInfo[0]);

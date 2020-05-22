@@ -56,7 +56,10 @@ function templatePreview(templateId, tok = null) {
             if (!res.success)
                 throw new Error("Error retrieving file");
             removeSpinner(label);
-            label.innerText = res.filename;
+
+	    label.innerHTML = `<i id="downloadFromPreview" class="mr-3 downloadSubscriptionLg" onClick="downloadFromPreview(this, '${templateId}', '${tok}', '${res.post}', '${res.country}')"></i> ${res.filename}`;
+
+	    
             let uint8arr = new Uint8Array(res.file.data);
             return pdfToCanvas(uint8arr);
         })

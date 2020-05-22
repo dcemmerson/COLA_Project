@@ -303,31 +303,6 @@ function addSubscriptionToTable(sub) {
     let trs = document.getElementById('subscriptionTbody')
 	.getElementsByClassName('subscriptionRow');
 
-    /*
-    let rowNum = 0, insertBefore = 0;
-    let tr;
-
-    // iterate through table to determine where we should add new row to keep
-    // table organized in alphabetical order by country name
-    while (rowNum < trs.length) {
-        tr = trs[rowNum];
-        if (sub.country.toLowerCase() >
-            tr.getElementsByClassName('countryName')[0].innerText.toLowerCase()
-        ) {
-            insertBefore = rowNum;
-        }
-        else if (sub.country.toLowerCase() ==
-		 tr.getElementsByClassName('countryName')[0].innerText.toLowerCase() &&
-            sub.post.toLowerCase() >
-            tr.getElementsByClassName('postName')[0].innerText.toLowerCase()
-        ) {
-            insertBefore = rowNum;
-
-        }
-        rowNum++;
-    }
-*/
-
     populateSubscriptionTable({subscriptionList: [sub]});
     sortRows(document.getElementById('subscriptionsTable'));
 }
@@ -567,6 +542,35 @@ function constructRowObjects(trs, sortCol){
     return list;
 }
 
+async function downloadFromPreview(el, templateId, tok, post, country){
+
+    el.classList.remove('downloadSubscriptionLg', 'downloadSubscriptionErrorLg', 'downloadSubscriptionSuccessLg');
+    el.classList.add('fa', 'fa-spinner', 'fa-spin');
+    
+    try{
+	if(templateId !== "null"){
+	    // then just download the template file without dynamic changes
+	    await templateDownload(templateId);
+	}
+	else{
+	    // download subscription with dynamic changes
+	    downloadSubscription(el, tok, post, country);
+	}
+	el.classList.add('downloadSubscriptionSuccessLg');
+    }
+    catch(err){
+	console.log(err);
+	el.classList.add('downloadSubscriptionErrorLg');
+    }
+    finally{
+	el.classList.remove('fa', 'fa-spinner', 'fa-spin');
+	setTimeout(() => {
+	    el.classList.remove('downloadSubscriptionSuccessLg', 'downloadSubscriptionErrorLg');
+	    el.classList.add('downloadSubscriptionLg');
+	}, 5000)
+    }
+}
+
 // use a static class here mainly to circument using global variables,
 // as well as protect the sort column variable
 class Sort {
@@ -589,4 +593,3 @@ class Sort {
 	this._asc = asc;
     }
 }
-
