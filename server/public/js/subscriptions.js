@@ -39,6 +39,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('previewTemplateLabel').innerText = "";
     });
 
+    downloadIcons();
+    
 });
 
 function pdfToCanvas(uint8arr) {

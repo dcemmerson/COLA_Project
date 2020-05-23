@@ -239,3 +239,34 @@ function insertionSort(list, asc=true){
 	
     }
 }
+
+/* Call this method after DOMContentLoaded to force user browser
+   to download all icons used in css background images.
+   There has been an issue with mobile browsers not downloading
+   icons on demand.
+*/
+function downloadIcons(){
+    let cache = document.getElementById('iconCache');
+    
+    let classList = ['downloadSubscription',
+		     'downloadSubscriptionError',
+		     'downloadSubscriptionSuccess',
+		     'downloadSubscriptionSecondary',
+		     'downloadSubscriptionLg',
+		     'downloadSubscriptionErrorLg',
+		     'downloadSubscriptionSuccessLg',
+		     'downloadSubscriptionSecondaryLg',
+		     'email',
+		     'emailSuccess',
+		     'emailError',
+		     'preview',
+		     'previewSecondary',
+		     'trashCan',
+		     'trashCanSecondary'];
+    
+    classList.forEach(cl => {
+	let i = document.createElement('i');
+	i.classList.add(cl);
+	cache.appendChild(i);
+    });
+}

@@ -7,6 +7,9 @@ body {
     grid-template-rows: auto 1fr auto;
 }
 
+#iconCache {
+    display:none;
+}
 input:invalid {
     box-shadow: none;
 /*    border-width: 0.25rem;

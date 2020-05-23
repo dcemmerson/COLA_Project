@@ -341,7 +341,7 @@ function downloadSubscription(thisEl, tok, post, country) {
                 throw new Error("Error retrieving file");
 
             clientDownloadFile(res);
-            classTimer(thisEl, 'downloadSubscriptionSecondary', 'downloadSubscriptionSuccess', 'downloadSubscription', 5000);
+            classTimer(thisEl, 'downloadSubscriptionSecondary', 'downloadSubscriptionSuccess', 'downloadSubscription', 3000);
         })
         .catch(err => {
             console.log(err);
@@ -383,7 +383,7 @@ function fireSubscriptionEmail(thisEl, tok, post, country) {
             if (!res.success)
                 throw new Error("Error retrieving file");
 
-            classTimer(thisEl, 'emailSecondary', 'emailSuccess', 'email', 5000);
+            classTimer(thisEl, 'emailSecondary', 'emailSuccess', 'email', 3000);
         })
         .catch(err => {
             console.log(err);

@@ -18,6 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#previewTemplateModal').on('show.bs.modal', () => {
         defaultTemplatePreview();
     });
+
+    downloadIcons();
 });
 
 function pdfToCanvas(uint8arr) {
