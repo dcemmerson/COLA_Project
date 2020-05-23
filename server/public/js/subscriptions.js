@@ -489,25 +489,25 @@ function sortRows(table, element=null, sortCol=null){
     // Use static class to keep track of sortCol and direction.
     // Necessary to sort table correctly when user adds new subscription.
     if(sortCol !== null){ // sort request is coming from user
-	Sort.setCol(sortCol);
+	sortColG = sortCol;
     }
 
     let userRows = table.getElementsByClassName('subscriptionRow');
-    let list = constructRowObjects(userRows, Sort.getCol());
+    let list = constructRowObjects(userRows, sortColG);
 
     if(sortCol !== null && element !== null && element.classList.contains('sortedDown')){
 	insertionSort(list, true);
 	removeSortClasses(table.getElementsByClassName('thead')[0].getElementsByClassName('sortIcon'));
 	element.classList.remove('sort');
 	element.classList.add('sortedUp');
-	Sort.setAsc(true);
+	sortAscG = true;
     }
     else if(sortCol !== null && element !== null && element.classList.contains('sortedUp')){
 	insertionSort(list, false);
 	removeSortClasses(table.getElementsByClassName('thead')[0].getElementsByClassName('sortIcon'));
 	element.classList.remove('sort');
 	element.classList.add('sortedDown');
-	Sort.setAsc(false);
+	sortAscG = false;
     }
     else if(sortCol !== null && element !== null){
 	// Then we need to sort ascending - user did not just re-sort by this column.
@@ -515,12 +515,12 @@ function sortRows(table, element=null, sortCol=null){
 	removeSortClasses(table.getElementsByClassName('thead')[0].getElementsByClassName('sortIcon'));
 	element.classList.remove('sort');
 	element.classList.add('sortedUp');
-	Sort.setAsc(false);
+	sortAscG = false;
     }
     else{
 	// This method was triggered by user creating new subscription and we
 	// just need to resort the list in the same order it's already sorted
-	insertionSort(list, Sort.getAsc());
+	insertionSort(list, sortAscG);
     }
 
     clearTableRows(table);
@@ -571,8 +571,14 @@ async function downloadFromPreview(el, templateId, tok, post, country){
     }
 }
 
+// Use these two global variables to keep track of sorting done since
+// the static class below does not work on mobile...
+var sortColG = 0;
+var sorAscG = true;
+
 // use a static class here mainly to circument using global variables,
 // as well as protect the sort column variable
+/*
 class Sort {
     static _col = 0;
     static _asc = true;
@@ -593,3 +599,4 @@ class Sort {
 	this._asc = asc;
     }
 }
+*/
