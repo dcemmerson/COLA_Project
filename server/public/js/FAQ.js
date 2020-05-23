@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
         defaultTemplatePreview();
     });
 
-    downloadIcons();
 });
 
 function pdfToCanvas(uint8arr) {

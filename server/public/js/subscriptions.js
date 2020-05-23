@@ -38,8 +38,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         clearCanvas(document.getElementById('previewCanvas'));
         document.getElementById('previewTemplateLabel').innerText = "";
     });
-
-    downloadIcons();
     
 });
 
