@@ -89,12 +89,12 @@ async function defaultTemplatePreview() {
 
 }
 
-function defaultTemplateDownload(templateId=1) {
+function defaultTemplateDownload() {
     var dlts = document.getElementById('downloadTemplateSpan');
     dlts.classList.remove('downloadTemplate', 'downloadTemplateError', 'downloadTemplateSuccess');
     dlts.classList.add('fa', 'fa-spinner', 'fa-spin');
     
-    return fetch(`/download_template?templateId=${templateId}`)
+    return fetch(`/download_default_template`)
         .then(response => {
             if (response.status == 200)
                 return response.json();

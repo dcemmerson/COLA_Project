@@ -542,6 +542,26 @@ module.exports = function (app, passport) {
                 res.send(context);
             })
     });
+    app.get('/download_default_template', function (req, res) {
+        const defaultUserId = process.env.DEFAULT_TEMPLATE_USER_ID;
+        const defaultTemplateId = process.env.DEFAULT_TEMPLATE_ID;
+        var context = {};
+	db.getUserTemplate(defaultUserId, defaultTemplateId)
+            .then(response => {
+                context.filename = response[0].name;
+                context.uploaded = response[0].uploaded;
+                context.file = response[0].file;
+                context.success = true;
+            })
+            .catch(err => {
+                if (err) console.log(err);
+                context.msg = "Error retrieving file";
+                context.success = false;
+            })
+            .finally(() => {
+                res.send(context);
+            })
+    })
     /************************* End FAQ page ajax ****************************/
     /************************************************************************
     AJAX routes coming from email links and/or
