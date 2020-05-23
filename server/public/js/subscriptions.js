@@ -574,7 +574,7 @@ async function downloadFromPreview(el, templateId, tok, post, country){
 // Use these two global variables to keep track of sorting done since
 // the static class below does not work on mobile...
 var sortColG = 0;
-var sorAscG = true;
+var sortAscG = true;
 
 // use a static class here mainly to circument using global variables,
 // as well as protect the sort column variable
