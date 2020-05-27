@@ -1,5 +1,6 @@
 const db = require('../server_functions/db_functions.js');
-var misc = require('../server_functions/misc.js');
+const misc = require('../server_functions/misc.js');
+const fs = require('fs'); 
 
 module.exports = function (app) {
     app.get('/', function (req, res) {
@@ -271,5 +272,21 @@ module.exports = function (app) {
 		return res.redirect('/')
 	    })
     });
+    
+    app.get('/sitemap', function (req, res) {
+	let fd = fs.open('./public/siteMap.xml', 'r', (err, fd) => {
+	    if(err) {
+		console.log(err);
+		res.end();
+	    }
 
+	    fs.read(fd, (err, bytesRead, sitemap) => {
+		if(err) {
+		    console.log(err);
+		    res.end();
+		}
+		res.send(sitemap);
+	    });
+	});
+    });
 };
