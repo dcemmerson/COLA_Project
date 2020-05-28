@@ -34,7 +34,7 @@ function _processCredentials() {
             email = emailInput.value.trim();
             emailErrorSpan = document.getElementById('emailError');
             password = document.getElementById('pwd').value;
-            disableElements([button, email]);
+            disableElements([button, emailInput]);
             showSpinner(buttonContainer);
 
             if (validateEmail(email, emailInput, emailErrorSpan)) {
