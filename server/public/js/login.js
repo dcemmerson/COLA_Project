@@ -112,8 +112,8 @@ function processServerResponse(context) {
   var emailForm = document.getElementById('formOuterContainer');
 
   if (context.success) {
-    document.getElementById('submitCredentials').innerText = 'Redirecting...';
-    window.location = context.redirect;
+    document.getElementById('submitCredentials').innerText = 'Redirecting...'; //        window.location = context.redirect;
+
     document.location = context.redirect;
   } else if (context.invalid) {
     if (!context.isVerified) {
