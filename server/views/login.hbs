@@ -1,7 +1,7 @@
 <div class="container gridRows">
   <div class="container">
     <div id="alertContainer" class="row justify-content-around">
-      <div id="errorAlert" class="usa-alert usa-alert--error max-width-900 width-90 mt-4" style="display:none;">
+      <div id="errorAlert" class="usa-alert usa-alert--error max-width-900 width-90 mt-4 displayNone">
 	<div class="usa-alert__body">
 	  <h2 class="h3 usa-alert__heading">Error</h2>
 	  <p class="usa-alert__text">
@@ -20,14 +20,11 @@
 	  </div>
 	  <div class="mx-2">
 	    <form class="" method="POST" action="/login">
-	      <span class="usa-error-message" id="invalid" role="alert"
-		    style="display:none">Invalid email or password</span>
-	      <span class="usa-error-message" id="unverified" role="alert"
-		    style="display:none"><span id="unverifiedEmail"></span> needs to be verified<br><a class="sm usa-link" href="/requestverificationcode">Re-request verification email</a></span>
+	      <span class="usa-error-message displayNone" id="invalid" role="alert">Invalid email or password</span>
+	      <span class="usa-error-message displayNone" id="unverified" role="alert"><span id="unverifiedEmail"></span> needs to be verified<br><a class="sm usa-link" href="/requestverificationcode">Re-request verification email</a></span>
 	      <div class="form-group">
 		<label for="email" class="usa-label"><strong>Email</strong></label>
-		<span class="usa-error-message" id="emailError" role="alert"
-		    style="display:none">Invalid email or password</span>
+		<span class="usa-error-message displayNone" id="emailError" role="alert">Invalid email or password</span>
 		<input type="email" class="usa-input" id="email" name="username">
 	      </div>	    
 	      <div class="form-group">

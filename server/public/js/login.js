@@ -26,8 +26,10 @@ function _processCredentials() {
           case 0:
             _context.prev = 0;
             //hide any error messages
-            document.getElementById('invalid').setAttribute('display', 'none');
-            document.getElementById('unverified').setAttribute('display', 'none');
+            document.getElementById('invalid').classList.remove('displayBlock');
+            document.getElementById('invalid').classList.add('displayNone');
+            document.getElementById('unverified').classList.remove('displayBlock');
+            document.getElementById('unverified').classList.add('displayNone');
             button = document.getElementById('submitCredentials');
             buttonContainer = document.getElementById('submitButtonContainer');
             emailInput = document.getElementById('email');
@@ -38,59 +40,60 @@ function _processCredentials() {
             showSpinner(buttonContainer);
 
             if (validateEmail(email, emailInput, emailErrorSpan)) {
-              _context.next = 13;
+              _context.next = 15;
               break;
             }
 
             return _context.abrupt("return");
 
-          case 13:
+          case 15:
             hideElements(document.getElementsByClassName('usa-alert'));
-            _context.next = 16;
+            _context.next = 18;
             return submitRequest(email, password);
 
-          case 16:
+          case 18:
             response = _context.sent;
-            _context.next = 19;
+            _context.next = 21;
             return response.json();
 
-          case 19:
+          case 21:
             res = _context.sent;
             processServerResponse(res);
-            _context.next = 27;
+            _context.next = 29;
             break;
 
-          case 23:
-            _context.prev = 23;
+          case 25:
+            _context.prev = 25;
             _context.t0 = _context["catch"](0);
             console.log(_context.t0);
             processServerResponse({
               error: true
             });
 
-          case 27:
-            _context.prev = 27;
+          case 29:
+            _context.prev = 29;
 
             if (!res || !res.success) {
               enableElements([button, emailInput]);
               removeSpinner(buttonContainer);
             }
 
-            return _context.finish(27);
+            return _context.finish(29);
 
-          case 30:
+          case 32:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[0, 23, 27, 30]]);
+    }, _callee, null, [[0, 25, 29, 32]]);
   }));
   return _processCredentials.apply(this, arguments);
 }
 
 function validateEmail(email, emailInput, errorSpan) {
   //remove errors caused by previous submission attempts
-  errorSpan.setAttribute('display', 'none');
+  errorSpan.classList.remove('displayBlock');
+  errorSpan.classList.add('displayNone');
   emailInput.classList.remove('usa-input--error');
   var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -99,12 +102,14 @@ function validateEmail(email, emailInput, errorSpan) {
     errorSpan.innerText = "Please enter valid email";
     errorSpan.setAttribute('display', 'block');
     return false;
+    v;
   }
 
   return true;
 }
 
 function processServerResponse(context) {
+  console.log(context);
   var emailForm = document.getElementById('formOuterContainer');
 
   if (context.success) {
@@ -113,12 +118,16 @@ function processServerResponse(context) {
   } else if (context.invalid) {
     if (!context.isVerified) {
       document.getElementById('unverifiedEmail').innerText = context.unverifiedEmail;
-      document.getElementById('unverified').setAttribute('display', 'block');
+      document.getElementById('unverified').classList.remove('displayNone');
+      document.getElementById('unverified').classList.add('displayBlock');
     } else {
-      document.getElementById('invalid').setAttribute('display', 'block');
+      document.getElementById('invalid').classList.remove('displayNone');
+      document.getElementById('invalid').classList.add('displayBlock');
     }
   } else {
-    document.getElementById('errorAlert').setAttribute('display', 'block');
-    document.getElementById('loginFormOuterContainer').setAttribute('display', 'none');
+    document.getElementById('errorAlert').classList.remove('displayNone');
+    document.getElementById('errorAlert').classList.add('displayBlock');
+    document.getElementById('loginFormOuterContainer').classList.remove('displayBlock');
+    document.getElementById('loginFormOuterContainer').classList.add('displayNone');
   }
 }
