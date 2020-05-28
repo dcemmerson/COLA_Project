@@ -72,7 +72,7 @@ function _processCredentials() {
             _context.prev = 27;
 
             if (!res || !res.success) {
-              enableElements([button, email]);
+              enableElements([button, emailInput]);
               removeSpinner(buttonContainer);
             }
 
