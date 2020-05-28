@@ -236,3 +236,10 @@ input:invalid {
 .sortedDown:hover::after {
     cursor: pointer;
 }
+
+.displayNone {
+    display: none !important;
+}
+.displayBlock{
+    display: block !important;
+}
