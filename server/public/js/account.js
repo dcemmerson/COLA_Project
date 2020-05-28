@@ -1,122 +1,148 @@
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('showPassword').addEventListener('click', function (e) {
-        e.preventDefault();
-        let pwd = document.getElementById('newPassword');
-        let pwdMatch = document.getElementById('newPasswordRe');
-        let oldPwd = document.getElementById('oldPassword');
+"use strict";
 
-        if (pwd.getAttribute('type') === 'password') {
-            oldPwd.setAttribute('type', 'text');
-            pwd.setAttribute('type', 'text');
-            pwdMatch.setAttribute('type', 'text');
-            this.innerText = 'Hide password';
-        }
-        else {
-            oldPwd.setAttribute('type', 'password');
-            pwd.setAttribute('type', 'password');
-            pwdMatch.setAttribute('type', 'password');
-            this.innerText = 'Show password';
-        }
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
-    })
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-    document.getElementById('submitNewPassword').addEventListener('click', e => {
-        e.preventDefault();
-        if (validPassword(true)) updatePassword();
-    });
-})
+document.addEventListener('DOMContentLoaded', function () {
+  document.getElementById('showPassword').addEventListener('click', function (e) {
+    e.preventDefault();
+    var pwd = document.getElementById('newPassword');
+    var pwdMatch = document.getElementById('newPasswordRe');
+    var oldPwd = document.getElementById('oldPassword');
+
+    if (pwd.getAttribute('type') === 'password') {
+      oldPwd.setAttribute('type', 'text');
+      pwd.setAttribute('type', 'text');
+      pwdMatch.setAttribute('type', 'text');
+      this.innerText = 'Hide password';
+    } else {
+      oldPwd.setAttribute('type', 'password');
+      pwd.setAttribute('type', 'password');
+      pwdMatch.setAttribute('type', 'password');
+      this.innerText = 'Show password';
+    }
+  });
+  document.getElementById('submitNewPassword').addEventListener('click', function (e) {
+    e.preventDefault();
+    if (validPassword(true)) updatePassword();
+  });
+});
+
 function showPasswordForm() {
-    let passwordBtn = document.getElementById('changePasswordBtnDiv');
-    let passwordForm = document.getElementById('passwordFormContainer');
-
-    passwordBtn.classList.add('hidden');
-    passwordBtn.classList.remove('shown');
-
-    passwordForm.classList.remove('hidden');
-    passwordForm.classList.add('shown');
+  var passwordBtn = document.getElementById('changePasswordBtnDiv');
+  var passwordForm = document.getElementById('passwordFormContainer');
+  passwordBtn.classList.add('hidden');
+  passwordBtn.classList.remove('shown');
+  passwordForm.classList.remove('hidden');
+  passwordForm.classList.add('shown');
 }
+
 function hidePasswordForm() {
-    let passwordBtn = document.getElementById('changePasswordBtnDiv');
-    let passwordForm = document.getElementById('passwordFormContainer');
-
-    passwordForm.classList.remove('shown');
-    passwordForm.classList.add('hidden');
-    passwordBtn.classList.add('show');
-    passwordBtn.classList.remove('hidden');
-
+  var passwordBtn = document.getElementById('changePasswordBtnDiv');
+  var passwordForm = document.getElementById('passwordFormContainer');
+  passwordForm.classList.remove('shown');
+  passwordForm.classList.add('hidden');
+  passwordBtn.classList.add('show');
+  passwordBtn.classList.remove('hidden');
 }
-async function updatePassword() {
-    try {
-        document.getElementById('submitNewPassword').disabled = true;
-        showSpinner(document.getElementById('submitBtnDiv'));
-        let context = await submitPassword();
 
-        hideElements($('.changePasswordAlert'));
-        //check if server found any issues with password
-        invalidPasswordServer(context);
-    }
-    catch (err) {
-        console.log(err);
-        hideElements($('.changePasswordAlert'));
-        document.getElementById('alertError').display = 'block';
-    }
-    removeSpinner(document.getElementById('submitBtnDiv'));
-    document.getElementById('submitNewPassword').disabled = false;
+function updatePassword() {
+  return _updatePassword.apply(this, arguments);
+}
+
+function _updatePassword() {
+  _updatePassword = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+    var context;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _context.prev = 0;
+            document.getElementById('submitNewPassword').disabled = true;
+            showSpinner(document.getElementById('submitBtnDiv'));
+            _context.next = 5;
+            return submitPassword();
+
+          case 5:
+            context = _context.sent;
+            hideElements($('.changePasswordAlert')); //check if server found any issues with password
+
+            invalidPasswordServer(context);
+            _context.next = 15;
+            break;
+
+          case 10:
+            _context.prev = 10;
+            _context.t0 = _context["catch"](0);
+            console.log(_context.t0);
+            hideElements($('.changePasswordAlert'));
+            document.getElementById('alertError').display = 'block';
+
+          case 15:
+            removeSpinner(document.getElementById('submitBtnDiv'));
+            document.getElementById('submitNewPassword').disabled = false;
+
+          case 17:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, null, [[0, 10]]);
+  }));
+  return _updatePassword.apply(this, arguments);
 }
 
 function updateRegexValidationMarks(field, arr, submit) {
-    let validPassword = true;
-    arr.forEach(val => {
-        if (field.value.match(val.regex) === null) {
-            for (let i = 0; i < val.elements.length; i++)
-                val.elements[i].classList.remove('val', 'invalid', 'invalBlank');
-            validPassword = false;
+  var validPassword = true;
+  arr.forEach(function (val) {
+    if (field.value.match(val.regex) === null) {
+      for (var i = 0; i < val.elements.length; i++) {
+        val.elements[i].classList.remove('val', 'invalid', 'invalBlank');
+      }
 
-            if (submit)
-                for (let i = 0; i < val.elements.length; i++)
-                    val.elements[i].classList.add('invalid');
+      validPassword = false;
+      if (submit) for (var _i = 0; _i < val.elements.length; _i++) {
+        val.elements[_i].classList.add('invalid');
+      } else for (var _i2 = 0; _i2 < val.elements.length; _i2++) {
+        val.elements[_i2].classList.add('invalBlank');
+      }
+    } else {
+      for (var _i3 = 0; _i3 < val.elements.length; _i3++) {
+        val.elements[_i3].classList.remove('invalBlank', 'invalid');
 
-            else
-                for (let i = 0; i < val.elements.length; i++)
-                    val.elements[i].classList.add('invalBlank');
-        }
-        else {
-            for (let i = 0; i < val.elements.length; i++) {
-                val.elements[i].classList.remove('invalBlank', 'invalid');
-                val.elements[i].classList.add('val');
-            }
-        }
-    });
-
-    if (!validPassword && submit) $('#newPassword')[0].classList.add('usa-input--error');
-    else if (validPassword) $('#newPassword')[0].classList.remove('usa-input--error');
-
-    return validPassword;
+        val.elements[_i3].classList.add('val');
+      }
+    }
+  });
+  if (!validPassword && submit) $('#newPassword')[0].classList.add('usa-input--error');else if (validPassword) $('#newPassword')[0].classList.remove('usa-input--error');
+  return validPassword;
 }
+
 function updateLengthValidationMark(field, req, submit) {
-    let validPassword = true;
-    if (submit) clearInnerText($('.passwordError'));
+  var validPassword = true;
+  if (submit) clearInnerText($('.passwordError'));
 
-    if (field.value.length < req.minLength) {
-        for (let i = 0; i < req.elements.length; i++)
-            req.elements[i].classList.remove('val', 'invalid', 'invalBlank');
-        validPassword = false;
-
-        if (submit)
-            for (let i = 0; i < req.elements.length; i++)
-                req.elements[i].classList.add('invalid');
-        else
-            for (let i = 0; i < req.elements.length; i++)
-                req.elements[i].classList.add('invalBlank');
-    }
-    else {
-        for (let i = 0; i < req.elements.length; i++) {
-            req.elements[i].classList.remove('invalBlank', 'invalid');
-            req.elements[i].classList.add('val');
-        }
+  if (field.value.length < req.minLength) {
+    for (var i = 0; i < req.elements.length; i++) {
+      req.elements[i].classList.remove('val', 'invalid', 'invalBlank');
     }
 
-    return validPassword;
+    validPassword = false;
+    if (submit) for (var _i4 = 0; _i4 < req.elements.length; _i4++) {
+      req.elements[_i4].classList.add('invalid');
+    } else for (var _i5 = 0; _i5 < req.elements.length; _i5++) {
+      req.elements[_i5].classList.add('invalBlank');
+    }
+  } else {
+    for (var _i6 = 0; _i6 < req.elements.length; _i6++) {
+      req.elements[_i6].classList.remove('invalBlank', 'invalid');
+
+      req.elements[_i6].classList.add('val');
+    }
+  }
+
+  return validPassword;
 }
 /* name: validPassword
    preconditions: user has clicked submit on change password form, or just entered input
@@ -124,43 +150,48 @@ function updateLengthValidationMark(field, req, submit) {
    postconditions: determine if user has entered valid new password
    description:
 */
-function validPassword(submit = false) {
-    var newPassword = $('#newPassword')[0];
-    var newPasswordRe = $('#newPasswordRe')[0];
 
-    let lowerCase = /[a-z]/g;
-    let upperCase = /[A-Z]/g;
-    let numbers = /[0-9]/g;
-    let special = /\W|_/g;
-    let minLength = 8;
 
-    let validPassword = updateRegexValidationMarks(newPassword, [
-        { regex: lowerCase, elements: $('.lowercaseReq') },
-        { regex: upperCase, elements: $('.uppercaseReq') },
-        { regex: numbers, elements: $('.numberReq') },
-        { regex: special, elements: $('.specialReq') }
-    ], submit);
+function validPassword() {
+  var submit = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+  var newPassword = $('#newPassword')[0];
+  var newPasswordRe = $('#newPasswordRe')[0];
+  var lowerCase = /[a-z]/g;
+  var upperCase = /[A-Z]/g;
+  var numbers = /[0-9]/g;
+  var special = /\W|_/g;
+  var minLength = 8;
+  var validPassword = updateRegexValidationMarks(newPassword, [{
+    regex: lowerCase,
+    elements: $('.lowercaseReq')
+  }, {
+    regex: upperCase,
+    elements: $('.uppercaseReq')
+  }, {
+    regex: numbers,
+    elements: $('.numberReq')
+  }, {
+    regex: special,
+    elements: $('.specialReq')
+  }], submit);
+  validPassword = updateLengthValidationMark(newPassword, {
+    minLength: minLength,
+    elements: $('.minCharReq')
+  }, submit) && validPassword;
 
-    validPassword = updateLengthValidationMark(newPassword, {
-        minLength: minLength,
-        elements: $('.minCharReq')
-    }, submit) && validPassword;
+  if (submit && validPassword && newPassword.value !== newPasswordRe.value) {
+    $('#newPasswordReError')[0].innerText = 'Password re-entry mismatch';
+    $('#newPasswordReError')[0].style.display = 'block';
+    newPasswordRe.classList.add('usa-input--error');
+    validPassword = false;
+  } else {
+    newPasswordRe.classList.remove('usa-input--error');
+    $('#newPasswordReError')[0].style.display = 'none';
+    validPassword = validPassword && true;
+  }
 
-    if (submit && validPassword && newPassword.value !== newPasswordRe.value) {
-        $('#newPasswordReError')[0].innerText = 'Password re-entry mismatch';
-        $('#newPasswordReError')[0].style.display = 'block';
-        newPasswordRe.classList.add('usa-input--error');
-        validPassword = false;
-    }
-    else {
-        newPasswordRe.classList.remove('usa-input--error');
-        $('#newPasswordReError')[0].style.display = 'none';
-        validPassword = validPassword && true;
-    }
-
-    return validPassword;
+  return validPassword;
 }
-
 /* name: invalidPasswordServer
    preconditions: ajax req was made to server. Server determined something
                   the user sent was invalid.
@@ -172,35 +203,35 @@ function validPassword(submit = false) {
 		account.js (this file). Server runs additional validation
 		to catch this, in which case this method will run.
 */
-function invalidPasswordServer(context) {
-    if (context.passwordUpdated) { //pword updated in db
-        document.getElementById('alertSuccess').style.display = 'block';
-        document.getElementById('passwordFormContainer').style.display = 'none';
-    }
-    else { //figure out which method to give user and where on screen to place
-        //new password doesn't meet criteria
-        //(8+ char, 1+ uppercase, 1+ lowercase, 1+ number, 1+ special char)
-        if (context.invalidNewPassword) {
-            document.getElementById('alertInfo').style.display = 'block';
-            document.getElementById('newPasswordError').innerText = context.invalidMessage;
-            document.getElementById('newPasswordError').style.display = 'block';
-        }
-        //new password re-entry mismatch
-        else if (context.invalidNewPasswordRe) {
-            document.getElementById('alertWarning').style.display = 'block';
-            document.getElementById('newPasswordReError').innerText = context.invalidMessage;
-            document.getElementById('newPasswordReError').style.display = 'block';
-        }
-        //incorect old password was provided by user
-        else if (context.invalidOldPassword) {
-            document.getElementById('alertInfo').style.display = 'block';
-            document.getElementById('oldPasswordError').innerText = context.invalidMessage;
-            document.getElementById('oldPasswordError').style.display = 'block';
-        }
-        else { //server error occurred
-            document.getElementById('alertError').style.display = 'block';
-            document.getElementById('passwordFormContainer').style.display = 'none';
-        }
-    }
-}
 
+
+function invalidPasswordServer(context) {
+  if (context.passwordUpdated) {
+    //pword updated in db
+    document.getElementById('alertSuccess').style.display = 'block';
+    document.getElementById('passwordFormContainer').style.display = 'none';
+  } else {
+    //figure out which method to give user and where on screen to place
+    //new password doesn't meet criteria
+    //(8+ char, 1+ uppercase, 1+ lowercase, 1+ number, 1+ special char)
+    if (context.invalidNewPassword) {
+      document.getElementById('alertInfo').style.display = 'block';
+      document.getElementById('newPasswordError').innerText = context.invalidMessage;
+      document.getElementById('newPasswordError').style.display = 'block';
+    } //new password re-entry mismatch
+    else if (context.invalidNewPasswordRe) {
+        document.getElementById('alertWarning').style.display = 'block';
+        document.getElementById('newPasswordReError').innerText = context.invalidMessage;
+        document.getElementById('newPasswordReError').style.display = 'block';
+      } //incorect old password was provided by user
+      else if (context.invalidOldPassword) {
+          document.getElementById('alertInfo').style.display = 'block';
+          document.getElementById('oldPasswordError').innerText = context.invalidMessage;
+          document.getElementById('oldPasswordError').style.display = 'block';
+        } else {
+          //server error occurred
+          document.getElementById('alertError').style.display = 'block';
+          document.getElementById('passwordFormContainer').style.display = 'none';
+        }
+  }
+}
