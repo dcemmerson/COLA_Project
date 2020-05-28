@@ -101,11 +101,11 @@ function scrollSave(arr) {
 
 
 function scrollRestore(arr) {
-  document.getElementsByTagName('html')[0].style.scrollBehavior = "auto";
+  document.getElementsByTagName('html')[0].setAttribute('scrollBehavior', 'auto');
   arr.forEach(function (el) {
     el.element.scrollTo(el.scrollX, el.scrollY);
   });
-  document.getElementsByTagName('html')[0].style.scrollBehavior = "smooth";
+  document.getElementsByTagName('html')[0].setAttribute('scrollBehavior', 'smooth');
 }
 
 function addClasses(elements, classes) {
@@ -134,7 +134,7 @@ function removeClasses(elements, classes) {
 
 function hideElements(elements) {
   for (var i = 0; i < elements.length; i++) {
-    elements[i].style.display = 'none';
+    elements[i].setAttribute('display', 'none');
   }
 }
 
@@ -157,7 +157,7 @@ function displayReturnToTop() {
 
   if (html.clientHeight + 100 < body.clientHeight) {
     var rtt = document.getElementsByClassName('usa-footer__return-to-top')[0];
-    rtt.style.display = 'block';
+    rtt.setAttribute('display', 'block');
   }
 }
 

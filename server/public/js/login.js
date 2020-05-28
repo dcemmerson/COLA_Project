@@ -26,8 +26,8 @@ function _processCredentials() {
           case 0:
             _context.prev = 0;
             //hide any error messages
-            document.getElementById('invalid').style.display = 'none';
-            document.getElementById('unverified').style.display = 'none';
+            document.getElementById('invalid').setAttribute('display', 'none');
+            document.getElementById('unverified').setAttribute('display', 'none');
             button = document.getElementById('submitCredentials');
             buttonContainer = document.getElementById('submitButtonContainer');
             emailInput = document.getElementById('email');
@@ -90,14 +90,14 @@ function _processCredentials() {
 
 function validateEmail(email, emailInput, errorSpan) {
   //remove errors caused by previous submission attempts
-  errorSpan.style.display = 'none';
+  errorSpan.setAttribute('display', 'none');
   emailInput.classList.remove('usa-input--error');
   var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
   if (!re.test(String(email).toLowerCase())) {
     emailInput.classList.add('usa-input--error');
     errorSpan.innerText = "Please enter valid email";
-    errorSpan.style.display = 'block';
+    errorSpan.setAttribute('display', 'block');
     return false;
   }
 
@@ -113,12 +113,12 @@ function processServerResponse(context) {
   } else if (context.invalid) {
     if (!context.isVerified) {
       document.getElementById('unverifiedEmail').innerText = context.unverifiedEmail;
-      document.getElementById('unverified').style.display = 'block';
+      document.getElementById('unverified').setAttribute('display', 'block');
     } else {
-      document.getElementById('invalid').style.display = 'block';
+      document.getElementById('invalid').setAttribute('display', 'block');
     }
   } else {
-    document.getElementById('errorAlert').style.display = 'block';
-    document.getElementById('loginFormOuterContainer').style.display = 'none';
+    document.getElementById('errorAlert').setAttribute('display', 'block');
+    document.getElementById('loginFormOuterContainer').setAttribute('display', 'none');
   }
 }
