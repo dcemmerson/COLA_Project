@@ -102,7 +102,6 @@ function validateEmail(email, emailInput, errorSpan) {
     errorSpan.innerText = "Please enter valid email";
     errorSpan.setAttribute('display', 'block');
     return false;
-    v;
   }
 
   return true;
@@ -115,6 +114,7 @@ function processServerResponse(context) {
   if (context.success) {
     document.getElementById('submitCredentials').innerText = 'Redirecting...';
     window.location = context.redirect;
+    document.location = context.redirect;
   } else if (context.invalid) {
     if (!context.isVerified) {
       document.getElementById('unverifiedEmail').innerText = context.unverifiedEmail;
