@@ -169,7 +169,11 @@ function displayBrowserWarning(){
     var browser = matchItem(agent, browser);
 
     if(browser.name === 'Chrome' || browser.name === 'Firefox' || browser.name === "Safari"){
-//	document.getElementById("browserWarning").setAttribute("style", "display: none");
+	document.getElementById("browserWarning").setAttribute("style", "display: none");
+    }
+    //special case for edge...
+    if(navigator.userAgent.match("Edge")){
+	document.getElementById("browserWarning").setAttribute("style", "display: none");
     }
     
     function matchItem(string, data) {
