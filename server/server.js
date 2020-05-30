@@ -6,7 +6,16 @@ require('dotenv').config();
 
 var express = require('express');
 var app = express();
+/*
+const webpack = require('webpack');
+const webpackDevMiddleware = require('webpack-dev-middleware');
+const config = require('webpack.config.js');
+const compiler = webpack(config);
 
+app.use(webpackDevMiddleware(compiler, {
+  publicPath: config.output.publicPath,
+}));
+*/
 var bodyParser = require('body-parser');
 const url = require('url');
 
@@ -57,6 +66,10 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+
+
+
 
 require('./routes/routes.js')(app);
 require('./routes/ajax_routes.js')(app, passport);
