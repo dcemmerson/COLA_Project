@@ -6,16 +6,7 @@ require('dotenv').config();
 
 var express = require('express');
 var app = express();
-/*
-const webpack = require('webpack');
-const webpackDevMiddleware = require('webpack-dev-middleware');
-const config = require('webpack.config.js');
-const compiler = webpack(config);
 
-app.use(webpackDevMiddleware(compiler, {
-  publicPath: config.output.publicPath,
-}));
-*/
 var bodyParser = require('body-parser');
 const url = require('url');
 
@@ -23,7 +14,7 @@ var session = require('express-session');
 var mysql = require('./dbcon.js');
 
 var MySQLStore = require('express-mysql-session')(session);
-
+var useragent = require('express-useragent');
 
 let hbs = require('express-handlebars').create({
     defaultLayout: 'main',
@@ -66,7 +57,7 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
-
+app.use(useragent.express());
 
 
 
