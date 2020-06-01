@@ -46,15 +46,19 @@ document.addEventListener('DOMContentLoaded', async () => {
        a. upload a new template to use when creating new subscription
        b. select a previous template to use with new subscription
     */
-    document.getElementById('templateSelect').addEventListener('change', e => {
+    document.getElementById('templateSelect').addEventListener('change', () => {
         document.getElementById('uploadTemplate').value = '';
-        validateSubscription();
+        validateSubscription(false);
     });
-    document.getElementById('uploadTemplate').addEventListener('input', e => {
+    document.getElementById('uploadTemplate').addEventListener('input', () => {
         let select = document.getElementById('templateSelect');
         select.selectedIndex = 0;
-        validateSubscription();
+        validateSubscription(false);
     });
+    document.getElementById('postSelect').addEventListener('change', () => {
+	validateSubscription(false);
+    });
+    
 
     document.getElementById('submitNewSubscription').addEventListener('click', async e => {
         e.preventDefault();
@@ -69,14 +73,27 @@ document.addEventListener('DOMContentLoaded', async () => {
 	
     });
 
-    //event listeners for creating new subscription form
-    document.getElementById('postSelect').addEventListener('change', validateSubscription);
-    document.getElementById('uploadTemplate').addEventListener('change', validateSubscription);
-    document.getElementById('templateSelect').addEventListener('change', validateSubscription);
 
+    registerAlertDismissals();
     addSortEventListeners();
     
 });
+
+function registerAlertDismissals(){
+    let unsubscribeAlertBtns = document.getElementsByClassName('unsubscribeAlert');
+
+    Object.values(unsubscribeAlertBtns).forEach((el, ind) => {
+	el.getElementsByClassName('dismiss-alert')[0].addEventListener('click', () => {
+	    dismissAlert(el);
+	});
+    });
+
+}
+
+function dismissAlert(alert) {
+    alert.style.display = 'none';
+    document.getElementById('unsubscribeAlertBlank').style.display = 'block';
+}
 
 function addSortEventListeners(){
     let table = document.getElementById('subscriptionsTable');
@@ -130,7 +147,7 @@ export function clearUserSubscriptions() {
     document.getElementById('noActiveSubscriptions').style.display = 'none';
 }
 
-function clearDropdown(dropdown) {
+export function clearDropdown(dropdown) {
     while (dropdown.firstChild) {
         dropdown.removeChild(dropdown.firstChild);
     }
@@ -285,7 +302,7 @@ function validateSubscription(submit = false) {
     return valid;
 }
 
-function displayUnsubscribeAlert(element, post, country, tok, subscriptionId) {
+export function displayUnsubscribeAlert(element, post, country, tok, subscriptionId) {
     element.getElementsByClassName('unsubscribeMsgSpan')[0].innerText = `${country} (${post})`;
     element.style.display = 'block';
 
@@ -304,7 +321,7 @@ function restoreSubscription(e) {
 
     let undoLink = document.getElementById('undoLink');
 
-    deleteSubscription(null, undoLink.getAttribute('data-tok'),
+    sa.deleteSubscription(null, undoLink.getAttribute('data-tok'),
         undoLink.getAttribute('data-post'),
         undoLink.getAttribute('data-country'),
         undoLink.getAttribute('data-subscriptionId'));
@@ -332,11 +349,7 @@ export function checkEmptySubscriptions() {
     }
 }
 
-function dismissAlert(alert) {
-    alert.style.display = 'none';
-    document.getElementById('unsubscribeAlertBlank').style.display = 'block';
-}
-function populateTemplateDropdown(dropdown, templates) {
+export function populateTemplateDropdown(dropdown, templates) {
     var option = document.createElement('option');
     dropdown.appendChild(option);
 
@@ -349,7 +362,7 @@ function populateTemplateDropdown(dropdown, templates) {
     })
 }
 
-function addSubscriptionToTable(sub) {
+export function addSubscriptionToTable(sub) {
     let trs = document.getElementById('subscriptionTbody')
 	.getElementsByClassName('subscriptionRow');
 
@@ -357,7 +370,7 @@ function addSubscriptionToTable(sub) {
     sortRows(document.getElementById('subscriptionsTable'));
 }
 
-function checkPreviousAllowance99() {
+export function checkPreviousAllowance99() {
     let prevs = document.getElementsByClassName('prevAllowance');
     for (let i = 0; i < prevs.length; i++) {
         if (prevs[i].innerText.match('n/a') && prevs[i].parentElement.style.display !== "none") {
@@ -519,7 +532,7 @@ function addTableIcons(tr, sub) {
    postconditions: table has been search for subscription id and tr corresponding to
                    subscriptionId has been either hidden or deleted depending on del.
 */
-function updateTable(subscriptionId, del) {
+export function updateTable(subscriptionId, del) {
     let tbody = document.getElementById('subscriptionTbody');
     let trs = tbody.getElementsByTagName('tr');
 

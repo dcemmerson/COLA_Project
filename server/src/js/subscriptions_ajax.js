@@ -1,5 +1,10 @@
 import * as utility from './utility.js';
-import {clearUserSubscriptions, populateSubscriptionTable, checkEmptySubscriptions, newSubscriptionSuccess, addDownloadFromPreview, pdfToCanvas} from './subscriptions.js';
+import {clearUserSubscriptions, populateSubscriptionTable,
+	checkEmptySubscriptions, newSubscriptionSuccess,
+	addDownloadFromPreview, pdfToCanvas, clearDropdown,
+	addSubscriptionToTable, populateTemplateDropdown,
+	displayUnsubscribeAlert, updateTable,
+	checkPreviousAllowance99} from './subscriptions.js';
 
 export function templatePreview(templateId, tok = null) {
     var label = document.getElementById('previewTemplateLabel');

@@ -18,7 +18,6 @@ module.exports = {
 	subscriptions: ['whatwg-fetch', './src/js/subscriptions.js'],
 	userInfo: './src/js/userInfo.js',
 	home: './src/js/home.js',
-	empty: './src/js/empty.js',
     },
 //    devtool: 'inline-source-map',
     plugins: [
