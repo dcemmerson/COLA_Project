@@ -1,28 +1,21 @@
 require('core-js'); // require first!!
 require('regenerator-runtime/runtime');
+require('@babel/preset-env');
 const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
     mode: 'production',
     entry: {
-	account: './src/js/account.js',
-//	account_ajax: './src/js/account_ajax.js',
-	createAccount: './src/js/createAccount.js',
-//	createAccount_ajax: './src/js/createAccount_ajax.js',
-	FAQ: './src/js/FAQ.js',
-	login: './src/js/login.js',
-//	login_ajax: './src/js/login_ajax.js',
-	recover: './src/js/recover.js',
-//	recover_ajax: './src/js/recover_ajax.js',
-	requestVerificationCode: './src/js/requestVerificationCode.js',
-//	requestVerificationCode_ajax: './src/js/requestVerificationCode_ajax.js',
-	reset: './src/js/reset.js',
-//	reset_ajax: './src/js/reset_ajax.js',
-	subscriptions: './src/js/subscriptions.js',
-//	subscriptions_ajax: './src/js/subscriptions_ajax.js',	
+	account: ['core-js', './src/js/account.js'],
+	createAccount: ['core-js', './src/js/createAccount.js'],
+	FAQ: ['core-js', './src/js/FAQ.js'],
+	login: ['core-js', './src/js/login.js'],
+	recover: ['core-js', './src/js/recover.js'],
+	requestVerificationCode: ['core-js', './src/js/requestVerificationCode.js'],
+	reset: ['core-js', './src/js/reset.js'],
+	subscriptions: ['core-js', './src/js/subscriptions.js'],
 	userInfo: './src/js/userInfo.js',
-	//	utility: './src/js/utility.js',
 	home: './src/js/home.js',
     },
 //    devtool: 'inline-source-map',
@@ -34,7 +27,6 @@ module.exports = {
 	path: path.resolve(__dirname, 'public/js'),
 	publicPath: '/',
     },
-
     module: {
 	rules: [
 	    {
@@ -44,16 +36,26 @@ module.exports = {
 		    loader: 'babel-loader',
 		    options: {
 			presets: [
+/*			    ['@babel/preset-env', {
+				useBuiltIns: 'usage',
+				corejs: '3',
+			    }]
+			],
+*/
 			    ['@babel/preset-env', {
+				targets: {
+				    browsers: [">0.25%", "ie >= 11"]
+				},
 				useBuiltIns: 'usage',
 				corejs: '3',
 			    }]
 			],
 			cacheDirectory: true,
+			
 		    }
 		}
 	    }
 	]
     },
-
+    
 };
