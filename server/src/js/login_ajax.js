@@ -4,6 +4,7 @@ export function submitRequest(email, password) {
         headers: {
             'Content-Type': 'application/json'
         },
+	cache: 'no-store',
 	credentials: 'same-origin',
         body: JSON.stringify({ username: email, password: password })
     })

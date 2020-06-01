@@ -9,6 +9,7 @@ export async function submitCredentials() {
         headers: {
             'Content-Type': 'application/json'
         },
+	cache: 'no-store',
 	credentials: 'same-origin',
         body: JSON.stringify(context)
     })

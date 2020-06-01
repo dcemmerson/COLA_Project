@@ -161,6 +161,7 @@ export async function addNewSubscriptionPrevTemplate(postId, prevTemp) {
                 'Content-Type': 'application/JSON'
 	    },
 	    credentials: 'same-origin',
+	    cache: 'no-store',
 	    body: JSON.stringify(context)
         })
 
@@ -188,6 +189,7 @@ export async function addNewSubscriptionWithTemplateFile(postId, uploadTemp) {
         var response = await fetch('/add_new_subscription_with_template_file', {
 	    method: 'POST',
 	    credentials: 'same-origin',
+	    cache: 'no-store',
 	    body: fd
         })
 
@@ -209,7 +211,9 @@ export async function fetchUserTemplates() {
 	
         let response = await fetch('/get_user_template_list', {
 	    method: 'GET',
-	    credentials: 'same-origin'})
+	    cache: 'no-store',
+	    credentials: 'same-origin'
+	})
         let res = await response.json();
 
         clearDropdown(templateSelect);
@@ -229,7 +233,9 @@ export async function fetchUserSubscriptionList() {
         clearUserSubscriptions();
         let response = await fetch('/get_user_subscription_list', {
 	    method: 'GET',
-	    credentials: 'same-origin'})
+	    cache: 'no-store',
+	    credentials: 'same-origin'
+	})
         let res = await response.json();
         utility.removeSpinner(document.getElementById('subscriptionsContainerSpinner'));
         populateSubscriptionTable(res);
@@ -265,7 +271,9 @@ export async function deleteSubscription(thisEl, tok, post, country, subscriptio
 
         let response = await fetch(`/delete_subscription?tok=${tok}`, {
 	    method: 'GET',
-	    credentials: 'same-origin'})
+	    cache: 'no-store',
+	    credentials: 'same-origin'
+	})
         let res = await response.json();
 
         utility.hideElements(document.getElementsByClassName('unsubscribeAlert'));
@@ -366,7 +374,9 @@ export function fireSubscriptionEmail(thisEl, tok, post, country) {
 
     return fetch(`/fire_subscription_email?tok=${tok}`, {
 	method: 'GET',
-	credentials: 'same-origin'})
+	credentials: 'same-origin',
+    	cache: 'no-store'
+    })
         .then(response => {
 	    if (response.status == 200)
                 return response.json();
