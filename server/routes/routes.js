@@ -11,7 +11,7 @@ module.exports = function (app) {
         context.title = 'COLA Notifications';
         context.homepage = true;
 
-
+	console.log(req.useragent);
         misc.setLayout(req, context)
             .catch(() => console.log('error in setLayout'))
             .finally(() => res.render('home', context))

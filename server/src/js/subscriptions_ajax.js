@@ -18,10 +18,14 @@ export function templatePreview(templateId, tok = null) {
     let fe;
 
     if (templateId) {
-        fe = fetch(`/preview_template?templateId=${templateId}`)
+        fe = fetch(`/preview_template?templateId=${templateId}`, {
+	    method: 'GET',
+	    credentials: 'same-origin'})
     }
     else {
-        fe = fetch(`/preview_subscription?tok=${tok}`)
+        fe = fetch(`/preview_subscription?tok=${tok}`, {
+	    method: 'GET',
+	    credentials: 'same-origin'})
     }
 
     fe.then(response => {
@@ -57,7 +61,9 @@ export function templateDownload(templateId) {
     dlts.classList.remove('downloadError', 'downloadSuccess');
 
     utility.showSpinner(dlts, ' md', true);
-    return fetch(`/download_template?templateId=${templateId}`)
+    return fetch(`/download_template?templateId=${templateId}`, {
+	method: 'GET',
+	credentials: 'same-origin'})
         .then(response => {
 	    if (response.status == 200)
                 return response.json();
@@ -154,6 +160,7 @@ export async function addNewSubscriptionPrevTemplate(postId, prevTemp) {
 	    headers: {
                 'Content-Type': 'application/JSON'
 	    },
+	    credentials: 'same-origin',
 	    body: JSON.stringify(context)
         })
 
@@ -180,6 +187,7 @@ export async function addNewSubscriptionWithTemplateFile(postId, uploadTemp) {
 
         var response = await fetch('/add_new_subscription_with_template_file', {
 	    method: 'POST',
+	    credentials: 'same-origin',
 	    body: fd
         })
 
@@ -198,8 +206,10 @@ export async function fetchUserTemplates() {
         var templateSelect = document.getElementById('templateSelect');
         clearDropdown(templateSelect);
         templateSelect.innerHTML = '<option>Loading...<i class="fa fa-spinner spinner"></i></option>';
-
-        let response = await fetch('/get_user_template_list')
+	
+        let response = await fetch('/get_user_template_list', {
+	    method: 'GET',
+	    credentials: 'same-origin'})
         let res = await response.json();
 
         clearDropdown(templateSelect);
@@ -217,7 +227,9 @@ export async function fetchUserTemplates() {
 export async function fetchUserSubscriptionList() {
     try {
         clearUserSubscriptions();
-        let response = await fetch('/get_user_subscription_list')
+        let response = await fetch('/get_user_subscription_list', {
+	    method: 'GET',
+	    credentials: 'same-origin'})
         let res = await response.json();
         utility.removeSpinner(document.getElementById('subscriptionsContainerSpinner'));
         populateSubscriptionTable(res);
@@ -227,8 +239,6 @@ export async function fetchUserSubscriptionList() {
         console.log(err);
     }
 }
-
-
 
 /* name: deleteSubscription
    preconditions: tok contains all necessary info needed in /delete_subscriptions route,
@@ -253,9 +263,10 @@ export async function deleteSubscription(thisEl, tok, post, country, subscriptio
         tableCover.style.display = 'block';
         spinner.style.display = 'inline-block';
 
-        let response = await fetch(`/delete_subscription?tok=${tok}`)
+        let response = await fetch(`/delete_subscription?tok=${tok}`, {
+	    method: 'GET',
+	    credentials: 'same-origin'})
         let res = await response.json();
-
 
         utility.hideElements(document.getElementsByClassName('unsubscribeAlert'));
         if (res.deleted) {
@@ -308,7 +319,9 @@ export function downloadSubscription(thisEl, tok, post, country) {
 
     thisEl.parentNode.disabled = true;
     utility.classTimer(thisEl, 'downloadSubscription', 'downloadSubscriptionSecondary');
-    return fetch(`/download_subscription?tok=${tok}`)
+    return fetch(`/download_subscription?tok=${tok}`, {
+	method: 'GET',
+	credentials: 'same-origin'})
         .then(response => {
 	    if (response.status == 200)
                 return response.json();
@@ -351,7 +364,9 @@ export function fireSubscriptionEmail(thisEl, tok, post, country) {
     thisEl.parentNode.disabled = true;
     utility.classTimer(thisEl, 'email', 'emailSecondary');
 
-    return fetch(`/fire_subscription_email?tok=${tok}`)
+    return fetch(`/fire_subscription_email?tok=${tok}`, {
+	method: 'GET',
+	credentials: 'same-origin'})
         .then(response => {
 	    if (response.status == 200)
                 return response.json();
@@ -377,4 +392,3 @@ export function fireSubscriptionEmail(thisEl, tok, post, country) {
 
         })
 }
-

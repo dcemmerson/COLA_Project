@@ -1,4 +1,3 @@
-
 import * as utility from './utility.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -65,7 +64,9 @@ async function defaultTemplatePreview() {
     $('#previewTemplateModal').modal({ keyboard: true, focus: true });
 
 
-    fetch(`/preview_default_template`)
+    fetch(`/preview_default_template`, {
+	method: 'GET',
+	credentials: 'same-origin'})
         .then(response => {
             if (response.status == 200)
                 return response.json();
@@ -111,7 +112,9 @@ function defaultTemplateDownload() {
     dlts.classList.remove('downloadTemplate', 'downloadTemplateError', 'downloadTemplateSuccess');
     dlts.classList.add('fa', 'fa-spinner', 'fa-spin');
     
-    return fetch(`/download_default_template`)
+    return fetch(`/download_default_template`, {
+	method: 'GET',
+	credentials: 'same-origin'})
         .then(response => {
             if (response.status == 200)
                 return response.json();
