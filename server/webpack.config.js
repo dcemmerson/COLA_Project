@@ -1,22 +1,24 @@
 require('core-js'); // require first!!
 require('regenerator-runtime/runtime');
-require('@babel/preset-env');
+//require('@babel/preset-env');
+
 const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
     mode: 'production',
     entry: {
-	account: ['core-js', './src/js/account.js'],
-	createAccount: ['core-js', './src/js/createAccount.js'],
-	FAQ: ['core-js', './src/js/FAQ.js'],
-	login: ['core-js', './src/js/login.js'],
-	recover: ['core-js', './src/js/recover.js'],
-	requestVerificationCode: ['core-js', './src/js/requestVerificationCode.js'],
-	reset: ['core-js', './src/js/reset.js'],
-	subscriptions: ['core-js', './src/js/subscriptions.js'],
+	account: ['whatwg-fetch', './src/js/account.js'],
+	createAccount: ['whatwg-fetch', './src/js/createAccount.js'],
+	FAQ: ['whatwg-fetch', './src/js/FAQ.js'],
+	login: ['whatwg-fetch', './src/js/login.js'],
+	recover: ['whatwg-fetch', './src/js/recover.js'],
+	requestVerificationCode: ['whatwg-fetch', './src/js/requestVerificationCode.js'],
+	reset: ['whatwg-fetch', './src/js/reset.js'],
+	subscriptions: ['whatwg-fetch', './src/js/subscriptions.js'],
 	userInfo: './src/js/userInfo.js',
 	home: './src/js/home.js',
+	empty: './src/js/empty.js',
     },
 //    devtool: 'inline-source-map',
     plugins: [
@@ -36,12 +38,6 @@ module.exports = {
 		    loader: 'babel-loader',
 		    options: {
 			presets: [
-/*			    ['@babel/preset-env', {
-				useBuiltIns: 'usage',
-				corejs: '3',
-			    }]
-			],
-*/
 			    ['@babel/preset-env', {
 				targets: {
 				    browsers: [">0.25%", "ie >= 11"]
