@@ -1,3 +1,5 @@
+import * as utility from './utility.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     let mainContainer = document.getElementById('mainContainer');
     
@@ -29,20 +31,20 @@ function sortRows(table, element, sortCol){
     let list = constructRowObjects(userRows, sortCol);
 
     if(element.classList.contains('sortedUp')){
-	insertionSort(list, false);
-	removeSortClasses(table.getElementsByClassName('thead')[0].getElementsByClassName('sortIcon'));
+	utility.insertionSort(list, false);
+	utility.removeSortClasses(table.getElementsByClassName('thead')[0].getElementsByClassName('sortIcon'));
 	element.classList.remove('sort');
 	element.classList.add('sortedDown');
     }
     else{
-	insertionSort(list, true);
-	removeSortClasses(table.getElementsByClassName('thead')[0].getElementsByClassName('sortIcon'));
+	utility.insertionSort(list, true);
+	utility.removeSortClasses(table.getElementsByClassName('thead')[0].getElementsByClassName('sortIcon'));
 	element.classList.remove('sort');
 	element.classList.add('sortedUp');
     }
 
-    clearTableRows(table);
-    displayTableRows(table, list);
+    utility.clearTableRows(table);
+    utility.displayTableRows(table, list);
     
 }
 
@@ -51,20 +53,20 @@ function sortGroups(table, element, sortCol){
     let list = constructGroupObjects(table.getElementsByTagName('tbody'), sortCol);
 
     if(element.classList.contains('sortedUp')){
-	insertionSort(list, false);
-	removeSortClasses(table.getElementsByClassName('thead')[0].getElementsByClassName('sortIcon'));
+	utility.insertionSort(list, false);
+	utility.removeSortClasses(table.getElementsByClassName('thead')[0].getElementsByClassName('sortIcon'));
 	element.classList.remove('sort');
 	element.classList.add('sortedDown');
     }
     else{
-	insertionSort(list, true);
-	removeSortClasses(table.getElementsByClassName('thead')[0].getElementsByClassName('sortIcon'));
+	utility.insertionSort(list, true);
+	utility.removeSortClasses(table.getElementsByClassName('thead')[0].getElementsByClassName('sortIcon'));
 	element.classList.remove('sort');
 	element.classList.add('sortedUp');
     }
 
-    clearTableGroups(table);
-    displayTableGroups(table, list);
+    utility.clearTableGroups(table);
+    utility.displayTableGroups(table, list);
     
 }
 

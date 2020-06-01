@@ -6,7 +6,7 @@ module.exports = function (app) {
     app.get('/', function (req, res) {
         let context = {};
         context.style = ['styles.css', 'font_size.css', 'home.css'];
-        context.script = ['utility.min.js'];
+        context.script = ['home.min.js'];
 
         context.title = 'COLA Notifications';
         context.homepage = true;

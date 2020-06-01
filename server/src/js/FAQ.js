@@ -1,3 +1,4 @@
+
 import * as utility from './utility.js';
 
 document.addEventListener('DOMContentLoaded', () => {
