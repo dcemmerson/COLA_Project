@@ -1,5 +1,5 @@
 import * as utility from './utility.js';
-import {clearUserSubscriptions, populateSubscriptionTable, checkEmptySubscriptions, newSubscriptionSuccess} from './subscriptions.js';
+import {clearUserSubscriptions, populateSubscriptionTable, checkEmptySubscriptions, newSubscriptionSuccess, addDownloadFromPreview, pdfToCanvas} from './subscriptions.js';
 
 export function templatePreview(templateId, tok = null) {
     var label = document.getElementById('previewTemplateLabel');
@@ -29,8 +29,8 @@ export function templatePreview(templateId, tok = null) {
                 throw new Error("Error retrieving file");
 	    utility.removeSpinner(label);
 
-	    label.innerHTML = `<i id="downloadFromPreview" class="mr-3 downloadSubscriptionLg" onClick="downloadFromPreview(this, '${templateId}', '${tok}', '${res.post}', '${res.country}')"></i> ${res.filename}`;
-
+	    label.innerText = res.filename;
+	    addDownloadFromPreview(label, templateId, tok, res.post, res.country);
 	    
 	    let uint8arr = new Uint8Array(res.file.data);
 	    return pdfToCanvas(uint8arr);
@@ -62,13 +62,14 @@ export function templateDownload(templateId) {
 	    if (!res.success)
                 throw new Error("Error retrieving file");
 
-	    clientDownloadFile(res);
+	    utility.clientDownloadFile(res);
 
 	    dlts.classList.add('downloadSuccess');
         })
         .catch(err => {
 	    console.log(err);
 	    dlts.classList.add('downloadError');
+	    throw new Error("Error retrieving file");
         })
         .finally(() => {
 	    utility.removeSpinner(dlts, ' md');
@@ -312,7 +313,7 @@ export function downloadSubscription(thisEl, tok, post, country) {
 	    if (!res.success)
                 throw new Error("Error retrieving file");
 
-	    clientDownloadFile(res);
+	    utility.clientDownloadFile(res);
 	    utility.classTimer(thisEl, 'downloadSubscriptionSecondary', 'downloadSubscriptionSuccess', 'downloadSubscription', 3000);
         })
         .catch(err => {

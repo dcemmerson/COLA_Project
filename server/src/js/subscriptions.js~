@@ -1,13 +1,10 @@
-import * as sa from './subscriptions_ajax.js';
-import * as utility from './utility.js';
-
-const LINESPACING = 10; 
+const LINESPACING = 10;
 document.addEventListener('DOMContentLoaded', async () => {
-    let subscriptionList = await sa.fetchUserSubscriptionList();
+    let subscriptionList = await fetchUserSubscriptionList();
 
     initializeForm();
     document.getElementById('subscribeAdditional').addEventListener('click', () => {
-        utility.hideElements($('.alert'));
+        hideElements($('.alert'));
         document.getElementById('infoContainer').style.display = "block";
         document.getElementById('subscriptionFormContainer').style.display = "block";
     });
@@ -18,7 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         let templateId = tempSelect[tempSelect.selectedIndex].getAttribute('data-templateId');
 
         if (validPreview()) {
-            sa.templatePreview(templateId);
+            templatePreview(templateId);
         }
     });
 
@@ -29,7 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (validPreview(true)) {
             this.disabled = true;
-            await sa.templateDownload(templateId);
+            await templateDownload(templateId);
             this.disabled = false;
 
         }
@@ -38,60 +35,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     //when user exits modal, reset modal to be ready to user to preview
     //another template
     $('#previewTemplateModal').on('hidden.bs.modal', () => {
-        utility.clearCanvas(document.getElementById('previewCanvas'));
+        clearCanvas(document.getElementById('previewCanvas'));
         document.getElementById('previewTemplateLabel').innerText = "";
     });
-
-    /* register event handlers to ensure user does only one of the following:
-       a. upload a new template to use when creating new subscription
-       b. select a previous template to use with new subscription
-    */
-    document.getElementById('templateSelect').addEventListener('change', e => {
-        document.getElementById('uploadTemplate').value = '';
-        validateSubscription();
-    });
-    document.getElementById('uploadTemplate').addEventListener('input', e => {
-        let select = document.getElementById('templateSelect');
-        select.selectedIndex = 0;
-        validateSubscription();
-    });
-
-    document.getElementById('submitNewSubscription').addEventListener('click', async e => {
-        e.preventDefault();
-        document.getElementById('submitNewSubscription').disabled = true;
-        utility.showSpinner(document.getElementById('addNewSubscriptionButtons'));
-
-        if (validateSubscription(true))
-            await sa.submitNewSubscription();
-
-        document.getElementById('submitNewSubscription').disabled = false;
-        utility.removeSpinner(document.getElementById('addNewSubscriptionButtons'));
-	
-    });
-
-    //event listeners for creating new subscription form
-    document.getElementById('postSelect').addEventListener('change', validateSubscription);
-    document.getElementById('uploadTemplate').addEventListener('change', validateSubscription);
-    document.getElementById('templateSelect').addEventListener('change', validateSubscription);
-
-    addSortEventListeners();
     
 });
 
-function addSortEventListeners(){
-    let table = document.getElementById('subscriptionsTable');
-    let icons = document.getElementsByClassName('sortIcon');
-
-    Object.values(icons).forEach((el, ind) => {
-	el.addEventListener('click', () => {
-	    sortRows(table, el, ind);
-	});
-    })
-
-    
-}
-
-export function pdfToCanvas(uint8arr) {
+function pdfToCanvas(uint8arr) {
     return new Promise((resolve, reject) => {
         var loadingTask = pdfjsLib.getDocument(uint8arr);
         loadingTask.promise.then(function (pdf) {
@@ -121,13 +71,14 @@ export function pdfToCanvas(uint8arr) {
     })
 }
 
-export function clearUserSubscriptions() {
+function clearUserSubscriptions() {
     let tbody = document.getElementById('subscriptionTbody');
     while (tbody.firstChild)
         tbody.removeChild(tbody.firstChild);
 
     document.getElementById('subscriptionsTable').style.display = 'none';
     document.getElementById('noActiveSubscriptions').style.display = 'none';
+
 }
 
 function clearDropdown(dropdown) {
@@ -136,10 +87,9 @@ function clearDropdown(dropdown) {
     }
 }
 
-export function newSubscriptionSuccess(postId) {
-    utility.hideElements(document.getElementsByClassName('alert'));
-    utility.hideElements([document.getElementById('subscriptionFormContainer')]);
-
+function newSubscriptionSuccess(postId) {
+    hideElements(document.getElementsByClassName('alert'));
+    hideElements([document.getElementById('subscriptionFormContainer')]);
     let successContainer = document.getElementById('successContainer');
     successContainer.style.display = 'block';
 
@@ -173,16 +123,16 @@ function initializeForm() {
     // on alert validation to help user understand the alert is responsive
     if (upTemp.value && !reg.exec(upTemp.value)) {
         //ending of file is not .doc or .doc
-        utility.removeClasses(tempVal, ['val', 'invalBlank']);
-        utility.addClasses(tempVal, ['invalid']);
+        removeClasses(tempVal, ['val', 'invalBlank']);
+        addClasses(tempVal, ['invalid']);
         upTemp.classList.add('usa-input--error');
         validatePost();
     }
     else if (prevTemp.selectedIndex !== 0
         && !reg.exec(prevTemp[prevTemp.selectedIndex].value)) {
         //ending of file is not .doc or .doc
-        utility.removeClasses(tempVal, ['val', 'invalBlank']);
-        utility.addClasses(tempVal, ['invalid']);
+        removeClasses(tempVal, ['val', 'invalBlank']);
+        addClasses(tempVal, ['invalid']);
         prevTemp.classList.add('usa-input--error');
         validatePost();
     }
@@ -215,14 +165,14 @@ function validatePost(submit = false) {
 
     //////////////////// check for selected post ///////////////////
     if (postSelect.selectedIndex === 0) {
-        utility.removeClasses(postVals, ['val']);
-        utility.addClasses(postVals, ['invalBlank']);
+        removeClasses(postVals, ['val']);
+        addClasses(postVals, ['invalBlank']);
         var valid = false;
         if (submit) postSelect.classList.add('usa-input--error');
     }
     else {
-        utility.removeClasses(postVals, ['invalBlank']);
-        utility.addClasses(postVals, ['val']);
+        removeClasses(postVals, ['invalBlank']);
+        addClasses(postVals, ['val']);
         postSelect.classList.remove('usa-input--error');
 
         var valid = true;
@@ -240,8 +190,8 @@ function validateSubscription(submit = false) {
 
     ////////////////// check for template - ensure doc/docx ending ///////
     if (!upTemp.value && prevTemp.selectedIndex === 0) {
-        utility.removeClasses(tempVals, ['val', 'invalid']);
-        utility.addClasses(tempVals, ['invalBlank']);
+        removeClasses(tempVals, ['val', 'invalid']);
+        addClasses(tempVals, ['invalBlank']);
 
         if (submit) {
             upTemp.classList.add('usa-input--error');
@@ -252,8 +202,8 @@ function validateSubscription(submit = false) {
     else if (!reg.exec(upTemp.value)
         && !reg.exec(prevTemp[prevTemp.selectedIndex].value)) {
         //ending of file is not .doc or .doc
-        utility.removeClasses(tempVals, ['val', 'invalBlank']);
-        utility.addClasses(tempVals, ['invalid']);
+        removeClasses(tempVals, ['val', 'invalBlank']);
+        addClasses(tempVals, ['invalid']);
 
         if (submit) {
             document.getElementById('infoContainer').style.display = 'none';
@@ -269,8 +219,8 @@ function validateSubscription(submit = false) {
         valid = false;
     }
     else { //everything looks okay
-        utility.removeClasses(tempVals, ['invalBlank', 'invalid']);
-        utility.addClasses(tempVals, ['val']);
+        removeClasses(tempVals, ['invalBlank', 'invalid']);
+        addClasses(tempVals, ['val']);
 
         upTemp.classList.remove('usa-input--error');
         prevTemp.classList.remove('usa-input--error');
@@ -311,7 +261,7 @@ function restoreSubscription(e) {
 
 }
 
-export function checkEmptySubscriptions() {
+function checkEmptySubscriptions() {
     let table = document.getElementById('subscriptionsTable');
     let tbody = document.getElementById('subscriptionTbody');
     let msgDiv = document.getElementById('noActiveSubscriptions');
@@ -368,8 +318,7 @@ function checkPreviousAllowance99() {
 
     document.getElementById('prevAllowanceWarning').style.display = 'none';
 }
-
-export function populateSubscriptionTable(res, rowNum = null) {
+function populateSubscriptionTable(res, rowNum = null) {
     let tbody = document.getElementById('subscriptionTbody');
     res.subscriptionList.forEach(sub => {
 	
@@ -453,7 +402,7 @@ function addTableIcons(tr, sub) {
     prevBtn.setAttribute('title', `Preview ${sub.country} (${sub.post}) document`);
     prevBtn.addEventListener('click', e => {
         e.preventDefault();
-        sa.templatePreview(null, sub.tok);
+        templatePreview(null, sub.tok);
     });
     let iPrev = document.createElement('i');
     iPrev.setAttribute('class', 'preview');
@@ -470,7 +419,7 @@ function addTableIcons(tr, sub) {
     downloadBtn.appendChild(iDl);
     downloadBtn.addEventListener('click', e => {
         e.preventDefault();
-        sa.downloadSubscription(iDl, sub.tok, sub.post, sub.country);
+        downloadSubscription(iDl, sub.tok, sub.post, sub.country);
     });
     td2.appendChild(downloadBtn);
 
@@ -484,7 +433,7 @@ function addTableIcons(tr, sub) {
     delBtn.appendChild(iDel);
     delBtn.addEventListener('click', e => {
         e.preventDefault();
-        sa.deleteSubscription(iDel, sub.tok, sub.post, sub.country, sub.subscriptionId);
+        deleteSubscription(iDel, sub.tok, sub.post, sub.country, sub.subscriptionId);
     });
     td3.appendChild(delBtn);
 
@@ -498,9 +447,10 @@ function addTableIcons(tr, sub) {
     emailBtn.appendChild(iEmail);
     emailBtn.addEventListener('click', e => {
         e.preventDefault();
-        sa.fireSubscriptionEmail(iEmail, sub.tok, sub.post, sub.country);
+        fireSubscriptionEmail(iEmail, sub.tok, sub.post, sub.country);
     });
     td4.appendChild(emailBtn);
+
 
     tdMain.appendChild(tr1);
     tr1.appendChild(td1);
@@ -546,23 +496,23 @@ function sortRows(table, element=null, sortCol=null){
     let list = constructRowObjects(userRows, sortColG);
 
     if(sortCol !== null && element !== null && element.classList.contains('sortedDown')){
-	utility.insertionSort(list, true);
-	utility.removeSortClasses(table.getElementsByClassName('thead')[0].getElementsByClassName('sortIcon'));
+	insertionSort(list, true);
+	removeSortClasses(table.getElementsByClassName('thead')[0].getElementsByClassName('sortIcon'));
 	element.classList.remove('sort');
 	element.classList.add('sortedUp');
 	sortAscG = true;
     }
     else if(sortCol !== null && element !== null && element.classList.contains('sortedUp')){
-	utility.insertionSort(list, false);
-	utility.removeSortClasses(table.getElementsByClassName('thead')[0].getElementsByClassName('sortIcon'));
+	insertionSort(list, false);
+	removeSortClasses(table.getElementsByClassName('thead')[0].getElementsByClassName('sortIcon'));
 	element.classList.remove('sort');
 	element.classList.add('sortedDown');
 	sortAscG = false;
     }
     else if(sortCol !== null && element !== null){
 	// Then we need to sort ascending - user did not just re-sort by this column.
-	utility.insertionSort(list, true);
-	utility.removeSortClasses(table.getElementsByClassName('thead')[0].getElementsByClassName('sortIcon'));
+	insertionSort(list, true);
+	removeSortClasses(table.getElementsByClassName('thead')[0].getElementsByClassName('sortIcon'));
 	element.classList.remove('sort');
 	element.classList.add('sortedUp');
 	sortAscG = false;
@@ -570,11 +520,11 @@ function sortRows(table, element=null, sortCol=null){
     else{
 	// This method was triggered by user creating new subscription and we
 	// just need to resort the list in the same order it's already sorted
-	utility.insertionSort(list, sortAscG);
+	insertionSort(list, sortAscG);
     }
 
-    utility.clearTableRows(table);
-    utility.displayTableRows(table, list);
+    clearTableRows(table);
+    displayTableRows(table, list);
 }
 
 function constructRowObjects(trs, sortCol){
@@ -598,13 +548,13 @@ async function downloadFromPreview(el, templateId, tok, post, country){
     el.classList.add('fa', 'fa-spinner', 'fa-spin');
     
     try{
-	if(templateId !== null){
+	if(templateId !== "null"){
 	    // then just download the template file without dynamic changes
-	    await sa.templateDownload(templateId);
+	    await templateDownload(templateId);
 	}
 	else{
 	    // download subscription with dynamic changes
-	    sa.downloadSubscription(el, tok, post, country);
+	    downloadSubscription(el, tok, post, country);
 	}
 	el.classList.add('downloadSubscriptionSuccessLg');
     }
@@ -619,20 +569,6 @@ async function downloadFromPreview(el, templateId, tok, post, country){
 	    el.classList.add('downloadSubscriptionLg');
 	}, 5000)
     }
-}
-
-export function addDownloadFromPreview(el, templateId, tok, post, country){
-    let i = document.createElement('i');
-    i.setAttribute('id', 'downloadFromPreview');
-    i.setAttribute('class', 'mr-3 downloadSubscriptionLg');
-    console.log(templateId);
-    console.log(tok);
-    
-    i.addEventListener('click', () => {
-	downloadFromPreview(i, templateId, tok, post, country);
-    });
-
-    el.insertBefore(i, el.childNodes[0]);
 }
 
 // Use these two global variables to keep track of sorting done since

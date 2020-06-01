@@ -22,8 +22,9 @@ module.exports = {
 	subscriptions_ajax: './src/js/subscriptions_ajax.js',	
 	userInfo: './src/js/userInfo.js',
 	utility: './src/js/utility.js',
+//	pdf: './src/js/pdf.js'
     },
-    devtool: 'inline-source-map',
+//    devtool: 'inline-source-map',
     devServer: {
 	contentBase: './dist',
     },
@@ -34,7 +35,7 @@ module.exports = {
 	}),
     ],
     output: {
-	filename: '[name].bundle.js',
+	filename: '[name].min.js',
 	path: path.resolve(__dirname, 'public/js'),
 	publicPath: '/',
     },

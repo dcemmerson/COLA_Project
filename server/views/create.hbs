@@ -19,7 +19,7 @@
   {{else}}
   <div class="container">
     <div class="row justify-content-around my-5">
-      <div id="alertError" class="mt-2 usa-alert usa-alert--error changePasswordAlert max-width-900 width-100" style="display:none">
+      <div id="alertError" class="my-2 usa-alert usa-alert--error changePasswordAlert max-width-900 width-100" style="display:none">
 	<div class="usa-alert__body">
 	  <h3 class="usa-alert__heading">Error creating account</h3>
 	  <p class="usa-alert__text">Something unexpected occurred. Please <a href="/create_account">refresh</a> page and try again.</p>
@@ -50,7 +50,7 @@
 		  <label for="email" class="usa-label mt-2 mr-2"><strong>Email</strong></label>
 		  <span class="usa-error-message emailError" id="emailError" role="alert"
 			style="display:none"></span>
-		  <input id="email" type="email" class="usa-input" oninput="validEmail()">
+		  <input id="email" type="email" class="usa-input">
 		  
 		</div>
 		<!-- 2. new password -->
@@ -58,7 +58,7 @@
 		  <label for="password" class="usa-label mt-2 mr-2"><strong>Password</strong></label>
  		  <span class="usa-error-message passwordError" id="passwordError" role="alert"
 			style="display:none"></span>
-		  <input id="password" type="password" class="usa-input" oninput="validPassword()">
+		  <input id="password" type="password" class="usa-input">
 		</div>
 		<!-- 3. new password re-enter -->
 		<div class="form-group">

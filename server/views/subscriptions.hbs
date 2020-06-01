@@ -103,14 +103,14 @@
 		    <th scope="col">
 		      <span class="nowrap">
 			Country
-			<span class="sortIcon sort" onclick="sortRows(this.parentNode.parentNode.parentNode.parentNode.parentNode, this, 0)">
+			<span class="sortIcon sort">
 			</span>
 		      </span>
 		    </th>
 		    <th scope="col">
 		      <span class="nowrap">
 			Post
-			<span class="sortIcon sort" onclick="sortRows(this.parentNode.parentNode.parentNode.parentNode.parentNode, this, 1)">
+			<span class="sortIcon sort">
 			</span>
 		      </span>
 		    </th>
@@ -118,21 +118,21 @@
 		      Previous
 		      <span class="nowrap">
 			Allowance
-			<span class="sortIcon sort" onclick="sortRows(this.parentNode.parentNode.parentNode.parentNode.parentNode, this, 2)">
+			<span class="sortIcon sort">
 			</span>
 		      </span>
 		    </th>
 		    <th scope="col">
 		      <span class="nowrap">
 			Allowance
-			<span class="sortIcon sort" onclick="sortRows(this.parentNode.parentNode.parentNode.parentNode.parentNode, this, 3)">
+			<span class="sortIcon sort">
 			</span>
 		      </span>
 		    </th>
 		    <th scope="col">Effective
 		      <span class="nowrap">
 			Date
-			<span class="sortIcon sort" onclick="sortRows(this.parentNode.parentNode.parentNode.parentNode.parentNode, this, 4)">
+			<span class="sortIcon sort">
 			</span>
 		      </span>
 		    </th>
@@ -214,7 +214,7 @@
 	  <div class="">
 	    <div class="">
 	      <label for="postSelect" class="usa-label mt-2 ml-2 mr-2"><strong>1. Post</strong></label>
-	      <select id="postSelect" class="usa-select input-max-width" placeholder="Search for post" onchange="validateSubscription()">
+	      <select id="postSelect" class="usa-select input-max-width" placeholder="Search for post">
 		<option></option>
 		{{#each postInfo}}
 		<option data-COLARatesId="{{this.id}}">{{this.country}} ({{this.post}})</option>
@@ -229,7 +229,7 @@
 		      style="display:none">File does not appear to be doc/docx</span>
 		<input type="file" accept=".doc, .docx" id="uploadTemplate"
 		       class="usa-input btn btn-sm input-max-width"
-		       placeholder="Upload a template" onchange="validateSubscription()">
+		       placeholder="Upload a template">
 	      </div>
 	      <!-- Or use one of my other templates... -->
 	      <div class="mt-2">
@@ -243,7 +243,7 @@
 		<span class="usa-error-message" id="previousTemplateErrorMsgDownload"
 		      role="alert" style="display:none">
 		  Must select previous template to download</span>
-		<select id="templateSelect" class="usa-select input-max-width" onchange="validateSubscription()">
+		<select id="templateSelect" class="usa-select input-max-width">
 		  <option></option>
 		  {{#each templates}}
 		  <option data-templateId="{{this.id}}">{{this.name}}</option>

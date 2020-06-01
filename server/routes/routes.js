@@ -6,7 +6,7 @@ module.exports = function (app) {
     app.get('/', function (req, res) {
         let context = {};
         context.style = ['styles.css', 'font_size.css', 'home.css'];
-        context.script = ['utility.js'];
+        context.script = ['utility.min.js'];
 
         context.title = 'COLA Notifications';
         context.homepage = true;
@@ -25,7 +25,7 @@ module.exports = function (app) {
             title: 'Login - COLA',
             login: true,
             style: ['login.css', 'styles.css', 'font_size.css'],
-            script: ['login.js', 'login_ajax.js', 'utility.js']
+            script: ['login.min.js']
         }
 
         misc.setLayout(req, context)
@@ -37,7 +37,7 @@ module.exports = function (app) {
             title: 'Create Account - COLA',
             createAccount: true,
             style: ['createAccount.css', 'styles.css', 'font_size.css'],
-            script: ['createAccount.js', 'createAccount_ajax.js', 'utility.js'],
+            script: ['createAccount.min.js'],
             layout: 'loginLayout.hbs'
         }
         misc.setLayout(req, context)
@@ -49,7 +49,8 @@ module.exports = function (app) {
         var decrypted = {};
         let context = {
             title: 'Account Verification - COLA',
-            style: ['styles.css', 'font_size.css']
+            style: ['styles.css', 'font_size.css'],
+	    script: ['utility.min.js']
         };
 
         misc.setLayout(req, context)
@@ -91,7 +92,7 @@ module.exports = function (app) {
         let context = {
             title: 'Request New Verification Code - COLA',
             style: ['login.css', 'styles.css', 'font_size.css'],
-            script: ['requestVerificationCode.js', 'requestVerificationCode_ajax.js', 'utility.js']
+            script: ['requestVerificationCode.min.js']
 
         }
 
@@ -111,7 +112,7 @@ module.exports = function (app) {
             layout: 'loginLayout.hbs',
             title: 'Reset Password - COLA',
             style: ['reset.css', 'styles.css', 'font_size.css'],
-            script: ['reset.js', 'reset_ajax.js', 'utility.js'],
+            script: ['reset.min.js'],
             layout: 'loginLayout.hbs'
         }
         misc.setLayout(req, context)
@@ -122,8 +123,8 @@ module.exports = function (app) {
     app.get('/about', function (req, res) {
         let context = {};
         context.style = ['styles.css', 'font_size.css', 'FAQ.css'];
-        context.script = ['FAQ.js', 'utility.js'];
-        context.deferScript = ['../pdfjs/pdf.js'];
+        context.script = ['FAQ.min.js'];
+        context.deferScript = ['../pdfjs/pdf.min.js'];
         context.title = 'About - COLA';
         context.about = true;
 
@@ -136,7 +137,7 @@ module.exports = function (app) {
         let context = {};
         const userId = req.session.passport.user.userId;
         context.style = ['styles.css', 'font_size.css', 'account.css'];
-        context.script = ['account.js', 'account_ajax.js', 'utility.js'];
+        context.script = ['account.min.js'];
         context.title = 'My Account';
         context.account = true; //used for navivation.hbs
 
@@ -169,10 +170,8 @@ module.exports = function (app) {
         context.style = ['styles.css', 'font_size.css', 'subscriptions.css'];
         context.title = 'My Subscriptions';
         context.subscriptions = true; //used for navivation.hbs
-        context.script = ['subscriptions.js',
-            'subscriptions_ajax.js',
-            'utility.js'];
-        context.deferScript = ['../pdfjs/pdf.js'];
+        context.script = ['subscriptions.min.js'];
+	context.deferScript = ['../pdfjs/pdf.min.js'];
 	
         Promise.all(awaitPromises)
 	    .catch(err => console.log(err))
@@ -223,7 +222,7 @@ module.exports = function (app) {
             })
             .finally(() => {
                 context.style = ['styles.css', 'font_size.css', 'account.css'];
-                context.script = ['recover.js', 'recover_ajax.js', 'utility.js'];
+                context.script = ['recover.min.js'];
                 res.render('recover', context);
             })
     });
@@ -232,7 +231,7 @@ module.exports = function (app) {
 
         let context = {
             style: ['styles.css', 'font_size.css', 'userInfo.css'],
-            script: ['userInfo.js', 'utility.js'],
+            script: ['userInfo.min.js'],
             title: 'User Info',
             userInfo: true, //used for navivation.hbs
 	    userInfo: []
