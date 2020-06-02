@@ -182,172 +182,214 @@ table {
     border: 1px solid #E0E0E0;
 }
 .trashCan {
-    content: url(/img/trash-alt.png);
+    content: "";
+    background-image: url(/img/trash-alt.png);
+    background-size: 95% auto;
+    background-repeat: no-repeat;
     width: 0.85rem;
     height: 0.85rem;
-    background-repeat: no-repeat;
     position: relative;
     display: inline-block;
 }
 .trashCanSecondary {
-    content: url(/img/trash-alt--secondary.png);
+    content: "";
+    background-image: url(/img/trash-alt--secondary.png);
+    background-size: 95% auto;
+    background-repeat: no-repeat;
     width: 0.85rem;
     height: 0.85rem;
-    background-repeat: no-repeat;
     position: relative;
     display: inline-block;
 }
 .trashCan:hover {
+    content: "";
+    background-image: url(/img/trash-alt--danger.png);
+    background-size: 95% auto;
+    background-repeat: no-repeat;
     position: relative;
-    content: url(/img/trash-alt--danger.png);
     width: 0.85rem;
     height: 0.85rem;
-    background-repeat: no-repeat;
     position: relative;
     display: inline-block;
 }
 .downloadSubscription {
-    content: url(/img/download.png);
+    content: "";
+    background-image: url(/img/download.png);
+    background-size: 95% auto;
+    background-repeat: no-repeat;
     width: 0.85rem;
     height: 0.85rem;
-    background-repeat: no-repeat;
     position: relative;
     display: inline-block;
 }
 .downloadSubscriptionError {
-    content: url(/img/download--danger.png);
+    content: "";
+    background-image: url(/img/download--danger.png);
+    background-size: 95% auto;
+    background-repeat: no-repeat;
     width: 0.85rem;
     height: 0.85rem;
-    background-repeat: no-repeat;
     position: relative;
     display: inline-block;
 }
 .downloadSubscriptionSuccess {
-    content: url(/img/download--success.png);
+    content: "";
+    background-image: url(/img/download--success.png);
+    background-size: 95% auto;
+    background-repeat: no-repeat;
     width: 0.85rem;
     height: 0.85rem;
-    background-repeat: no-repeat;
     position: relative;
     display: inline-block;
 }
 .downloadSubscriptionSecondary {
-    content: url(/img/download--secondary.png);
+    content: "";
+    background-image: url(/img/download--secondary.png);
+    background-size: 95% auto;
+    background-repeat: no-repeat;
     width: 0.85rem;
     height: 0.85rem;
-    background-repeat: no-repeat;
     position: relative;
     display: inline-block;
 }
 .downloadSubscription:hover {
-    content: url(/img/download--primary.png);
+    content: "";
+    background-image: url(/img/download--primary.png);
+    background-size: 95% auto;
+    background-repeat: no-repeat;
     width: 0.85rem;
     height: 0.85rem;
-    background-repeat: no-repeat;
     position: relative;
     display: inline-block;
 }
 .downloadSubscriptionLg {
-    content: url(/img/download.png);
+    content: "";
+    background-image: url(/img/download.png);
+    background-size: 95% auto;
+    background-repeat: no-repeat;
     width: 1.25rem;
     height: 1.25rem;
-    background-repeat: no-repeat;
     position: relative;
     display: inline-block;
 }
 .downloadSubscriptionErrorLg {
-    content: url(/img/download--danger.png);
+    content: "";
+    background-image: url(/img/download--danger.png);
+    background-size: 95% auto;
+    background-repeat: no-repeat;
     width: 1.25rem;
     height: 1.25rem;
-    background-repeat: no-repeat;
     position: relative;
     display: inline-block;
 }
 .downloadSubscriptionSuccessLg {
-    content: url(/img/download--success.png);
+    content: "";
+    background-image: url(/img/download--success.png);
+    background-size: 95% auto;
+    background-repeat: no-repeat;
     width: 1.25rem;
     height: 1.25rem;
-    background-repeat: no-repeat;
     position: relative;
     display: inline-block;
 }
 .downloadSubscriptionSecondaryLg {
-    content: url(/img/download--secondary.png);
+    content: "";
+    background-image: url(/img/download--secondary.png);
+    background-size: 95% auto;
+    background-repeat: no-repeat;
     width: 1.25rem;
     height: 1.25rem;
-    background-repeat: no-repeat;
     position: relative;
     display: inline-block;
 }
 .downloadSubscriptionLg:hover {
+    content: "";
+    background-image: url(/img/download--primary.png);
+    background-size: 95% auto;
+    background-repeat: no-repeat;
     cursor: pointer;
-    content: url(/img/download--primary.png);
     width: 1.25rem;
     height: 1.25rem;
-    background-repeat: no-repeat;
     position: relative;
     display: inline-block;
 }
 .email {
-    content: url(/img/envelope.png);
+    content: "";
+    background-image: url(/img/envelope.png);
+    background-size: 95% auto;
+    background-repeat: no-repeat;
     width: 0.85rem;
     height: 0.85rem;
-    background-repeat: no-repeat;
     position: relative;
     display: inline-block;
 }
 .emailSuccess {
-    content: url(/img/envelope--success.png);
+    content: "";
+    background-image: url(/img/envelope--success.png);
+    background-size: 95% auto;
+    background-repeat: no-repeat;
     width: 0.85rem;
     height: 0.85rem;
-    background-repeat: no-repeat;
     position: relative;
     display: inline-block;
 }
 .emailSecondary {
-    content: url(/img/envelope--secondary.png);
+    content: "";
+    background-image: url(/img/envelope--secondary.png);
+    background-size: 95% auto;
+    background-repeat: no-repeat;
     width: 0.85rem;
     height: 0.85rem;
-    background-repeat: no-repeat;
     position: relative;
     display: inline-block;
 }
 .emailError {
-    content: url(/img/envelope--danger.png);
+    content: "";
+    background-image: url(/img/envelope--danger.png);
+    background-size: 95% auto;
+    background-repeat: no-repeat;
     width: 0.85rem;
     height: 0.85rem;
-    background-repeat: no-repeat;
     position: relative;
     display: inline-block;
 }
 .email:hover {
-    content: url(/img/envelope--primary.png);
+    content: "";
+    background-image: url(/img/envelope--primary.png);
+    background-size: 95% auto;
+    background-repeat: no-repeat;
     width: 0.85rem;
     height: 0.85rem;
-    background-repeat: no-repeat;
     position: relative;
     display: inline-block;
 }
 .preview {
-    content: url(/img/file-alt.png);
+    content: "";
+    background-image: url(/img/file-alt.png);
+    background-size: 95% auto;
+    background-repeat: no-repeat;
     width: 0.85rem;
     height: 0.85rem;
-    background-repeat: no-repeat;
     position: relative;
     display: inline-block;
 }
 .previewSecondary {
-    content: url(/img/file-alt--secondary.png);
+    content: "";
+    background-image: url(/img/file-alt--secondary.png);
+    background-size: 95% auto;
+    background-repeat: no-repeat;
     width: 0.85rem;
     height: 0.85rem;
-    background-repeat: no-repeat;
     position: relative;
     display: inline-block;
 }
 .preview:hover {
-    content: url(/img/file-alt--primary.png);
+    content: "";
+    background-image: url(/img/file-alt--primary.png);
+    background-size: 95% auto;
+    background-repeat: no-repeat;
     width: 0.85rem;
     height: 0.85rem;
-    background-repeat: no-repeat;
     position: relative;
     display: inline-block;
 }
