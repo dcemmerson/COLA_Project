@@ -124,7 +124,7 @@ module.exports = function (app) {
         let context = {};
         context.style = ['styles.css', 'font_size.css', 'FAQ.css'];
         context.script = ['FAQ.min.js'];
-        context.deferScript = ['../pdfjs/pdf.worker.min.js', '../pdfjs/pdf.min.js'];
+        context.deferScript = ['../pdfjs/pdf.worker.js', '../pdfjs/pdf.js'];
         context.title = 'About - COLA';
         context.about = true;
 
