@@ -47,7 +47,7 @@
     "gulp-sass": "^4.1.0",
     "gulp-sourcemaps": "^2.6.5",
     "html-webpack-plugin": "^4.3.0",
-    "pdfjs-dist": "^2.3.200",
+    "pdfjs-dist": "^2.4.456",
     "postcss-csso": "^4.0.0",
     "regenerator-runtime": "^0.13.5",
     "sass": "^1.26.7",

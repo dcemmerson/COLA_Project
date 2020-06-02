@@ -124,7 +124,7 @@ module.exports = function (app) {
         let context = {};
         context.style = ['styles.css', 'font_size.css', 'FAQ.css'];
         context.script = ['FAQ.min.js'];
-        context.deferScript = ['../pdfjs/pdf.min.js'];
+        context.deferScript = ['../pdfjs/pdf.min.js', '../pdfjs/compatibility.js'];
         context.title = 'About - COLA';
         context.about = true;
 
@@ -171,7 +171,7 @@ module.exports = function (app) {
         context.title = 'My Subscriptions';
         context.subscriptions = true; //used for navivation.hbs
         context.script = ['subscriptions.min.js'];
-	context.deferScript = ['../pdfjs/pdf.min.js'];
+	context.deferScript = ['../pdfjs/pdf.js', '../pdfjs/compatibility.js'];
 	
         Promise.all(awaitPromises)
 	    .catch(err => console.log(err))
