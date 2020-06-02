@@ -171,7 +171,7 @@ module.exports = function (app) {
         context.title = 'My Subscriptions';
         context.subscriptions = true; //used for navivation.hbs
         context.script = ['subscriptions.min.js'];
-	context.deferScript = ['../pdfjs/pdf.js', '../pdfjs/compatibility.js'];
+	context.deferScript = ['../pdfjs/pdf.min.js', '../pdfjs/compatibility.js'];
 	
         Promise.all(awaitPromises)
 	    .catch(err => console.log(err))
