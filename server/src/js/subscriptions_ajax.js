@@ -20,12 +20,16 @@ export function templatePreview(templateId, tok = null) {
     if (templateId) {
         fe = fetch(`/preview_template?templateId=${templateId}`, {
 	    method: 'GET',
-	    credentials: 'same-origin'})
+	    credentials: 'same-origin',
+	    cache: 'no-store',
+	})
     }
     else {
         fe = fetch(`/preview_subscription?tok=${tok}`, {
 	    method: 'GET',
-	    credentials: 'same-origin'})
+	    credentials: 'same-origin',
+	    cache: 'no-store',
+	})
     }
 
     fe.then(response => {
@@ -63,7 +67,9 @@ export function templateDownload(templateId) {
     utility.showSpinner(dlts, ' md', true);
     return fetch(`/download_template?templateId=${templateId}`, {
 	method: 'GET',
-	credentials: 'same-origin'})
+	credentials: 'same-origin',
+	cache: 'no-store',
+    })
         .then(response => {
 	    if (response.status == 200)
                 return response.json();
