@@ -17,10 +17,8 @@ module.exports = {
 	subscriptions: ['whatwg-fetch', './src/js/subscriptions.js'],
 	userInfo: './src/js/userInfo.js',
 	home: './src/js/home.js',
-	pdf: [/*'./node_modules/pdfjs-dist/lib/shared/compatibility.js',*/
-	      './node_modules/pdfjs-dist/lib/pdf.js']
     },
-//    devtool: 'inline-source-map',
+    devtool: 'inline-source-map',
     plugins: [
 	new CleanWebpackPlugin(),
     ],
