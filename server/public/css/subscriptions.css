@@ -143,29 +143,6 @@ table {
 #uploadTemplate {
     border: none !important;
 }
-.dismiss-alert {
-    position: absolute;
-    right: 0px;
-    top: 0px;
-}
-.dismiss-alert::before {
-    position: relative;
-    left: -0.25rem;
-    top: 0rem;
-    margin-left: 0.25rem;
-    background-image: url(/uswds/img/close-gray-90-alt.svg), linear-gradient(transparent,transparent);
-    content: "";
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 0.75rem;
-    display: inline-block;
-    height: 2rem;
-    width: 2rem;
-
-}
-.dismiss-alert:hover::before {
-    background-image: url(/uswds/img/close-blue-30-alt.svg), linear-gradient(transparent,transparent);
-}
 
 .modal-dialog {
     max-width: 1000px;

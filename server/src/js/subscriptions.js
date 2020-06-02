@@ -110,6 +110,7 @@ function addSortEventListeners(){
 
 export function pdfToCanvas(uint8arr) {
     return new Promise((resolve, reject) => {
+	
         var loadingTask = pdfjsLib.getDocument(uint8arr);
         loadingTask.promise.then(function (pdf) {
             pdf.getPage(1)

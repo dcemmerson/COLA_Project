@@ -419,6 +419,9 @@ module.exports = {
     */
     setLayout: function (req, context) {
         return new Promise((resolve, reject) => {
+
+	    checkBrowserCompatibility(req.useragent, context);
+	    
             if (req.isAuthenticated()) {
                 context.layout = 'main.hbs';
                 context.loggedIn = true;
@@ -499,7 +502,7 @@ module.exports = {
 	let month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(date);
 
 	return date.getDate() + ' '+ month + ' ' + date.getFullYear();
-    }
+    },
 }
 
 /* name: comparePassword
@@ -516,4 +519,28 @@ function comparePassword(pwd, hashed) {
 	    else resolve(result);
         })
     })
+}
+
+/* name: checkBrowserCompatibility
+   preconditions: context is object.
+                  useragent is obtained from express useragent.
+   postconditions: context.incompatibleBrowser is set to true/false.
+   description: Minimum recommended browser versions for cola.govapps.us
+                  are Chrome 61+, Firefox 58+, Safari 11+, but preferably
+		  newer than those. Versions found in .env file.
+*/
+function checkBrowserCompatibility(useragent, context) {
+    if(useragent.browser === "Chrome" && process.env.CHROME_VERSION) {
+	context.incompatibleBrowser = false;
+    }
+    else if(useragent.browser === "Firefox" && process.env.FIREFOX_VERSION) {
+	context.incompatibleBrowser = false;
+    }
+    else if(useragent.browser === "Safari"
+	    && parseInt(useragent.version) >= process.env.SAFARI_VERSION) {
+	context.incompatibleBrowser = false;
+    }
+    else {
+	context.incompatibleBrowser = true;
+    }	    
 }

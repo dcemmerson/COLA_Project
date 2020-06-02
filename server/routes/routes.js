@@ -187,13 +187,6 @@ module.exports = function (app) {
         res.redirect('/login');
     });
 
-
-    app.post(`/forgot`, function (req, res) {
-        res.redirect('/reset');
-    });
-
-
-
     app.get('/reset_password', function (req, res) {
         var context = {
             title: 'Reset Password - COLA'

@@ -18,7 +18,7 @@ module.exports = {
 	userInfo: './src/js/userInfo.js',
 	home: './src/js/home.js',
     },
-    devtool: 'inline-source-map',
+//    devtool: 'inline-source-map',
     plugins: [
 	new CleanWebpackPlugin(),
     ],

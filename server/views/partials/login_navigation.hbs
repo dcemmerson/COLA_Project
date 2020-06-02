@@ -64,17 +64,19 @@
     </nav>
   </div>
 </header>
+{{#if incompatibleBrowser}}
 <section id="browserWarning" class="" aria-label="">
-    <div class="container">
+  <div class="container">
     <div id="alertContainer" class="row justify-content-around">
       <div id="" class="usa-alert usa-alert--warning max-width-900 width-90 mt-4">
 	<div class="usa-alert__body">
 	  <h2 class="h3 usa-alert__heading">Browser Compatibility</h2>
 	  <p class="usa-alert__text">
-	    Limited site compatibility with current browser at this time. Please use Chrome or Firefox for a better experience. Broader browser support coming soon!
+	    This site may not work properly with current browser. Kindly consider using a <a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" title="Recommended Browsers" data-placement="bottom"data-content="Chrome 61+<br>Firefox 58+<br>Safari 11+" class="usa-link" id="browserListPopover">recommended browser</a> for a better experience.
 	  </p>
 	</div>
       </div>
     </div>
   </div>
 </section>
+{{/if}}
