@@ -185,154 +185,171 @@ table {
     content: url(/img/trash-alt.png);
     width: 0.85rem;
     height: 0.85rem;
-    repeat: no-repeat;
-    position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: inline-block;
 }
 .trashCanSecondary {
     content: url(/img/trash-alt--secondary.png);
     width: 0.85rem;
     height: 0.85rem;
-    repeat: no-repeat;
-    position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: inline-block;
 }
 .trashCan:hover {
     position: relative;
     content: url(/img/trash-alt--danger.png);
     width: 0.85rem;
     height: 0.85rem;
-    repeat: no-repeat;
-    position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: inline-block;
 }
 .downloadSubscription {
     content: url(/img/download.png);
     width: 0.85rem;
     height: 0.85rem;
-    repeat: no-repeat;
-    position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: inline-block;
 }
 .downloadSubscriptionError {
     content: url(/img/download--danger.png);
     width: 0.85rem;
     height: 0.85rem;
-    repeat: no-repeat;
-    position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: inline-block;
 }
 .downloadSubscriptionSuccess {
     content: url(/img/download--success.png);
     width: 0.85rem;
     height: 0.85rem;
-    repeat: no-repeat;
-    position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: inline-block;
 }
 .downloadSubscriptionSecondary {
     content: url(/img/download--secondary.png);
     width: 0.85rem;
     height: 0.85rem;
-    repeat: no-repeat;
-    position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: inline-block;
 }
 .downloadSubscription:hover {
-    position: relative;
     content: url(/img/download--primary.png);
     width: 0.85rem;
     height: 0.85rem;
-    repeat: no-repeat;
-    position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: inline-block;
 }
 .downloadSubscriptionLg {
     content: url(/img/download.png);
     width: 1.25rem;
     height: 1.25rem;
-    repeat: no-repeat;
-    position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: inline-block;
 }
 .downloadSubscriptionErrorLg {
     content: url(/img/download--danger.png);
     width: 1.25rem;
     height: 1.25rem;
-    repeat: no-repeat;
-    position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: inline-block;
 }
 .downloadSubscriptionSuccessLg {
     content: url(/img/download--success.png);
     width: 1.25rem;
     height: 1.25rem;
-    repeat: no-repeat;
-    position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: inline-block;
 }
 .downloadSubscriptionSecondaryLg {
     content: url(/img/download--secondary.png);
     width: 1.25rem;
     height: 1.25rem;
-    repeat: no-repeat;
-    position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: inline-block;
 }
 .downloadSubscriptionLg:hover {
     cursor: pointer;
-    position: relative;
     content: url(/img/download--primary.png);
     width: 1.25rem;
     height: 1.25rem;
-    repeat: no-repeat;
-    position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: inline-block;
 }
 .email {
     content: url(/img/envelope.png);
     width: 0.85rem;
     height: 0.85rem;
-    repeat: no-repeat;
-    position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: inline-block;
 }
 .emailSuccess {
     content: url(/img/envelope--success.png);
     width: 0.85rem;
     height: 0.85rem;
-    repeat: no-repeat;
-    position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: inline-block;
 }
 .emailSecondary {
     content: url(/img/envelope--secondary.png);
     width: 0.85rem;
     height: 0.85rem;
-    repeat: no-repeat;
-    position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: inline-block;
 }
 .emailError {
     content: url(/img/envelope--danger.png);
     width: 0.85rem;
     height: 0.85rem;
-    repeat: no-repeat;
-    position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: inline-block;
 }
 .email:hover {
-    position: relative;
     content: url(/img/envelope--primary.png);
     width: 0.85rem;
     height: 0.85rem;
-    repeat: no-repeat;
-    position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: inline-block;
 }
 .preview {
     content: url(/img/file-alt.png);
     width: 0.85rem;
     height: 0.85rem;
-    repeat: no-repeat;
-    position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: inline-block;
 }
 .previewSecondary {
     content: url(/img/file-alt--secondary.png);
     width: 0.85rem;
     height: 0.85rem;
-    repeat: no-repeat;
-    position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: inline-block;
 }
 .preview:hover {
-    position: relative;
     content: url(/img/file-alt--primary.png);
     width: 0.85rem;
     height: 0.85rem;
-    repeat: no-repeat;
-    position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: inline-block;
 }
 
 .td {
