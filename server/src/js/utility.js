@@ -254,16 +254,21 @@ export function clientDownloadFile(res) {
     var data = new Blob([uint8arr]);
     //    var data = new Blob(uint8arr);
 
-    var url = window.URL.createObjectURL(data);
-    a.href = url;
-    a.download = res.filename;
-    document.body.appendChild(a);
+    if(window.navigator && window.navigator.msSaveOrOpenBlob) {
+	window.navigator.msSaveOrOpenBlob(data, res.filename);
+    }
+    else {
+	var url = window.URL.createObjectURL(data);
+	a.href = url;
+	a.download = res.filename;
+	document.body.appendChild(a);
 
-    a.click();
-    setTimeout(function () {
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-    }, 0)
+	a.click();
+	setTimeout(function () {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+	}, 0)
+    }
 }
 /********************* table sorting methods *************************/
 export function clearTableGroups(table){
@@ -331,35 +336,4 @@ export function insertionSort(list, asc=true){
 	list.splice(j, 0, element);
 	
     }
-}
-
-/* Call this method after DOMContentLoaded to force user browser
-   to download all icons used in css background images.
-   There has been an issue with mobile browsers not downloading
-   icons on demand.
-*/
-export function downloadIcons(){
-    let cache = document.getElementById('iconCache');
-    
-    let classList = ['downloadSubscription',
-		     'downloadSubscriptionError',
-		     'downloadSubscriptionSuccess',
-		     'downloadSubscriptionSecondary',
-		     'downloadSubscriptionLg',
-		     'downloadSubscriptionErrorLg',
-		     'downloadSubscriptionSuccessLg',
-		     'downloadSubscriptionSecondaryLg',
-		     'email',
-		     'emailSuccess',
-		     'emailError',
-		     'preview',
-		     'previewSecondary',
-		     'trashCan',
-		     'trashCanSecondary'];
-    
-    classList.forEach(cl => {
-	let i = document.createElement('i');
-	i.classList.add(cl);
-	cache.appendChild(i);
-    });
 }
