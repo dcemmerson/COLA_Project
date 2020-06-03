@@ -547,7 +547,7 @@ function checkBrowserCompatibility(useragent, context) {
 	context.incompatibleBrowser = true;
     }
 
-    if(context.incompatibleBrowser){
+    if(context.incompatibleBrowser && context.script){
 	useES5Scripts(context.script);
     }
 }

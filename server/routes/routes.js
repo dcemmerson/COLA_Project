@@ -4,18 +4,18 @@ const fs = require('fs');
 
 module.exports = function (app) {
     app.get('/', function (req, res) {
-        let context = {};
-        context.style = ['styles.css', 'font_size.css', 'home.css'];
-        context.script = ['home.min.js'];
-
-        context.title = 'COLA Notifications';
-        context.homepage = true;
-
-	console.log(req.useragent);
+        let context = {
+            style: ['styles.css', 'font_size.css', 'home.css'],
+            script: ['home.min.js'],
+            title: 'COLA Notifications',
+            homepage: true
+	};
+	
         misc.setLayout(req, context)
             .catch(() => console.log('error in setLayout'))
             .finally(() => res.render('home', context))
     });
+    
     app.get(`/login`, function (req, res) {
         if (req.isAuthenticated()) {
             return res.redirect('/');
@@ -121,25 +121,28 @@ module.exports = function (app) {
     });
 
     app.get('/about', function (req, res) {
-        let context = {};
-        context.style = ['styles.css', 'font_size.css', 'FAQ.css'];
-        context.script = ['FAQ.min.js'];
-        context.title = 'About - COLA';
-        context.about = true;
-
+        let context = {
+            style: ['styles.css', 'font_size.css', 'FAQ.css'],
+            script: ['FAQ.min.js'],
+            title: 'About - COLA',
+            about: true
+	};
+	
         misc.setLayout(req, context)
             .catch(() => console.log('error in setLayout'))
             .finally(() => res.render('FAQ', context))
     });
 
     app.get('/account', db.authenticationMiddleware(), function (req, res) {
-        let context = {};
-        const userId = req.session.passport.user.userId;
-        context.style = ['styles.css', 'font_size.css', 'account.css'];
-        context.script = ['account.min.js'];
-        context.title = 'My Account';
-        context.account = true; //used for navivation.hbs
 
+        const userId = req.session.passport.user.userId;
+	let context = {
+            style: ['styles.css', 'font_size.css', 'account.css'],
+            script: ['account.min.js'],
+            title: 'My Account',
+            account: true //used for navivation.hbs
+	};
+	
 	misc.setLayout(req, context)
 	    .catch(() => console.log('error in setLayout'))
 	    .finally(() => res.render('account', context))
@@ -148,7 +151,15 @@ module.exports = function (app) {
     app.get('/subscriptions', db.authenticationMiddleware(), function (req, res) {
         const userId = req.session.passport.user.userId;
         let awaitPromises = [];
-        let context = { postInfo: [], templates: [] };
+        let context = {
+	    postInfo: [],
+	    templates: [],
+            style: ['styles.css', 'font_size.css', 'subscriptions.css'],
+            title: 'My Subscriptions',
+            subscriptions: true, //used for navivation.hbs
+            script: ['subscriptions.min.js']
+	};
+	
         awaitPromises.push(
             db.getListOfPosts()
                 .then(posts => posts.forEach(post => {
@@ -166,11 +177,6 @@ module.exports = function (app) {
                 .catch(err => console.log(err))
         )
 	
-        context.style = ['styles.css', 'font_size.css', 'subscriptions.css'];
-        context.title = 'My Subscriptions';
-        context.subscriptions = true; //used for navivation.hbs
-        context.script = ['subscriptions.min.js'];
-	
         Promise.all(awaitPromises)
 	    .catch(err => console.log(err))
 	    .finally(() => res.render('subscriptions', context))
@@ -179,7 +185,8 @@ module.exports = function (app) {
     app.get(`/logout`, function (req, res) {
         req.logout();
         req.session.destroy();
-        if (req.query.redirect) {
+
+	if (req.query.redirect) {
             return res.redirect(`/${req.query.redirect}`);
         }
         res.redirect('/login');
@@ -187,8 +194,11 @@ module.exports = function (app) {
 
     app.get('/reset_password', function (req, res) {
         var context = {
-            title: 'Reset Password - COLA'
+            title: 'Reset Password - COLA',
+	    style: ['styles.css', 'font_size.css', 'account.css'],
+            script: ['recover.min.js']
         };
+	
         db.getUserById(req.query.id, context)
             .then(encPassword => {
                 return misc.jwtVerify(
@@ -212,8 +222,7 @@ module.exports = function (app) {
                 context.error = true;
             })
             .finally(() => {
-                context.style = ['styles.css', 'font_size.css', 'account.css'];
-                context.script = ['recover.min.js'];
+
                 res.render('recover', context);
             })
     });
