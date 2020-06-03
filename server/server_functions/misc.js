@@ -559,6 +559,6 @@ function checkBrowserCompatibility(useragent, context) {
 */
 function useES5Scripts(scripts) {
     scripts.forEach((script, ind) => {
-	scripts[i] = script.replace(/^/, 'es5/');
+	scripts[ind] = script.replace(/^/, 'es5/');
     });
 }
