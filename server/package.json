@@ -39,7 +39,6 @@
     "clean-webpack-plugin": "^3.0.0",
     "core-js": "^3.6.5",
     "css-loader": "^3.5.3",
-    "fs": "0.0.1-security",
     "gulp": "^4.0.2",
     "gulp-cli": "^2.2.1",
     "gulp-notify": "^3.2.0",
@@ -68,7 +67,8 @@
     "watch": "webpack --watch",
     "start": "webpack-dev-server --open",
     "server": "node server.js",
-    "build": "webpack"
+    "build": "webpack",
+    "buildes5": "webpack --config webpack.config_es5.js"
   },
   "repository": {
     "type": "git",

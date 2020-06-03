@@ -1,9 +1,7 @@
 import * as sa from './subscriptions_ajax.js';
 import * as utility from './utility.js';
 
-var pdfjsLib = require('pdfjs-dist');
-pdfjsLib.GlobalWorkerOptions.workerSrc = './js/pdf.worker.min.js';
-
+var pdfjsLib = null;
 const LINESPACING = 10;
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -80,7 +78,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     registerAlertDismissals();
     addSortEventListeners();
-       
+    import(/* webpackChunkName: "pdf" */ './pdf.js')
+	.then(({default: pLib}) => { pdfjsLib = pLib})
 });
 
 function registerAlertDismissals(){

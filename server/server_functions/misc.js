@@ -522,9 +522,12 @@ function comparePassword(pwd, hashed) {
 }
 
 /* name: checkBrowserCompatibility
-   preconditions: context is object.
+   preconditions: context is object. context.scripts should have been set
+                    with arr of script used on browser before calling this.
                   useragent is obtained from express useragent.
    postconditions: context.incompatibleBrowser is set to true/false.
+                   Each element has been prepended with es5/ if incompatible
+		     browser is used.
    description: Minimum recommended browser versions for cola.govapps.us
                   are Chrome 61+, Firefox 58+, Safari 11+, but preferably
 		  newer than those. Versions found in .env file.
@@ -542,5 +545,20 @@ function checkBrowserCompatibility(useragent, context) {
     }
     else {
 	context.incompatibleBrowser = true;
-    }	    
+    }
+
+    if(context.incompatibleBrowser){
+	useES5Scripts(context.script);
+    }
+}
+
+/* name: useES5Scripts
+   preconditions: scripts is arr of js script names that will be sent to
+                    client.
+   postconditions: Each script has been prepended with es5/
+*/
+function useES5Scripts(scripts) {
+    scripts.forEach(script => {
+	script = script.replace(/^/, 'es5/');
+    });
 }
