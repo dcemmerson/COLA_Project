@@ -558,7 +558,7 @@ function checkBrowserCompatibility(useragent, context) {
    postconditions: Each script has been prepended with es5/
 */
 function useES5Scripts(scripts) {
-    scripts.forEach(script => {
-	script = script.replace(/^/, 'es5/');
+    scripts.forEach((script, ind) => {
+	scripts[i] = script.replace(/^/, 'es5/');
     });
 }
