@@ -16,19 +16,7 @@
     position: relative;
     left: 90%;
 }
-/*
-.buttonRight:active {
-    animation-duration: 1s;
-    animation-name: slideRight;
-    animation-iteration-count: 1;
-    
-}
-.buttonLeft:active {
-    animation-duration: 1s;
-    animation-name: slideLeft;
-    animation-iteration-count: 1;   
-}
-*/
+
 .buttonLeft {
     background-image: url(/img/arrow-left.svg);
     background-repeat: no-repeat;
@@ -48,9 +36,15 @@
 }
 .slideRight {
     animation: slideRight 1s 1 forwards;
+    -webkit-animation: slideRight 1s 1 forwards;
+    -moz-animation: slideRight 1s 1 forwards;
+    -o-animation: slideRight 1s 1 forwards;
 }
 .slideLeft {
     animation: slideLeft 1s 1 forwards;
+    -webkit-animation: slideLeft 1s 1 forwards;
+    -moz-animation: slideLeft 1s 1 forwards;
+    -o-animation: slideLeft 1s 1 forwards;
 }
 #topLevelContainer {
     overflow: hidden;
@@ -209,7 +203,67 @@
 	left: -100vw;
     }
 }
+@-webkit-keyframes slideRight {
+    from {
+	position: relative;
+	left: 0vw;
+    }
+    to {
+    	position: relative;
+	left: -100vw;
+    }
+}
+@-moz-keyframes slideRight {
+    from {
+	position: relative;
+	left: 0vw;
+    }
+    to {
+    	position: relative;
+	left: -100vw;
+    }
+}
+@-o-keyframes slideRight {
+    from {
+	position: relative;
+	left: 0vw;
+    }
+    to {
+    	position: relative;
+	left: -100vw;
+    }
+}
 @keyframes slideLeft {
+    from {
+	position: relative;
+	left: -100vw;
+    }
+    to {
+    	position: relative;
+	left: 0vw;
+    }
+}
+@-webkit-keyframes slideLeft {
+    from {
+	position: relative;
+	left: -100vw;
+    }
+    to {
+    	position: relative;
+	left: 0vw;
+    }
+}
+@-moz-keyframes slideLeft {
+    from {
+	position: relative;
+	left: -100vw;
+    }
+    to {
+    	position: relative;
+	left: 0vw;
+    }
+}
+@-o-keyframes slideLeft {
     from {
 	position: relative;
 	left: -100vw;

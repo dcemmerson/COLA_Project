@@ -10,10 +10,6 @@
 	<div class="mx-3">
 	  <div id="newUsersAlertInfo" class="unsubscribeAlert" style="">
 	    <div class="usa-alert usa-alert--info">
-	      <div class="dismiss-alert"
-		   onclick="dismissAlert(this.parentNode.parentNode)">
-		<span role="button" class="dismiss-alert-button"></span>
-	      </div>
 	      <div class="usa-alert__body">
 		<h3 class="usa-alert__heading">New user info</h3>
 		
@@ -49,14 +45,14 @@
 		  <thead class="thead">
 		    <tr class="">
 		      <th></th>
-		      <th scope="col"><span class="nowrap">Email<span class="sortIcon sort" onclick="sortGroups(this.parentNode.parentNode.parentNode.parentNode.parentNode, this, 0)"></span></span></th>
-		      <th scope="col"><span class="nowrap">Created<span class="sortIcon sort" onclick="sortGroups(this.parentNode.parentNode.parentNode.parentNode.parentNode, this, 1)"></span></span></th>
-		      <th scope="col">No. <span class="nowrap">Subscr<span class="sortIcon sort" onclick="sortGroups(this.parentNode.parentNode.parentNode.parentNode.parentNode, this, 2)"></span></span></th>
+		      <th scope="col"><span class="nowrap">Email<span class="sortIcon sort"></span></span></th>
+		      <th scope="col"><span class="nowrap">Created<span class="sortIcon sort"></span></span></th>
+		      <th scope="col">No. <span class="nowrap">Subscr<span class="sortIcon sort"></span></span></th>
 		    </tr>
 		  </thead>
 		  {{#each userInfo}}
 		  <tbody class="subscriptions userGroup" id="subscriptionTbody"
-			 aria-expanded="false" onclick="expand(this)">
+			 aria-expanded="false">
 		    <tr class="userRow">
 		      <td data-value="{{email}}">{{email}}{{#if isAdmin}}<sup class="md">*</sup>{{/if}}{{#if isVerified}}{{else}}<sup class="md red">u</sup>{{/if}}</td>
 		      <td data-value="{{sortDate created}}">{{toHumanDate created}}</td>
@@ -106,10 +102,6 @@
 	      
 	      <div id="newUsersAlertInfo" class="unsubscribeAlert" style="display:none">
 		<div class="usa-alert usa-alert--info">
-		  <div class="dismiss-alert"
-		       onclick="dismissAlert(this.parentNode.parentNode)">
-		    <span role="button" class="dismiss-alert-button"></span>
-		  </div>
 		  <div class="usa-alert__body">
 		    <h3 class="usa-alert__heading">New user info</h3>
 		    
@@ -128,10 +120,10 @@
 		<table class="table userRowTable" id="subscriptionsTable">
 		  <thead class="thead">
 		    <tr class="">
-		      <th scope="col"><span class="nowrap">Email<span class="sortIcon sort" onclick="sortRows(this.parentNode.parentNode.parentNode.parentNode.parentNode, this, 0)"></span></span></th>
-		      <th scope="col"><span class="nowrap">Country<span class="sortIcon sort" onclick="sortRows(this.parentNode.parentNode.parentNode.parentNode.parentNode, this, 1)"></span></span></th>
-		      <th scope="col"><span class="nowrap">Post<span class="sortIcon sort" onclick="sortRows(this.parentNode.parentNode.parentNode.parentNode.parentNode, this, 2)"></span></span></th>
-		      <th scope="col"><span class="nowrap">Created<span class="sortIcon sort" onclick="sortRows(this.parentNode.parentNode.parentNode.parentNode.parentNode, this, 3)"></span></span></th>
+		      <th scope="col"><span class="nowrap">Email<span class="sortIcon sort"></span></span></th>
+		      <th scope="col"><span class="nowrap">Country<span class="sortIcon sort"></span></span></th>
+		      <th scope="col"><span class="nowrap">Post<span class="sortIcon sort"></span></span></th>
+		      <th scope="col"><span class="nowrap">Created<span class="sortIcon sort"></span></span></th>
 		    </tr>
 		  </thead>
 		  {{#each userInfo}}

@@ -108,7 +108,6 @@ function addSortEventListeners(){
 	});
     })
 
-    
 }
 
 export function pdfToCanvas(uint8arr) {

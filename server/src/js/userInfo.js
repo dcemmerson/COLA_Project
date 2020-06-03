@@ -14,7 +14,37 @@ document.addEventListener('DOMContentLoaded', () => {
 	mainContainer.classList.add('slideLeft');
     });
 
+    addSortEventListeners();
+    addGroupTableEventListeners();
 })
+
+function addGroupTableEventListeners(){
+    let userGroups = document.getElementsByClassName('userGroup');
+
+    Object.values(userGroups).forEach(group => {
+	group.addEventListener('click', () => expand(group));
+    });
+}
+
+function addSortEventListeners(){
+    let groupTable = document.getElementsByClassName('userGroupTable')[0];
+    let icons = groupTable.getElementsByClassName('sortIcon');
+    
+    Object.values(icons).forEach((el, ind) => {
+	el.addEventListener('click', () => {
+	    sortGroups(groupTable, el, ind);
+	});
+    });
+
+    let rowTable = document.getElementsByClassName('userRowTable')[0];
+    icons = rowTable.getElementsByClassName('sortIcon');
+    
+    Object.values(icons).forEach((el, ind) => {
+	el.addEventListener('click', () => {
+	    sortRows(rowTable, el, ind);
+	});
+    });
+}
 
 function expand(element){
     let ariaExp = element.getAttribute('aria-expanded');
