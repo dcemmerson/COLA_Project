@@ -23,11 +23,11 @@ document.addEventListener('DOMContentLoaded', () => {
         defaultTemplatePreview();
     });
 
-    // Dynamically import after DOMContentLoaded as this script won't
-    // immediately be needed and is relatively large..
-    import(/* webpackChunkName: "pdf" */ './pdf.js')
-	.then(({default: pLib}) => { pdfjsLib = pLib})
 });
+
+export function setPdfJsLib(pjl){
+    pdfjsLib = pjl;
+}
 
 function pdfToCanvas(uint8arr) {
     return new Promise((resolve, reject) => {

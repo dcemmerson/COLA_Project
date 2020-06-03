@@ -78,10 +78,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     registerAlertDismissals();
     addSortEventListeners();
-    import(/* webpackChunkName: "pdf" */ './pdf.js')
-	.then(({default: pLib}) => { pdfjsLib = pLib})
 });
 
+export function setPdfJsLib(pjl){
+    console.log('setting');
+    pdfjsLib = pjl;
+    console.log(pdfjsLib);
+}
+
+function p(){
+    console.log(pdfjsLib);
+}
 function registerAlertDismissals(){
     let unsubscribeAlertBtns = document.getElementsByClassName('unsubscribeAlert');
 
