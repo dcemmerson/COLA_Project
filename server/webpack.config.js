@@ -1,7 +1,8 @@
 require('core-js'); // require first!!
 require('regenerator-runtime/runtime');
 
-const path = require('path');
+var path = require('path');
+var webpack = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
@@ -17,6 +18,9 @@ module.exports = {
 	subscriptions: ['whatwg-fetch', './src/js/subscriptions.js'],
 	userInfo: './src/js/userInfo.js',
 	home: './src/js/home.js',
+//	pdf: '../../node_modules/pdfjs-dist/webpack.js',
+//	pdf: './src/js/pdf.js',
+	'pdf.worker': 'pdfjs-dist/build/pdf.worker.entry',
     },
 //    devtool: 'inline-source-map',
     plugins: [
@@ -24,9 +28,14 @@ module.exports = {
     ],
     output: {
 	filename: '[name].min.js',
+//	chunkFilename: '[name].min.js',
 	path: path.resolve(__dirname, 'public/js'),
-	publicPath: '/',
+	publicPath: '/js/',
     },
+    target: 'web',
+    //    node: {
+    //	fs: 'empty',
+    //    },
     module: {
 	rules: [
 	    {
@@ -50,5 +59,6 @@ module.exports = {
 		}
 	    }
 	]
-    },    
+    },
+
 };
