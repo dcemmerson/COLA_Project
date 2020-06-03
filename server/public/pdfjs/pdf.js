@@ -21,14 +21,23 @@
  */
 
 (function webpackUniversalModuleDefinition(root, factory) {
-	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
-	else if(typeof define === 'function' && define.amd)
-		define("pdfjs-dist/build/pdf", [], factory);
-	else if(typeof exports === 'object')
-		exports["pdfjs-dist/build/pdf"] = factory();
-	else
-		root["pdfjs-dist/build/pdf"] = root.pdfjsLib = factory();
+    if(typeof exports === 'object' && typeof module === 'object'){
+	console.log("path 1");
+	module.exports = factory();
+    }
+    else if(typeof define === 'function' && define.amd){
+	console.log("path 2");
+	define("pdfjs-dist/build/pdf", [], factory);
+    }
+    else if(typeof exports === 'object'){
+		console.log("path 3");
+	exports["pdfjs-dist/build/pdf"] = factory();
+    }
+    else{
+	console.log("path 4");
+	root["pdfjs-dist/build/pdf"] = root.pdfjsLib = factory();
+
+    }
 })(this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache

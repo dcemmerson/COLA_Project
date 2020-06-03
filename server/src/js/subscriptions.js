@@ -1,7 +1,11 @@
 import * as sa from './subscriptions_ajax.js';
 import * as utility from './utility.js';
 
-const LINESPACING = 10; 
+var pdfjsLib = require('pdfjs-dist');
+pdfjsLib.GlobalWorkerOptions.workerSrc = './js/pdf.worker.min.js';
+
+const LINESPACING = 10;
+
 document.addEventListener('DOMContentLoaded', async () => {
     let subscriptionList = await sa.fetchUserSubscriptionList();
 
@@ -76,7 +80,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     registerAlertDismissals();
     addSortEventListeners();
-    
+       
 });
 
 function registerAlertDismissals(){
@@ -110,7 +114,6 @@ function addSortEventListeners(){
 
 export function pdfToCanvas(uint8arr) {
     return new Promise((resolve, reject) => {
-	
         var loadingTask = pdfjsLib.getDocument(uint8arr);
         loadingTask.promise.then(function (pdf) {
             pdf.getPage(1)
