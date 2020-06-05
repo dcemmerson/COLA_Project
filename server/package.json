@@ -67,8 +67,8 @@
     "watch": "webpack --watch",
     "start": "webpack-dev-server --open",
     "server": "node server.js",
-    "build": "webpack",
-    "buildes5": "webpack --config webpack.config_es5.js"
+    "build": "webpack --config-name=es6+",
+    "buildes5": "webpack --config-name=es5"
   },
   "repository": {
     "type": "git",
