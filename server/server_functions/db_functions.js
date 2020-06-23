@@ -1,3 +1,12 @@
+/*  filename: db_functions.js
+    last modified: 06/23/2020
+    description: File contains functions specific to making db calls.
+                    This file should be imported into other files when
+                    necessary, and we should avoid importing other parts
+                    of this app into this file to avoid circular
+                    dependencies.
+*/
+
 var passport = require('passport');
 var bcrypt = require('bcrypt');
 var LocalStrategy = require('passport-local').Strategy;

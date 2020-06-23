@@ -1,3 +1,11 @@
+/*  filename: misc.js
+    last modified: 06/23/2020
+    description: File contains miscellaneous helper functions, such
+                    as signing and verifying json web tokens, setting
+                    the templating layout flags, verifying user 
+                    uploaded valid files, etc.
+*/
+
 var bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'add_pw_to_dotenv';
@@ -16,7 +24,7 @@ module.exports = {
     /* name: jwtVerify
        preconditions: tok is signed using jwtSign
                       jwtSecret must be same jwtSecret that was used to
-		        sign this tok
+		                sign this tok
        postconditions: If decoding tok was successful, resolve with
                          decoded object, else reject with error.
     */
@@ -32,11 +40,11 @@ module.exports = {
     },
 
     /* name: jwtSign
-       preconditions: tok is signed using jwtSign
-                      jwtSecret used to sign token
-		      expiresIn is not required. If present, expiresIn should
-		        be max life for this token. If not present, token 
-			never expires.
+       preconditions:   tok is signed using jwtSign
+                        jwtSecret used to sign token
+		                expiresIn is not required. If present, expiresIn should
+		                be max life for this token. If not present, token 
+			            never expires.
        postconditions: If signing tok was successful, resolve with
                          encoded token, else reject with error.
     */
@@ -66,13 +74,13 @@ module.exports = {
             });
         }
     },
-    
+
     /* name: validateFile
        preconditions: file object from multer module that contains information about
                         file that user uploaded, in addition to the actual file
-			Buffer
-		      context is object in which we will set flags to pass back to
-		        client in case that file is invalidated
+			            Buffer
+		                context is object in which we will set flags to pass back to
+		                client in case that file is invalidated
        postconditions: check if file is actually .doc or .docx using Magic module.
                        Resolve if valid file type, else reject.
     */
@@ -104,13 +112,13 @@ module.exports = {
        preconditions: userId is user id whose credentials we are checking 
                       oldPwd will be checked against db
                       newPwd is pwd that user desires to change to
-		      newPwdRe is re-entered pwd by user
-		      context is object in which we will set flags to pass back to
-		        client in case that pwd is invalidated
+		                newPwdRe is re-entered pwd by user
+                        context is object in which we will set flags to pass back to
+                        client in case that pwd is invalidated
        postconditions: oldPwd has been checked against db
                        newPwd has been checked to be at least 8 char, contain 1+
-		         lower case, 1+ upper case, 1+ num, 1+ non-alphanumeric
-		       context has been set with flags indicating success/failure
+		                lower case, 1+ upper case, 1+ num, 1+ non-alphanumeric
+		                context has been set with flags indicating success/failure
        description: upon successful password validation, resolve method is called.
                       else reject method is called
     */
@@ -181,19 +189,19 @@ module.exports = {
             if (context.invalidNewPassword || context.invalidNewPasswordRe) reject();
         })
     },
-    
+
     /* name validatePasswordReset
        preconditions: userId is user id whose credentials we are checking 
                       oldPwdEnc is old password will be checked to make sure
-		           its not same as new password
+		                its not same as new password
                       newPwd is pwd that user desires to change to
-		      newPwdRe is re-entered pwd by user
-		      context is object in which we will set flags to pass back to
-		        client in case that pwd is invalidated
+                        newPwdRe is re-entered pwd by user
+                        context is object in which we will set flags to pass back to
+		                client in case that pwd is invalidated
        postconditions: oldPwd has been compared to new password
                        newPwd has been checked to be at least 8 char, contain 1+
-		         lower case, 1+ upper case, 1+ num, 1+ non-alphanumeric
-		       context has been set with flags indicating success/failure
+		                lower case, 1+ upper case, 1+ num, 1+ non-alphanumeric
+		                context has been set with flags indicating success/failure
        description: upon successful password validation, resolve method is called.
                       else reject method is called
      */
@@ -262,9 +270,9 @@ module.exports = {
        preconditions: newPwd and newPwdRe were provided by client
                       context is empty object
        postconditions: newPwd has been checked to be at least 8 char, contain 1+
-		       lower case, 1+ upper case, 1+ num, 1+ non-alphanumeric
-		       newPwd checked to match newPwdRe
-		       context has been set with flags indicating success/failure
+                        lower case, 1+ upper case, 1+ num, 1+ non-alphanumeric
+                        newPwd checked to match newPwdRe
+                        context has been set with flags indicating success/failure
        description: upon successful password validation, resolve method is called.
                       else reject method is called
      */
@@ -309,9 +317,9 @@ module.exports = {
                 //then the new pwd is valid
                 return resolve()
             }
-	    
+
             // If we get to this point, an if/elseif executve and
-	    // user entered invalid newPwd/newPwdRe
+            // user entered invalid newPwd/newPwdRe
             // We can just reject without an error
             return reject();
         })
@@ -322,9 +330,9 @@ module.exports = {
                       context is object reference where we will set any error flags
        postconditions: regular expression used to determine if client provided
                        email conforms to email format.
-		       context has been set with any error flags.
+		               context has been set with any error flags.
        description: Returns a promise (to make this method then-able) which resolves
-                    if valid email provided, else rejects and sets flags in context
+                     if valid email provided, else rejects and sets flags in context
 		       
     */
     validateEmail: function (email, context) {
@@ -347,16 +355,16 @@ module.exports = {
 
     /* name: previewTemplate
        preconditions: userId is obtained from authentication system - logged in user
-                      context is object reference where we will set any error flags
-		        and well as place the filled in template pdf.
+                        context is object reference where we will set any error flags
+		                and well as place the filled in template pdf.
        postconditions: context contains file attributes and filled in pdf preview.
        description: Method used to select subscription template from db and fill
                       the values in doc/docx file containing {} fields. We then
-		      convert doc/docx to pdf and return to calling location.
-		      context then contains object with file attributes and
-		      filled in pdf preview of file. This would typically be
-		      sent back to client and the user would be shown a preview
-		      of the document.
+                    convert doc/docx to pdf and return to calling location.
+                    context then contains object with file attributes and
+                    filled in pdf preview of file. This would typically be
+                    sent back to client and the user would be shown a preview
+                    of the document.
     */
     previewTemplate: function (userId, templateId, context, fillValues) {
         return new Promise((resolve, reject) => {
@@ -373,8 +381,8 @@ module.exports = {
                     if (fillValues) {
                         return db.getColaRate(fillValues.country, fillValues.post)
                             .then(postInfo => {
-				context.country = fillValues.country;
-				context.post = fillValues.post;
+                                context.country = fillValues.country;
+                                context.post = fillValues.post;
                                 context.file = response[0].file;
                                 context.username = response[0].email;
                                 context.file = tm.manipTemplate(context, postInfo[0]);
@@ -396,7 +404,7 @@ module.exports = {
                 })
         })
     },
-    
+
     /* name: hashPassword
        preconditions: pwd is plain text password
        postconditions: resolve with bcrypt hashed password
@@ -410,7 +418,7 @@ module.exports = {
             })
         })
     },
-    
+
     /* name: setLayout
        preconditions: req is incoming user request
        context is object
@@ -420,8 +428,8 @@ module.exports = {
     setLayout: function (req, context) {
         return new Promise((resolve, reject) => {
 
-	    checkBrowserCompatibility(req.useragent, context);
-	    
+            checkBrowserCompatibility(req.useragent, context);
+
             if (req.isAuthenticated()) {
                 context.layout = 'main.hbs';
                 context.loggedIn = true;
@@ -429,7 +437,7 @@ module.exports = {
                 db.getUserEmail(req.session.passport.user.userId)
                     .then(res => {
                         context.email = res[0].email;
-			context.isAdmin = res[0].isAdmin;
+                        context.isAdmin = res[0].isAdmin;
                         resolve();
                     })
                     .catch(err => {
@@ -446,16 +454,16 @@ module.exports = {
     },
 
     /* name: loginHelper
-       preconditions: passport is passport module
-                      req is incoming client request
-		      res comes from incoming request
-		      next must be function we want called if login succeeds
-		      context is object we will fill with flags indicating outcome
-		        Potential flags include context.error, context.invalid,
-			context.success.
-       postconditions: If valid login request provided by clinet, user is logged in.
-                       context.redirect = '/subscriptions' along with context.success
-		       indicates to client to follow redirect.
+       preconditions:   passport is passport module
+                        req is incoming client request
+                        res comes from incoming request
+                        next must be function we want called if login succeeds
+                        context is object we will fill with flags indicating outcome
+                            Potential flags include context.error, context.invalid,
+                        context.success.
+       postconditions:  If valid login request provided by clinet, user is logged in.
+                        context.redirect = '/subscriptions' along with context.success
+		                indicates to client to follow redirect.
     */
     loginHelper: function (passport, req, res, next, context) {
         return new Promise((resolve, reject) => {
@@ -465,19 +473,19 @@ module.exports = {
                     return reject(err);
                 }
                 else if (!user) {
-		    console.log(info);
-		    console.log(user);
-		    if (!info.isVerified){
-			context.unverifiedEmail = req.body.username;
-			context.invalid = true;
-			context.isVerified = false;
-			return reject();
-		    }
-		    else {
-			context.invalid = true;
-			context.isVerified = true; 
-			return reject();
-		    }
+                    console.log(info);
+                    console.log(user);
+                    if (!info.isVerified) {
+                        context.unverifiedEmail = req.body.username;
+                        context.invalid = true;
+                        context.isVerified = false;
+                        return reject();
+                    }
+                    else {
+                        context.invalid = true;
+                        context.isVerified = true;
+                        return reject();
+                    }
                 }
 
                 req.logIn(user, function (err) {
@@ -498,25 +506,25 @@ module.exports = {
        preconditions: date is an instance of datetime
        postconditions: return date in string format "Day Month Year" 
      */
-    toHumanDate: function(date) {
-	let month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(date);
+    toHumanDate: function (date) {
+        let month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(date);
 
-	return date.getDate() + ' '+ month + ' ' + date.getFullYear();
+        return date.getDate() + ' ' + month + ' ' + date.getFullYear();
     },
 }
 
 /* name: comparePassword
-   preconditions: pwd is plain text password, probably supplied by user
-                  hashed is hashed password (probably supplied by user.password
-		    field in db) for which we want to test if pwd matches the
-		    hashed version
+   preconditions:   pwd is plain text password, probably supplied by user
+                    hashed is hashed password (probably supplied by user.password
+                    field in db) for which we want to test if pwd matches the
+                    hashed version
    postconditons: resolve if pwd and hashed are equivalent, else reject.
 */
 function comparePassword(pwd, hashed) {
     return new Promise((resolve, reject) => {
         bcrypt.compare(pwd, hashed, (err, result) => {
-	    if (err) reject(err);
-	    else resolve(result);
+            if (err) reject(err);
+            else resolve(result);
         })
     })
 }
@@ -527,28 +535,28 @@ function comparePassword(pwd, hashed) {
                   useragent is obtained from express useragent.
    postconditions: context.incompatibleBrowser is set to true/false.
                    Each element has been prepended with es5/ if incompatible
-		     browser is used.
+		            browser is used.
    description: Minimum recommended browser versions for cola.govapps.us
-                  are Chrome 61+, Firefox 58+, Safari 11+, but preferably
-		  newer than those. Versions found in .env file.
+                are Chrome 61+, Firefox 58+, Safari 11+, but preferably
+		        newer than those. Versions found in .env file.
 */
 function checkBrowserCompatibility(useragent, context) {
-    if(useragent.browser === "Chrome" && process.env.CHROME_VERSION) {
-	context.incompatibleBrowser = false;
+    if (useragent.browser === "Chrome" && process.env.CHROME_VERSION) {
+        context.incompatibleBrowser = false;
     }
-    else if(useragent.browser === "Firefox" && process.env.FIREFOX_VERSION) {
-	context.incompatibleBrowser = false;
+    else if (useragent.browser === "Firefox" && process.env.FIREFOX_VERSION) {
+        context.incompatibleBrowser = false;
     }
-    else if(useragent.browser === "Safari"
-	    && parseInt(useragent.version) >= process.env.SAFARI_VERSION) {
-	context.incompatibleBrowser = false;
+    else if (useragent.browser === "Safari"
+        && parseInt(useragent.version) >= process.env.SAFARI_VERSION) {
+        context.incompatibleBrowser = false;
     }
     else {
-	context.incompatibleBrowser = true;
+        context.incompatibleBrowser = true;
     }
 
-    if(context.incompatibleBrowser && context.script){
-	useES5Scripts(context.script);
+    if (context.incompatibleBrowser && context.script) {
+        useES5Scripts(context.script);
     }
 }
 
@@ -559,6 +567,6 @@ function checkBrowserCompatibility(useragent, context) {
 */
 function useES5Scripts(scripts) {
     scripts.forEach((script, ind) => {
-	scripts[ind] = script.replace(/^/, 'es5/');
+        scripts[ind] = script.replace(/^/, 'es5/');
     });
 }

@@ -1,3 +1,12 @@
+/*  filename: cola_rates_script.js
+    last modified: 06/23/2020
+    description: File contains functions specific to cola webscraping from
+                    aoprals.state.gov and exports these functions.
+                    Should be imported into main server entry point,
+                    server.js and scheduleCrcs() should be called to 
+                    start daily cola webpage scraping process.
+*/
+
 const db = require('./db_functions.js');
 const setInterval = require('set-interval');
 const afterLoad = require('after-load');
@@ -41,6 +50,14 @@ module.exports = {
         });
         console.log("Cola rate change script schduled to start at: " + midnight);
     },
+
+
+    /*  The following functions were written and used to scrape historical cola rates
+        which should be a one time process and not needed again, but these have just 
+        been commented out and left here in the event we need to run this process 
+        again for some reason.
+        Should no longer be necessary.
+    */
 
     /* name: scrapePreviousColaRates
        preconditions: db methond in db_functions.js have been un-commented out

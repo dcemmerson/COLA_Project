@@ -1,3 +1,10 @@
+/*  filename: ajax_routes.js
+    last modified: 06/23/2020
+    description: File contains non-rendering routes and exports these.
+                    Should be imported into main server entry point,
+                    server.js.
+*/
+
 const db = require('../server_functions/db_functions.js');
 const tm = require('../server_functions/template_manip.js');
 const misc = require('../server_functions/misc.js');
@@ -15,7 +22,7 @@ module.exports = function (app, passport) {
                 if (err) console.log(err);
             })
             .finally(() => {
-		console.log(context);
+                console.log(context);
                 res.send(context);
             })
 
@@ -23,41 +30,41 @@ module.exports = function (app, passport) {
 
     /******************* Subscription page ajax routes *********************/
     app.get('/get_user_subscription_list', db.authenticationMiddleware(),
-            function (req, res) {
-		const userId = req.session.passport.user.userId;
-		let awaitPromises = [];
-		let context = {subscriptionList: [] };
-		awaitPromises.push(
-                    db.getUserSubscriptionList(userId)
-			.then(subs => {
-                            //this is ugly but necessary to send to client at right times
-                            return new Promise((resolve, reject) => {
-				let awaitSigning = [];
-				subs.forEach(sub => {
-                                    awaitSigning.push(misc.jwtSign({
-					templateId: sub.templateId,
-					post: sub.post,
-					country: sub.country,
-					subscriptionId: sub.subscriptionId
-                                    })
-						      .then(tok => {
-							  sub.tok = tok;
-							  sub.effectiveDate = misc.toHumanDate(sub.effectiveDate);
-							  context.subscriptionList.push(sub);
-						      }))
-				})
-				Promise.all(awaitSigning).then(resolve);
+        function (req, res) {
+            const userId = req.session.passport.user.userId;
+            let awaitPromises = [];
+            let context = { subscriptionList: [] };
+            awaitPromises.push(
+                db.getUserSubscriptionList(userId)
+                    .then(subs => {
+                        //this is ugly but necessary to send to client at right times
+                        return new Promise((resolve, reject) => {
+                            let awaitSigning = [];
+                            subs.forEach(sub => {
+                                awaitSigning.push(misc.jwtSign({
+                                    templateId: sub.templateId,
+                                    post: sub.post,
+                                    country: sub.country,
+                                    subscriptionId: sub.subscriptionId
+                                })
+                                    .then(tok => {
+                                        sub.tok = tok;
+                                        sub.effectiveDate = misc.toHumanDate(sub.effectiveDate);
+                                        context.subscriptionList.push(sub);
+                                    }))
                             })
-			})
-			.catch(err => console.log(err))
-		);
-		Promise.all(awaitPromises)
-                    .then(() => {
-			res.send(context);
+                            Promise.all(awaitSigning).then(resolve);
+                        })
                     })
-            });
+                    .catch(err => console.log(err))
+            );
+            Promise.all(awaitPromises)
+                .then(() => {
+                    res.send(context);
+                })
+        });
     app.get('/get_user_template_list', db.authenticationMiddleware(),
-            function (req, res) {
+        function (req, res) {
             const userId = req.session.passport.user.userId;
             let context = {};
 
@@ -88,8 +95,8 @@ module.exports = function (app, passport) {
                 .then(sub => {
 
                     context = sub;
-		    context.effectiveDate = misc.toHumanDate(sub.effectiveDate);
-		    
+                    context.effectiveDate = misc.toHumanDate(sub.effectiveDate);
+
                     return misc.jwtSign({
                         templateId: sub.templateId,
                         post: sub.post,
@@ -124,8 +131,8 @@ module.exports = function (app, passport) {
                 .then(() => db.getUserSubscriptionById(context.subscriptionId))
                 .then(sub => {
                     context = sub;
-		    context.effectiveDate = misc.toHumanDate(sub.effectiveDate);
-		    
+                    context.effectiveDate = misc.toHumanDate(sub.effectiveDate);
+
                     return misc.jwtSign({
                         templateId: sub.templateId,
                         post: sub.post,
@@ -148,6 +155,7 @@ module.exports = function (app, passport) {
                     res.send(context);
                 })
         });
+
     app.get('/preview_template', db.authenticationMiddleware(),
         function (req, res) {
             var userId = req.session.passport.user.userId;
@@ -244,6 +252,7 @@ module.exports = function (app, passport) {
                     res.send(context);
                 })
         });
+
     // fire email button
     app.get('/fire_subscription_email', db.authenticationMiddleware(),
         function (req, res) {
@@ -293,7 +302,7 @@ module.exports = function (app, passport) {
                     res.send(context);
                 })
         });
-    
+
     // preview button
     app.get('/preview_subscription', db.authenticationMiddleware(),
         function (req, res) {
@@ -363,6 +372,7 @@ module.exports = function (app, passport) {
                     res.send(context);
                 })
         });
+
     /****************** End subscription page ajax routes *******************/
     /*********************** Account page ajax routes ***********************/
     app.post('/update_password', db.authenticationMiddleware(), function (req, res) {
@@ -383,7 +393,6 @@ module.exports = function (app, passport) {
             })
             .finally(() => res.send(context))
     });
-
 
     app.post('/reset_password', function (req, res) {
 
@@ -521,7 +530,6 @@ module.exports = function (app, passport) {
 
     });
 
-
     /********************* End Account page ajax routes *********************/
     /********************* Start FAQ page ajax routes *********************/
     app.get('/preview_default_template', function (req, res) {
@@ -542,11 +550,12 @@ module.exports = function (app, passport) {
                 res.send(context);
             })
     });
+
     app.get('/download_default_template', function (req, res) {
         const defaultUserId = process.env.DEFAULT_TEMPLATE_USER_ID;
         const defaultTemplateId = process.env.DEFAULT_TEMPLATE_ID;
         var context = {};
-	db.getUserTemplate(defaultUserId, defaultTemplateId)
+        db.getUserTemplate(defaultUserId, defaultTemplateId)
             .then(response => {
                 context.filename = response[0].name;
                 context.uploaded = response[0].uploaded;
@@ -563,6 +572,7 @@ module.exports = function (app, passport) {
             })
     })
     /************************* End FAQ page ajax ****************************/
+
     /************************************************************************
     AJAX routes coming from email links and/or
        coming from one-click unsubscribe/undo unsubscribe
@@ -638,8 +648,8 @@ module.exports = function (app, passport) {
             })
     })
     /**************** End AJAX routes coming from email links ****************/
-    /***************** AJAX routes coming from password reset page *************/
 
+    /***************** AJAX routes coming from password reset page *************/
     app.post(`/reset`, (req, res, next) => {
         var context = {};
         context.title = "Reset password - COLA";
@@ -672,16 +682,5 @@ module.exports = function (app, passport) {
             })
 
     });
-    
-    /***************************************************/
-    /* functionallity for get all user info page here  */
-    /***************************************************/
-        app.get('/delete_subscription', db.authenticationMiddleware(),
-        function (req, res) {
-            const userId = req.session.passport.user.userId;
-            var context = {};
-            
 
-	})
 }
-

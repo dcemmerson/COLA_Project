@@ -1,13 +1,19 @@
-//require('dotenv').config();
+/*  filename: emails.js
+    last modified: 06/23/2020
+    description: File contains functions specific to sending emails,
+                    including rendering email templates, making db
+                    calls to functions in db_functions.js, and making
+                    calls to edit user uploaded templates to functions
+                    in template_manip.js.
+*/
+
 const db = require('./db_functions.js');
 const tm = require('./template_manip.js');
 const misc = require('./misc.js');
 const path = require('path');
 const randomAccessFile = require('random-access-file');
-//const nodemailer = require('nodemailer');
-//var sgTransport = require('nodemailer-sendgrid-transport');
-var Email = require('email-templates');
 
+var Email = require('email-templates');
 
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -130,9 +136,8 @@ module.exports = {
                 console.log('now send');
                 return sgMail.send(msg);
             })
-
     },
-    
+
     /* name: sendEmails
        preconditions: changedRates contains array of objects that contains each
                         post that has changed cola rate, including information db id,

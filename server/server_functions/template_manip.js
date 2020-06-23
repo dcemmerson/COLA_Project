@@ -1,3 +1,11 @@
+/*  filename: template_manip.js
+    last modified: 06/23/2020
+    description: File contains functions needed to manipulate templates,
+                    including injecting COLA Rates and other values such 
+                    as date into template, and converting a docx to pdf
+                    for file preview in-browser.
+*/
+
 const DocxTemplater = require('docxtemplater');
 const PizZip = require('pizzip');
 const HOST = process.env.HOST;
@@ -7,15 +15,15 @@ module.exports = {
     /* name: manipTemplate
        preconditions: user {
                             username is used for accessing correct user's template in separate
-			    directory to prevent name conflicts caused by multiple templates with
-			    same name.
-			    filename is name of file that user gave their template
+			                directory to prevent name conflicts caused by multiple templates with
+                            same name.
+                            filename is name of file that user gave their template
 			   }
 	              changed {
-                               post is name of post whose rate has changed
-			       country is name of country that post belogns to
-			       prevAllowance is old allowance before change script ran
-			       newAllowance is allowance after change script ran
+                            post is name of post whose rate has changed
+                            country is name of country that post belogns to
+                            prevAllowance is old allowance before change script ran
+                            newAllowance is allowance after change script ran
 			       }
        postconditions: username's file has been manipulated and {} fields updated.
                        A new docx has been created, which is returned from maniptemplate
@@ -81,6 +89,14 @@ module.exports = {
                 + ` and create a new subscription to this post with a new template file.`);
         }
     },
+
+    /*  name: docxToPdf
+        preconditions: docxBuffer is a blob from db that was uploaded by user,
+                        validated in misc.validateFile, stored in our db, and now
+                        is being selected by user to display an in-browser preview
+                        of the document.
+        postconditions: Reolves with buffer containing file as pdf.
+    */
     docxToPdf: function (docxBuffer) {
         return new Promise((resolve, reject) => {
             toPdf(docxBuffer)
