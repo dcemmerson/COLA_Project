@@ -92,10 +92,10 @@ To run the site locally:
    DEFAULT_TEMPLATE_ID = 1  
    DEFAULT_TEMPLATE_USER_ID = 1  
    FROM_EMAIL = configuredEmail@email.email  
-   SENDGRID_API_KEY = specialApiKey
-   CHROME_VERSION = 61
-   FIREFOX_VERSION = 58
-   SAFARI_VERSION = 11
+   SENDGRID_API_KEY = specialApiKey  
+   CHROME_VERSION = 61  
+   FIREFOX_VERSION = 58  
+   SAFARI_VERSION = 11  
    
 5) Run `node server` and the website will be accessible at localhost:10000
 
