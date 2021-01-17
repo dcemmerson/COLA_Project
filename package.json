@@ -5,7 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "after-load": "^1.0.4",
-    "bcrypt": "^4.0.1",
+    "bcrypt": "^5.0.0",
     "cherio": "^1.0.0-rc.2",
     "cookie-parser": "^1.4.4",
     "docxtemplater": "^3.17.0",
