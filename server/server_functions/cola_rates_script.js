@@ -232,7 +232,7 @@ function checkRateChanges(scrapedRates, changedRates, effectiveDate) {
                     else if (!res[0]) {
                         console.log("Post does not exist in db: "
                             + element.post + ", " + element.country + ". Adding...");
-                        return db.addColaRate(element.country, element.post, element.allowance)
+                        return db.addColaRate(element.country, element.post, element.allowance, effectiveDate)
                             .then(res => console.log("Added new post: " + element.post + ", "
                                 + element.country + "."))
                             .catch(err => console.log(err + "\nError adding "
