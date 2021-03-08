@@ -302,9 +302,11 @@ function parseColaPage(html) {
     })
 
     // also grab effective date from the webpage
-    const regex = /(.*?)Rates Effective: (.*?)/;
-    context.effectiveDate = new Date($('tr td div h4').text().replace(regex, ''));
-
+    // const regex = /(.*?)Rates Effective: (.*?)/;
+    // context.effectiveDate = new Date($('tr td div h4').text().replace(regex, ''));
+    const split = $('tr td div h4').text().split(' ');
+    context.effectiveDate = new Date(split[split.length - 1]);
+    
     return context;
 }
 
