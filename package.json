@@ -8,7 +8,7 @@
     "bcrypt": "^5.0.0",
     "cherio": "^1.0.0-rc.2",
     "cookie-parser": "^1.4.4",
-    "docxtemplater": "^3.17.0",
+    "docxtemplater": "^3.31.4",
     "dotenv": "^8.2.0",
     "email-templates": "^7.0.4",
     "express-flash": "^0.0.2",
