@@ -16,7 +16,7 @@
     "express-mysql-session": "^2.1.4",
     "express-session": "^1.17.1",
     "express-useragent": "^1.0.13",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "mmmagic": "^0.5.3",
     "multer": "^1.4.2",
     "mysql": "^2.18.1",
